@@ -174,14 +174,10 @@ PRIMEROS 30 DÍAS: [3 acciones concretas para validar antes de construir]
 
 MRR ESTIMADO A 12M: [rango realista si ejecutan bien]`;
 
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/shark", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 800,
-          messages: [{ role: "user", content: prompt }],
-        }),
+        body: JSON.stringify({ prompt }),
       });
       const data = await res.json();
       update(selectedId, { sharkOpinion: data.content?.[0]?.text || "Error al obtener opinión." });
