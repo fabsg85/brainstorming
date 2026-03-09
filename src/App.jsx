@@ -4,39 +4,21 @@ const SAMPLE_IDEAS = [
   {
     id: 1,
     title: "Due Diligence Agent para Inversores",
-    summary: "Agente que procesa pitch decks, financials y datos públicos para generar reportes de DD en minutos en lugar de semanas.",
-    publicObj: "VCs, ángeles inversores, family offices en LATAM y España",
-    diferencial: "Integración con Crunchbase, LinkedIn y registros públicos + LLM especializado en inversión. Produce reporte estructurado listo para comité de inversión.",
-    tech: "Claude API + RAG + scraping público + PDF generation",
-    pros: ["Mercado con altísimo poder adquisitivo", "Pain real: DD tarda semanas y cuesta $5K–$20K", "Output fácil de cobrar como reporte premium"],
-    cons: ["Requiere validación de accuracy (riesgo legal)", "Ciclo de venta largo con institucionales", "Big4 tienen soluciones propias"],
+    description: "Agente que procesa pitch decks, financials y datos públicos para generar reportes de DD en minutos en lugar de semanas.",
     stage: "idea",
     comments: [],
-    scores: {},
-    sharkOpinion: null,
+    analysis: null,
+    analyzing: false,
   },
   {
     id: 2,
     title: "Copiloto AI para Vendedores B2B",
-    summary: "Chrome extension + CRM plugin que analiza llamadas de ventas en tiempo real y sugiere respuestas, objeciones y próximos pasos.",
-    publicObj: "Equipos de ventas B2B SaaS, inmobiliarias premium, agencias de alto ticket",
-    diferencial: "Contextualiza sugerencias con el CRM del cliente. Aprende del mejor vendedor del equipo y escala ese conocimiento a todos.",
-    tech: "Whisper STT + Claude API + HubSpot/Salesforce API + Chrome Extension",
-    pros: ["ROI medible en días (más cierres = más $)", "Integración profunda = alto switching cost", "Upsell natural: analytics del equipo"],
-    cons: ["Integraciones CRM son complejas", "Privacidad en grabación de llamadas (GDPR)", "Gong y Chorus ya existen"],
+    description: "Chrome extension que analiza llamadas de ventas en tiempo real y sugiere respuestas, objeciones y próximos pasos basándose en el historial del CRM.",
     stage: "validando",
     comments: [],
-    scores: {},
-    sharkOpinion: null,
+    analysis: null,
+    analyzing: false,
   },
-];
-
-const CRITERIA = [
-  { key: "traccion", label: "Tracción potencial", icon: "📈", desc: "¿Hay demanda real y urgente?" },
-  { key: "moat", label: "Moat / Ventaja defensible", icon: "🏰", desc: "¿Qué tan difícil es copiarlo?" },
-  { key: "monetizacion", label: "Monetización clara", icon: "💰", desc: "¿Es fácil cobrar desde el día 1?" },
-  { key: "velocidad", label: "Velocidad de validación", icon: "⚡", desc: "¿En cuánto tiempo se puede testear?" },
-  { key: "mercado", label: "Tamaño de mercado", icon: "🌍", desc: "¿Cuán grande es la oportunidad?" },
 ];
 
 const STAGES = [
@@ -46,65 +28,40 @@ const STAGES = [
   { key: "lanzado", label: "Lanzado", emoji: "🚀", bg: "#d1fae5", color: "#059669" },
 ];
 
-const BLANK = {
-  title: "", summary: "", publicObj: "", diferencial: "",
-  tech: "", pros: ["", ""], cons: ["", ""],
-  stage: "idea", comments: [], scores: {}, sharkOpinion: null,
-};
+const BLANK = { title: "", description: "", stage: "idea", comments: [], analysis: null };
 
-function avg(scores) {
-  const vals = Object.values(scores);
-  return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
-}
-
-function ScoreChip({ score }) {
-  if (score === null) return <span style={{ color: "#9ca3af", fontSize: 13 }}>—</span>;
-  const color = score >= 7.5 ? "#059669" : score >= 5.5 ? "#d97706" : "#dc2626";
+function ScoreBar({ label, value }) {
+  if (!value) return null;
+  const color = value >= 8 ? "#059669" : value >= 6 ? "#d97706" : "#dc2626";
   return (
-    <span style={{
-      background: color + "15", color, border: `1.5px solid ${color}40`,
-      borderRadius: 8, padding: "2px 10px", fontWeight: 800,
-      fontSize: 14, fontFamily: "monospace",
-    }}>
-      {score.toFixed(1)}
-    </span>
+    <div style={{ marginBottom: 10 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+        <span style={{ fontSize: 13, color: "#374151", fontWeight: 600 }}>{label}</span>
+        <span style={{ fontSize: 13, fontWeight: 800, fontFamily: "monospace", color }}>{value}/10</span>
+      </div>
+      <div style={{ height: 6, background: "#f3f4f6", borderRadius: 99 }}>
+        <div style={{ height: 6, background: color, borderRadius: 99, width: `${value * 10}%`, transition: "width 0.6s ease" }} />
+      </div>
+    </div>
   );
 }
 
 function StageBadge({ stage }) {
   const s = STAGES.find(x => x.key === stage) || STAGES[0];
   return (
-    <span style={{
-      background: s.bg, color: s.color, fontSize: 11, fontWeight: 700,
-      borderRadius: 6, padding: "3px 9px",
-    }}>
+    <span style={{ background: s.bg, color: s.color, fontSize: 11, fontWeight: 700, borderRadius: 6, padding: "3px 9px" }}>
       {s.emoji} {s.label}
     </span>
   );
 }
 
-function Slider({ value, onChange }) {
+function Card({ title, children, accent }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-      <input
-        type="range" min={1} max={10} value={value || 1}
-        onChange={e => onChange(Number(e.target.value))}
-        style={{ flex: 1, accentColor: "#6366f1", cursor: "pointer" }}
-      />
-      <span style={{
-        minWidth: 36, textAlign: "center", fontWeight: 800,
-        fontFamily: "monospace", fontSize: 16,
-        color: !value ? "#9ca3af" : value >= 8 ? "#059669" : value >= 5 ? "#d97706" : "#dc2626",
-      }}>
-        {value || "—"}
-      </span>
-    </div>
-  );
-}
-
-function Card({ title, children }) {
-  return (
-    <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "18px 22px" }}>
+    <div style={{
+      background: "#fff", border: `1px solid ${accent ? accent + "40" : "#e5e7eb"}`,
+      borderRadius: 12, padding: "18px 22px",
+      borderLeft: accent ? `4px solid ${accent}` : undefined,
+    }}>
       <div style={{ fontWeight: 700, fontSize: 11, color: "#9ca3af", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.7px" }}>
         {title}
       </div>
@@ -113,15 +70,36 @@ function Card({ title, children }) {
   );
 }
 
+function OverallScore({ score }) {
+  if (!score) return null;
+  const color = score >= 7.5 ? "#059669" : score >= 5.5 ? "#d97706" : "#dc2626";
+  const label = score >= 7.5 ? "INVERTIRÍA" : score >= 5.5 ? "NECESITA PIVOTE" : "PASS";
+  return (
+    <div style={{
+      background: color + "10", border: `2px solid ${color}30`,
+      borderRadius: 14, padding: "16px 22px",
+      display: "flex", justifyContent: "space-between", alignItems: "center",
+    }}>
+      <div>
+        <div style={{ fontSize: 11, color: "#6b7280", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 4 }}>Veredicto del Shark</div>
+        <div style={{ fontWeight: 900, fontSize: 18, color }}>{label}</div>
+      </div>
+      <div style={{ textAlign: "right" }}>
+        <div style={{ fontSize: 42, fontWeight: 900, fontFamily: "monospace", color, lineHeight: 1 }}>{score.toFixed(1)}</div>
+        <div style={{ fontSize: 11, color: "#9ca3af" }}>/ 10</div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [ideas, setIdeas] = useState(SAMPLE_IDEAS);
   const [selectedId, setSelectedId] = useState(1);
-  const [tab, setTab] = useState("detail");
+  const [tab, setTab] = useState("analysis");
   const [modal, setModal] = useState(false);
   const [draft, setDraft] = useState({ ...BLANK });
   const [comment, setComment] = useState("");
   const [author, setAuthor] = useState("");
-  const [loadingShark, setLoadingShark] = useState(false);
 
   const sel = ideas.find(i => i.id === selectedId);
   const update = (id, patch) => setIdeas(p => p.map(i => i.id === id ? { ...i, ...patch } : i));
@@ -129,11 +107,11 @@ export default function App() {
   const addIdea = () => {
     if (!draft.title.trim()) return;
     const id = Date.now();
-    setIdeas(p => [...p, { ...draft, id, comments: [], scores: {}, sharkOpinion: null }]);
+    setIdeas(p => [...p, { ...draft, id, comments: [], analysis: null }]);
     setSelectedId(id);
     setDraft({ ...BLANK });
     setModal(false);
-    setTab("detail");
+    setTab("analysis");
   };
 
   const addComment = () => {
@@ -149,50 +127,55 @@ export default function App() {
     setComment("");
   };
 
-  const getShark = async () => {
-    setLoadingShark(true);
+  const analyze = async (idea) => {
+    update(idea.id, { analyzing: true });
+
+    const prompt = `Sos un shark de negocios tech con expertise en AI y startups. Analizá esta idea de negocio y respondé ÚNICAMENTE con un JSON válido, sin texto extra, sin markdown, sin backticks.
+
+IDEA: ${idea.title}
+DESCRIPCIÓN: ${idea.description}
+
+El JSON debe tener exactamente esta estructura:
+{
+  "publicObj": "string - quién es el cliente y cuánto paga hoy por este problema",
+  "diferencial": "string - ventaja competitiva real, por qué no se copia fácil",
+  "benchmark": "string - competidores o alternativas existentes y cómo se compara esta idea",
+  "stack": "string - stack técnico recomendado concreto (APIs, modelos, infra)",
+  "pros": ["string", "string", "string"],
+  "cons": ["string", "string", "string"],
+  "veredicto": "string - una línea brutal y directa",
+  "mayorRiesgo": "string - el riesgo número 1 que puede matar este proyecto",
+  "primeros30dias": "string - 3 acciones concretas para validar antes de construir",
+  "mrrEstimado": "string - rango realista a 12 meses si ejecutan bien",
+  "scores": {
+    "traccion": número del 1 al 10,
+    "moat": número del 1 al 10,
+    "monetizacion": número del 1 al 10,
+    "velocidad": número del 1 al 10,
+    "mercado": número del 1 al 10
+  }
+}`;
+
     try {
-      const prompt = `Eres un shark de negocios tech con expertise en AI y startups. Analiza esta idea y da tu opinión BRUTAL y DIRECTA en español, sin adornos.
-
-IDEA: ${sel.title}
-RESUMEN: ${sel.summary}
-PÚBLICO: ${sel.publicObj}
-DIFERENCIAL: ${sel.diferencial}
-PROS: ${sel.pros.filter(Boolean).join(", ")}
-CONS: ${sel.cons.filter(Boolean).join(", ")}
-TECH: ${sel.tech}
-
-Responde exactamente con este formato (sin markdown ni asteriscos):
-
-VEREDICTO: [INVERTIRÍA / NECESITA PIVOTE / PASS] — [una línea directa y sin filtros]
-
-MOAT REAL: [2-3 oraciones. ¿La ventaja competitiva es real o ilusoria?]
-
-MAYOR RIESGO: [El riesgo número 1 que va a matar este proyecto si no se resuelve]
-
-PRIMEROS 30 DÍAS: [3 acciones concretas para validar antes de construir]
-
-MRR ESTIMADO A 12M: [rango realista si ejecutan bien]`;
-
       const res = await fetch("/api/shark", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
       });
       const data = await res.json();
-      update(selectedId, { sharkOpinion: data.content?.[0]?.text || "Error al obtener opinión." });
+      const text = data.content?.[0]?.text || "";
+      const clean = text.replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(clean);
+      const avgScore = Object.values(parsed.scores).reduce((a, b) => a + b, 0) / Object.values(parsed.scores).length;
+      update(idea.id, { analysis: { ...parsed, avgScore }, analyzing: false });
     } catch {
-      update(selectedId, { sharkOpinion: "Error de conexión. Intentá de nuevo." });
+      update(idea.id, { analysis: { error: true }, analyzing: false });
     }
-    setLoadingShark(false);
   };
 
-  const selScore = sel ? avg(sel.scores) : null;
-
+  const a = sel?.analysis;
   const TABS = [
-    { key: "detail", label: "📋 Detalle" },
-    { key: "score", label: "🎯 Scoring" },
-    { key: "shark", label: "🦈 Shark" },
+    { key: "analysis", label: "🦈 Análisis" },
     { key: "comments", label: `💬 Comentarios${sel?.comments.length ? ` (${sel.comments.length})` : ""}` },
   ];
 
@@ -237,81 +220,62 @@ MRR ESTIMADO A 12M: [rango realista si ejecutan bien]`;
             Ideas del equipo
           </div>
           {ideas.map(idea => {
-            const s = avg(idea.scores);
             const isSelected = idea.id === selectedId;
             const stg = STAGES.find(x => x.key === idea.stage) || STAGES[0];
+            const score = idea.analysis?.avgScore;
+            const scoreColor = score >= 7.5 ? "#059669" : score >= 5.5 ? "#d97706" : "#dc2626";
             return (
-              <div key={idea.id} onClick={() => { setSelectedId(idea.id); setTab("detail"); }}
+              <div key={idea.id} onClick={() => { setSelectedId(idea.id); setTab("analysis"); }}
                 style={{
                   border: `1.5px solid ${isSelected ? "#6366f1" : "#e5e7eb"}`,
                   borderRadius: 10, padding: "12px 14px", cursor: "pointer",
-                  background: isSelected ? "#f5f3ff" : "#fff",
-                  transition: "all 0.15s",
+                  background: isSelected ? "#f5f3ff" : "#fff", transition: "all 0.15s",
                 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                  <span style={{
-                    background: stg.bg, color: stg.color,
-                    fontSize: 10, fontWeight: 700, borderRadius: 5, padding: "2px 7px",
-                  }}>
+                  <span style={{ background: stg.bg, color: stg.color, fontSize: 10, fontWeight: 700, borderRadius: 5, padding: "2px 7px" }}>
                     {stg.emoji} {stg.label}
                   </span>
-                  <ScoreChip score={s} />
+                  {score ? (
+                    <span style={{ background: scoreColor + "15", color: scoreColor, border: `1.5px solid ${scoreColor}40`, borderRadius: 6, padding: "1px 8px", fontWeight: 800, fontSize: 13, fontFamily: "monospace" }}>
+                      {score.toFixed(1)}
+                    </span>
+                  ) : idea.analyzing ? (
+                    <span style={{ fontSize: 11, color: "#6366f1" }}>analizando...</span>
+                  ) : (
+                    <span style={{ fontSize: 11, color: "#9ca3af" }}>sin análisis</span>
+                  )}
                 </div>
                 <div style={{ fontWeight: 700, fontSize: 13, color: isSelected ? "#6366f1" : "#111827", lineHeight: 1.35, marginBottom: 4 }}>
                   {idea.title || "Sin título"}
                 </div>
-                <div style={{
-                  color: "#6b7280", fontSize: 12, lineHeight: 1.5,
-                  display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
-                }}>
-                  {idea.summary || "Sin descripción"}
+                <div style={{ color: "#6b7280", fontSize: 12, lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                  {idea.description || "Sin descripción"}
                 </div>
-                {idea.sharkOpinion && (
-                  <div style={{ marginTop: 8, fontSize: 11, color: "#7c3aed", fontWeight: 600 }}>🦈 Shark opinion lista</div>
-                )}
               </div>
             );
           })}
         </div>
 
-        {/* MAIN PANEL */}
+        {/* MAIN */}
         {sel && (
           <div style={{ flex: 1, overflowY: "auto" }}>
-
-            {/* Idea header */}
             <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "20px 28px 0" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
                     <StageBadge stage={sel.stage} />
                     <select value={sel.stage} onChange={e => update(selectedId, { stage: e.target.value })}
-                      style={{
-                        border: "1px solid #e5e7eb", borderRadius: 6, padding: "3px 8px",
-                        fontSize: 11, color: "#374151", background: "#f9fafb", cursor: "pointer",
-                      }}>
+                      style={{ border: "1px solid #e5e7eb", borderRadius: 6, padding: "3px 8px", fontSize: 11, color: "#374151", background: "#f9fafb", cursor: "pointer" }}>
                       {STAGES.map(s => <option key={s.key} value={s.key}>{s.emoji} {s.label}</option>)}
                     </select>
                   </div>
-                  <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: "-0.4px", color: "#111827" }}>
+                  <h1 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 800, letterSpacing: "-0.4px", color: "#111827" }}>
                     {sel.title}
                   </h1>
+                  <p style={{ margin: 0, color: "#6b7280", fontSize: 14, lineHeight: 1.65 }}>{sel.description}</p>
                 </div>
-                {selScore !== null && (
-                  <div style={{ textAlign: "center", marginLeft: 20, padding: "10px 20px", background: "#f9fafb", borderRadius: 12, border: "1px solid #e5e7eb" }}>
-                    <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2, fontWeight: 600 }}>SCORE EQUIPO</div>
-                    <div style={{
-                      fontSize: 34, fontWeight: 900, fontFamily: "monospace",
-                      color: selScore >= 7.5 ? "#059669" : selScore >= 5.5 ? "#d97706" : "#dc2626",
-                    }}>
-                      {selScore.toFixed(1)}
-                    </div>
-                    <div style={{ fontSize: 11, color: "#9ca3af" }}>/ 10</div>
-                  </div>
-                )}
               </div>
-
-              {/* Tabs */}
-              <div style={{ display: "flex" }}>
+              <div style={{ display: "flex", gap: 4, marginTop: 16 }}>
                 {TABS.map(t => (
                   <button key={t.key} onClick={() => setTab(t.key)} style={{
                     border: "none", background: "none",
@@ -327,168 +291,127 @@ MRR ESTIMADO A 12M: [rango realista si ejecutan bien]`;
               </div>
             </div>
 
-            {/* Tab content */}
             <div style={{ padding: "24px 28px" }}>
 
-              {/* DETALLE */}
-              {tab === "detail" && (
-                <div style={{ display: "grid", gap: 16 }}>
-                  <Card title="🧠 Resumen ejecutivo">
-                    <p style={{ margin: 0, color: "#374151", lineHeight: 1.75, fontSize: 15 }}>{sel.summary || "—"}</p>
-                  </Card>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                    <Card title="👥 Público objetivo">
-                      <p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{sel.publicObj || "—"}</p>
-                    </Card>
-                    <Card title="⚙️ Stack técnico">
-                      <p style={{ margin: 0, color: "#374151", fontSize: 13, lineHeight: 1.6, fontFamily: "monospace", background: "#f3f4f6", borderRadius: 6, padding: "8px 10px" }}>
-                        {sel.tech || "—"}
-                      </p>
-                    </Card>
-                  </div>
-                  <Card title="✨ Diferencial clave">
-                    <p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.75 }}>{sel.diferencial || "—"}</p>
-                  </Card>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                    <Card title="✅ Pros">
-                      <ul style={{ margin: 0, paddingLeft: 18 }}>
-                        {sel.pros.filter(Boolean).map((p, i) => (
-                          <li key={i} style={{ color: "#059669", fontSize: 14, marginBottom: 7, lineHeight: 1.5 }}>{p}</li>
-                        ))}
-                      </ul>
-                    </Card>
-                    <Card title="⚠️ Cons / Riesgos">
-                      <ul style={{ margin: 0, paddingLeft: 18 }}>
-                        {sel.cons.filter(Boolean).map((c, i) => (
-                          <li key={i} style={{ color: "#dc2626", fontSize: 14, marginBottom: 7, lineHeight: 1.5 }}>{c}</li>
-                        ))}
-                      </ul>
-                    </Card>
-                  </div>
-                </div>
-              )}
-
-              {/* SCORING */}
-              {tab === "score" && (
+              {/* ANÁLISIS */}
+              {tab === "analysis" && (
                 <div>
-                  <p style={{ margin: "0 0 20px", color: "#6b7280", fontSize: 14 }}>
-                    Puntuá cada criterio del 1 al 10. El score final es el promedio de los criterios completados.
-                  </p>
-                  <div style={{ display: "grid", gap: 10 }}>
-                    {CRITERIA.map(c => (
-                      <div key={c.key} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "16px 20px" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                          <span style={{ fontWeight: 700, fontSize: 14 }}>{c.icon} {c.label}</span>
-                          {sel.scores[c.key] && (
-                            <span style={{
-                              background: "#f3f4f6", borderRadius: 6, padding: "2px 10px",
-                              fontWeight: 800, fontFamily: "monospace", fontSize: 13, color: "#374151",
-                            }}>
-                              {sel.scores[c.key]}/10
-                            </span>
-                          )}
-                        </div>
-                        <div style={{ color: "#9ca3af", fontSize: 12, marginBottom: 10 }}>{c.desc}</div>
-                        <Slider value={sel.scores[c.key]} onChange={val => update(selectedId, { scores: { ...sel.scores, [c.key]: val } })} />
-                      </div>
-                    ))}
-                  </div>
-                  {selScore !== null && (
+                  {!a && !sel.analyzing && (
                     <div style={{
-                      marginTop: 18, background: "#f5f3ff",
-                      border: "1.5px solid #c4b5fd", borderRadius: 14,
-                      padding: "18px 24px", display: "flex", justifyContent: "space-between", alignItems: "center",
-                    }}>
-                      <div>
-                        <div style={{ fontWeight: 800, fontSize: 16, color: "#6366f1" }}>Score final</div>
-                        <div style={{ color: "#7c3aed", fontSize: 13, marginTop: 2 }}>
-                          {Object.keys(sel.scores).length} de {CRITERIA.length} criterios completados
-                        </div>
-                      </div>
-                      <div style={{ textAlign: "right" }}>
-                        <div style={{
-                          fontSize: 44, fontWeight: 900, fontFamily: "monospace",
-                          color: selScore >= 7.5 ? "#059669" : selScore >= 5.5 ? "#d97706" : "#dc2626",
-                        }}>
-                          {selScore.toFixed(1)}
-                        </div>
-                        <div style={{ fontSize: 12, color: "#9ca3af" }}>/ 10</div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* SHARK */}
-              {tab === "shark" && (
-                <div>
-                  {!sel.sharkOpinion && !loadingShark && (
-                    <div style={{
-                      textAlign: "center", padding: "56px 20px",
+                      textAlign: "center", padding: "60px 20px",
                       background: "#fff", border: "1px solid #e5e7eb", borderRadius: 16,
                     }}>
                       <div style={{ fontSize: 56, marginBottom: 14 }}>🦈</div>
-                      <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 8, color: "#111827" }}>¿Querés mi opinión?</div>
-                      <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 28, maxWidth: 380, margin: "0 auto 28px" }}>
-                        Analizamos la idea y damos un veredicto sin filtros: moat real, mayor riesgo, primeros 30 días y MRR estimado.
+                      <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 8, color: "#111827" }}>Análisis del Shark</div>
+                      <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 28, maxWidth: 400, margin: "0 auto 28px" }}>
+                        El shark va a generar automáticamente: público objetivo, diferencial, benchmark, stack técnico, pros/cons, scoring y veredicto.
                       </div>
-                      <button onClick={getShark} style={{
+                      <button onClick={() => analyze(sel)} style={{
                         background: "linear-gradient(135deg, #6366f1, #a855f7)",
                         border: "none", borderRadius: 10, padding: "13px 30px",
                         color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer",
                       }}>
-                        🦈 Pedir opinión del Shark
+                        🦈 Analizar esta idea
                       </button>
                     </div>
                   )}
-                  {loadingShark && (
+
+                  {sel.analyzing && (
                     <div style={{
-                      textAlign: "center", padding: "56px 20px",
+                      textAlign: "center", padding: "60px 20px",
                       background: "#fff", border: "1px solid #e5e7eb", borderRadius: 16,
                     }}>
                       <div style={{ fontSize: 48, marginBottom: 14 }}>🦈</div>
                       <div style={{ color: "#6366f1", fontWeight: 700, fontSize: 16 }}>Analizando sin piedad...</div>
-                      <div style={{ color: "#9ca3af", fontSize: 13, marginTop: 6 }}>Esto tarda unos segundos</div>
+                      <div style={{ color: "#9ca3af", fontSize: 13, marginTop: 6 }}>Generando análisis completo, esto tarda unos segundos</div>
                     </div>
                   )}
-                  {sel.sharkOpinion && !loadingShark && (
-                    <div>
-                      <div style={{
-                        background: "#fff", border: "1px solid #e5e7eb",
-                        borderRadius: 16, padding: "28px 30px",
-                        borderTop: "4px solid #6366f1",
-                      }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, paddingBottom: 16, borderBottom: "1px solid #f3f4f6" }}>
-                          <span style={{ fontSize: 22 }}>🦈</span>
-                          <div>
-                            <div style={{ fontWeight: 800, fontSize: 15, color: "#111827" }}>Shark Opinion</div>
-                            <div style={{ fontSize: 12, color: "#9ca3af" }}>{sel.title}</div>
-                          </div>
+
+                  {a && !sel.analyzing && (
+                    a.error ? (
+                      <div style={{ textAlign: "center", padding: "40px", background: "#fff", border: "1px solid #fecaca", borderRadius: 16 }}>
+                        <div style={{ fontSize: 36, marginBottom: 10 }}>⚠️</div>
+                        <div style={{ color: "#dc2626", fontWeight: 700 }}>Error al analizar. Verificá la API key en Vercel.</div>
+                        <button onClick={() => { update(selectedId, { analysis: null }); analyze(sel); }} style={{
+                          marginTop: 16, background: "#f3f4f6", border: "1px solid #e5e7eb",
+                          borderRadius: 8, padding: "9px 18px", color: "#374151",
+                          fontWeight: 600, fontSize: 13, cursor: "pointer",
+                        }}>
+                          🔄 Reintentar
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ display: "grid", gap: 16 }}>
+                        <OverallScore score={a.avgScore} />
+
+                        {/* Scores */}
+                        <Card title="🎯 Scoring por criterio">
+                          <ScoreBar label="📈 Tracción potencial" value={a.scores?.traccion} />
+                          <ScoreBar label="🏰 Moat / Ventaja defensible" value={a.scores?.moat} />
+                          <ScoreBar label="💰 Monetización clara" value={a.scores?.monetizacion} />
+                          <ScoreBar label="⚡ Velocidad de validación" value={a.scores?.velocidad} />
+                          <ScoreBar label="🌍 Tamaño de mercado" value={a.scores?.mercado} />
+                        </Card>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                          <Card title="👥 Público objetivo">
+                            <p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.publicObj}</p>
+                          </Card>
+                          <Card title="🔍 Benchmark / Competencia">
+                            <p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.benchmark}</p>
+                          </Card>
                         </div>
-                        <div style={{ color: "#1f2937", lineHeight: 1.85, fontSize: 14 }}>
-                          {sel.sharkOpinion.split("\n").filter(l => l.trim()).map((line, i) => {
-                            const colonIdx = line.indexOf(":");
-                            const isHeader = colonIdx > 0 && colonIdx < 30 && line === line.toUpperCase().slice(0, colonIdx) + line.slice(colonIdx);
-                            if (isHeader) {
-                              return (
-                                <div key={i} style={{ marginBottom: 14 }}>
-                                  <span style={{ fontWeight: 800, color: "#6366f1" }}>{line.slice(0, colonIdx)}:</span>
-                                  <span style={{ color: "#1f2937" }}>{line.slice(colonIdx + 1)}</span>
-                                </div>
-                              );
-                            }
-                            return <p key={i} style={{ margin: "0 0 10px", color: "#374151" }}>{line}</p>;
-                          })}
+
+                        <Card title="✨ Diferencial clave">
+                          <p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.7 }}>{a.diferencial}</p>
+                        </Card>
+
+                        <Card title="⚙️ Stack técnico recomendado">
+                          <p style={{ margin: 0, color: "#374151", fontSize: 13, lineHeight: 1.6, fontFamily: "monospace", background: "#f3f4f6", borderRadius: 6, padding: "10px 12px" }}>
+                            {a.stack}
+                          </p>
+                        </Card>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                          <Card title="✅ Pros" accent="#059669">
+                            <ul style={{ margin: 0, paddingLeft: 18 }}>
+                              {a.pros?.map((p, i) => (
+                                <li key={i} style={{ color: "#059669", fontSize: 14, marginBottom: 7, lineHeight: 1.5 }}>{p}</li>
+                              ))}
+                            </ul>
+                          </Card>
+                          <Card title="⚠️ Cons / Riesgos" accent="#dc2626">
+                            <ul style={{ margin: 0, paddingLeft: 18 }}>
+                              {a.cons?.map((c, i) => (
+                                <li key={i} style={{ color: "#dc2626", fontSize: 14, marginBottom: 7, lineHeight: 1.5 }}>{c}</li>
+                              ))}
+                            </ul>
+                          </Card>
+                        </div>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+                          <Card title="☠️ Mayor riesgo" accent="#f59e0b">
+                            <p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.mayorRiesgo}</p>
+                          </Card>
+                          <Card title="📅 Primeros 30 días">
+                            <p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.primeros30dias}</p>
+                          </Card>
+                          <Card title="💵 MRR estimado a 12m" accent="#059669">
+                            <p style={{ margin: 0, color: "#059669", fontSize: 15, fontWeight: 800, lineHeight: 1.65 }}>{a.mrrEstimado}</p>
+                          </Card>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                          <button onClick={() => { update(selectedId, { analysis: null }); analyze(sel); }} style={{
+                            background: "#f9fafb", border: "1px solid #e5e7eb",
+                            borderRadius: 8, padding: "9px 18px",
+                            color: "#374151", fontWeight: 600, fontSize: 13, cursor: "pointer",
+                          }}>
+                            🔄 Re-analizar
+                          </button>
                         </div>
                       </div>
-                      <button onClick={getShark} style={{
-                        marginTop: 12, background: "#f9fafb",
-                        border: "1px solid #e5e7eb", borderRadius: 8, padding: "9px 18px",
-                        color: "#374151", fontWeight: 600, fontSize: 13, cursor: "pointer",
-                      }}>
-                        🔄 Regenerar opinión
-                      </button>
-                    </div>
+                    )
                   )}
                 </div>
               )}
@@ -496,30 +419,19 @@ MRR ESTIMADO A 12M: [rango realista si ejecutan bien]`;
               {/* COMENTARIOS */}
               {tab === "comments" && (
                 <div>
-                  <div style={{
-                    background: "#fff", border: "1px solid #e5e7eb",
-                    borderRadius: 12, padding: "16px 18px", marginBottom: 18,
-                  }}>
+                  <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "16px 18px", marginBottom: 18 }}>
                     <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: "#111827" }}>Agregar comentario</div>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                       <input value={author} onChange={e => setAuthor(e.target.value)} placeholder="Tu nombre"
-                        style={{
-                          border: "1.5px solid #e5e7eb", borderRadius: 8, padding: "9px 13px",
-                          fontSize: 13, width: 140, outline: "none", color: "#111827", background: "#fff",
-                        }} />
+                        style={{ border: "1.5px solid #e5e7eb", borderRadius: 8, padding: "9px 13px", fontSize: 13, width: 140, outline: "none", color: "#111827", background: "#fff" }} />
                       <input value={comment} onChange={e => setComment(e.target.value)}
                         onKeyDown={e => e.key === "Enter" && addComment()}
                         placeholder="Tu punto de vista, duda o crítica..."
-                        style={{
-                          border: "1.5px solid #e5e7eb", borderRadius: 8, padding: "9px 13px",
-                          fontSize: 13, flex: 1, minWidth: 180, outline: "none", color: "#111827", background: "#fff",
-                        }} />
+                        style={{ border: "1.5px solid #e5e7eb", borderRadius: 8, padding: "9px 13px", fontSize: 13, flex: 1, minWidth: 180, outline: "none", color: "#111827", background: "#fff" }} />
                       <button onClick={addComment} style={{
                         background: "#6366f1", border: "none", borderRadius: 8,
                         padding: "9px 18px", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer",
-                      }}>
-                        Enviar
-                      </button>
+                      }}>Enviar</button>
                     </div>
                   </div>
                   {sel.comments.length === 0 ? (
@@ -530,10 +442,7 @@ MRR ESTIMADO A 12M: [rango realista si ejecutan bien]`;
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                       {sel.comments.map(c => (
-                        <div key={c.id} style={{
-                          background: "#fff", border: "1px solid #e5e7eb",
-                          borderRadius: 10, padding: "14px 18px",
-                        }}>
+                        <div key={c.id} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "14px 18px" }}>
                           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                             <span style={{ fontWeight: 700, fontSize: 13, color: "#6366f1" }}>{c.author}</span>
                             <span style={{ fontSize: 11, color: "#9ca3af" }}>{c.time}</span>
@@ -559,69 +468,32 @@ MRR ESTIMADO A 12M: [rango realista si ejecutan bien]`;
         }}>
           <div style={{
             background: "#fff", borderRadius: 18, padding: "30px 34px",
-            width: "100%", maxWidth: 620, maxHeight: "90vh", overflowY: "auto",
+            width: "100%", maxWidth: 520,
             boxShadow: "0 20px 60px #0003",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 22 }}>
-              <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#111827" }}>➕ Nueva Idea</h2>
-              <button onClick={() => setModal(false)} style={{
-                background: "#f3f4f6", border: "none", borderRadius: 8,
-                width: 32, height: 32, cursor: "pointer", fontSize: 16, color: "#374151",
-              }}>✕</button>
+              <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#111827" }}>💡 Nueva Idea</h2>
+              <button onClick={() => setModal(false)} style={{ background: "#f3f4f6", border: "none", borderRadius: 8, width: 32, height: 32, cursor: "pointer", fontSize: 16, color: "#374151" }}>✕</button>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              {[
-                { label: "Título *", key: "title", ph: "ej: Agente AI para due diligence", multi: false },
-                { label: "Resumen ejecutivo", key: "summary", ph: "¿Qué hace, para quién y por qué importa?", multi: true },
-                { label: "Público objetivo", key: "publicObj", ph: "¿Quién es el cliente y cuánto paga hoy por este problema?", multi: false },
-                { label: "Diferencial clave", key: "diferencial", ph: "¿Por qué no se copia fácil? ¿Cuál es el moat?", multi: false },
-                { label: "Stack técnico", key: "tech", ph: "ej: Claude API + RAG + Next.js + Supabase", multi: false },
-              ].map(f => (
-                <div key={f.key}>
-                  <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                    {f.label}
-                  </label>
-                  {f.multi ? (
-                    <textarea rows={3} value={draft[f.key]}
-                      onChange={e => setDraft(p => ({ ...p, [f.key]: e.target.value }))}
-                      placeholder={f.ph}
-                      style={{
-                        width: "100%", border: "1.5px solid #e5e7eb", borderRadius: 8,
-                        padding: "10px 13px", fontSize: 14, resize: "vertical",
-                        outline: "none", color: "#111827", boxSizing: "border-box", fontFamily: "inherit",
-                      }} />
-                  ) : (
-                    <input value={draft[f.key]}
-                      onChange={e => setDraft(p => ({ ...p, [f.key]: e.target.value }))}
-                      placeholder={f.ph}
-                      style={{
-                        width: "100%", border: "1.5px solid #e5e7eb", borderRadius: 8,
-                        padding: "10px 13px", fontSize: 14, outline: "none",
-                        color: "#111827", boxSizing: "border-box",
-                      }} />
-                  )}
-                </div>
-              ))}
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                  Título de la idea *
+                </label>
+                <input value={draft.title} onChange={e => setDraft(p => ({ ...p, title: e.target.value }))}
+                  placeholder="ej: Agente AI para due diligence de startups"
+                  style={{ width: "100%", border: "1.5px solid #e5e7eb", borderRadius: 8, padding: "11px 13px", fontSize: 14, outline: "none", color: "#111827", boxSizing: "border-box" }} />
+              </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                {[
-                  { label: "✅ Pros (uno por línea)", key: "pros", color: "#059669" },
-                  { label: "⚠️ Cons (uno por línea)", key: "cons", color: "#dc2626" },
-                ].map(f => (
-                  <div key={f.key}>
-                    <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                      {f.label}
-                    </label>
-                    <textarea rows={4} value={draft[f.key].join("\n")}
-                      onChange={e => setDraft(p => ({ ...p, [f.key]: e.target.value.split("\n") }))}
-                      style={{
-                        width: "100%", border: "1.5px solid #e5e7eb", borderRadius: 8,
-                        padding: "10px 13px", fontSize: 13, resize: "vertical",
-                        outline: "none", color: f.color, boxSizing: "border-box", fontFamily: "inherit",
-                      }} />
-                  </div>
-                ))}
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                  Descripción
+                </label>
+                <textarea value={draft.description} onChange={e => setDraft(p => ({ ...p, description: e.target.value }))}
+                  placeholder="Explicá brevemente qué hace y para quién. El Shark va a generar todo lo demás."
+                  rows={4}
+                  style={{ width: "100%", border: "1.5px solid #e5e7eb", borderRadius: 8, padding: "11px 13px", fontSize: 14, resize: "vertical", outline: "none", color: "#111827", boxSizing: "border-box", fontFamily: "inherit" }} />
               </div>
 
               <div>
@@ -642,12 +514,15 @@ MRR ESTIMADO A 12M: [rango realista si ejecutan bien]`;
                 </div>
               </div>
 
+              <div style={{ background: "#f5f3ff", border: "1px solid #ede9fe", borderRadius: 10, padding: "12px 14px", fontSize: 13, color: "#7c3aed" }}>
+                🦈 El Shark va a generar automáticamente: público objetivo, diferencial, benchmark, stack técnico, pros/cons, scoring y veredicto.
+              </div>
+
               <button onClick={addIdea} disabled={!draft.title.trim()} style={{
                 background: draft.title.trim() ? "linear-gradient(135deg, #6366f1, #a855f7)" : "#f3f4f6",
                 border: "none", borderRadius: 10, padding: "13px",
                 color: draft.title.trim() ? "#fff" : "#9ca3af",
                 fontWeight: 800, fontSize: 14, cursor: draft.title.trim() ? "pointer" : "not-allowed",
-                marginTop: 4,
               }}>
                 Agregar al board →
               </button>
