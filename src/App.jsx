@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -37,6 +37,29 @@ function scoreColor(s) {
   return s >= 7.5 ? "#059669" : s >= 5.5 ? "#d97706" : "#dc2626";
 }
 
+// ── SVG SHARK LOGO ───────────────────────────────────────────────
+function SharkLogo({ size = 36 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="40" rx="10" fill="url(#grad)" />
+      <defs>
+        <linearGradient id="grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#6366f1" />
+          <stop offset="100%" stopColor="#a855f7" />
+        </linearGradient>
+      </defs>
+      {/* Shark body */}
+      <path d="M6 24 C8 18, 14 15, 22 16 L28 14 L24 19 C28 19, 32 21, 34 24 C30 23, 26 22, 22 23 L20 27 L18 23 C14 23, 10 23, 6 24Z" fill="white" opacity="0.95"/>
+      {/* Dorsal fin */}
+      <path d="M18 16 L22 10 L26 16" fill="white" opacity="0.85"/>
+      {/* Eye */}
+      <circle cx="27" cy="21" r="1.2" fill="#6366f1"/>
+      {/* Tail */}
+      <path d="M6 24 L3 20 M6 24 L3 28" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.85"/>
+    </svg>
+  );
+}
+
 function ScoreBar({ label, value, icon }) {
   if (!value) return null;
   const c = scoreColor(value);
@@ -58,10 +81,10 @@ function StageBadge({ stage }) {
   return <span style={{ background: s.bg, color: s.color, fontSize: 11, fontWeight: 700, borderRadius: 6, padding: "3px 9px" }}>{s.emoji} {s.label}</span>;
 }
 
-function Card({ title, children, accent, noPad }) {
+function Card({ title, children, accent }) {
   return (
-    <div style={{ background: "#fff", border: `1px solid ${accent ? accent + "30" : "#e5e7eb"}`, borderRadius: 12, padding: noPad ? 0 : "18px 22px", borderLeft: accent ? `4px solid ${accent}` : undefined, overflow: "hidden" }}>
-      {title && <div style={{ fontWeight: 700, fontSize: 11, color: "#9ca3af", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.7px", padding: noPad ? "18px 22px 0" : 0 }}>{title}</div>}
+    <div style={{ background: "#fff", border: `1px solid ${accent ? accent + "30" : "#e5e7eb"}`, borderRadius: 12, padding: "18px 22px", borderLeft: accent ? `4px solid ${accent}` : undefined }}>
+      {title && <div style={{ fontWeight: 700, fontSize: 11, color: "#9ca3af", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.7px" }}>{title}</div>}
       {children}
     </div>
   );
@@ -77,6 +100,7 @@ function Verdict({ score }) {
       <div>
         <div style={{ fontSize: 11, color: "#6b7280", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 4 }}>Veredicto del Shark</div>
         <div style={{ fontWeight: 900, fontSize: 20, color: c }}>{emoji} {label}</div>
+        {score && <div style={{ fontSize: 13, color: "#6b7280", marginTop: 4, fontStyle: "italic" }}>{score >= 7.5 ? "Potencial real. A construir." : score >= 5.5 ? "Hay algo acá, pero necesita ajustes." : "No vale el esfuerzo ahora."}</div>}
       </div>
       <div style={{ textAlign: "right" }}>
         <div style={{ fontSize: 44, fontWeight: 900, fontFamily: "monospace", color: c, lineHeight: 1 }}>{score.toFixed(1)}</div>
@@ -86,24 +110,21 @@ function Verdict({ score }) {
   );
 }
 
-// ── WIZARD ──────────────────────────────────────────────────────
+// ── WIZARD ───────────────────────────────────────────────────────
 function Wizard({ onSave, onClose }) {
   const [step, setStep] = useState(0);
   const [data, setData] = useState({ title: "", description: "", stage: "idea" });
-
   const canNext = step === 0 ? data.title.trim().length > 0 : step === 1 ? data.description.trim().length > 0 : true;
-
-  const handleSubmit = () => {
-    if (data.title.trim()) onSave(data);
-  };
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "#00000055", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 300, padding: 16 }}>
       <div style={{ background: "#fff", borderRadius: 20, width: "100%", maxWidth: 480, boxShadow: "0 25px 60px #0004", overflow: "hidden" }}>
-        {/* Progress */}
         <div style={{ background: "linear-gradient(135deg, #6366f1, #a855f7)", padding: "20px 24px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <span style={{ color: "#fff", fontWeight: 800, fontSize: 15 }}>💡 Nueva Idea</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <SharkLogo size={28} />
+              <span style={{ color: "#fff", fontWeight: 800, fontSize: 15 }}>Nueva Idea</span>
+            </div>
             <button onClick={onClose} style={{ background: "#ffffff22", border: "none", borderRadius: 6, color: "#fff", width: 28, height: 28, cursor: "pointer", fontSize: 14 }}>✕</button>
           </div>
           <div style={{ display: "flex", gap: 6 }}>
@@ -111,7 +132,7 @@ function Wizard({ onSave, onClose }) {
               <div key={s.key} style={{ flex: 1, height: 4, borderRadius: 99, background: i <= step ? "#fff" : "#ffffff33", transition: "background 0.3s" }} />
             ))}
           </div>
-          <div style={{ marginTop: 10, color: "#ffffffcc", fontSize: 12 }}>Paso {step + 1} de {WIZARD_STEPS.length}</div>
+          <div style={{ marginTop: 8, color: "#ffffffcc", fontSize: 12 }}>Paso {step + 1} de {WIZARD_STEPS.length}</div>
         </div>
 
         <div style={{ padding: "28px 24px" }}>
@@ -120,27 +141,19 @@ function Wizard({ onSave, onClose }) {
           <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 22 }}>{WIZARD_STEPS[step].desc}</div>
 
           {step === 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <input
-                autoFocus
-                value={data.title}
-                onChange={e => setData(p => ({ ...p, title: e.target.value }))}
-                onKeyDown={e => e.key === "Enter" && canNext && setStep(1)}
-                placeholder="ej: App para administración de edificios con AI"
-                style={{ border: "1.5px solid #e5e7eb", borderRadius: 10, padding: "13px 15px", fontSize: 15, outline: "none", color: "#111827", width: "100%", boxSizing: "border-box" }}
-              />
-            </div>
+            <input autoFocus value={data.title}
+              onChange={e => setData(p => ({ ...p, title: e.target.value }))}
+              onKeyDown={e => e.key === "Enter" && canNext && setStep(1)}
+              placeholder="ej: App para administración de edificios con AI"
+              style={{ border: "1.5px solid #e5e7eb", borderRadius: 10, padding: "13px 15px", fontSize: 15, outline: "none", color: "#111827", width: "100%", boxSizing: "border-box" }} />
           )}
 
           {step === 1 && (
-            <textarea
-              autoFocus
-              value={data.description}
+            <textarea autoFocus value={data.description}
               onChange={e => setData(p => ({ ...p, description: e.target.value }))}
-              placeholder="¿Qué dolor resuelve exactamente? ¿Quién lo sufre hoy? ¿Cómo lo resuelven sin tu producto?"
+              placeholder="¿Qué dolor resuelve? ¿Quién lo sufre? ¿Cómo lo resuelven hoy sin tu producto?"
               rows={5}
-              style={{ border: "1.5px solid #e5e7eb", borderRadius: 10, padding: "13px 15px", fontSize: 14, outline: "none", color: "#111827", width: "100%", boxSizing: "border-box", resize: "vertical", fontFamily: "inherit", lineHeight: 1.6 }}
-            />
+              style={{ border: "1.5px solid #e5e7eb", borderRadius: 10, padding: "13px 15px", fontSize: 14, outline: "none", color: "#111827", width: "100%", boxSizing: "border-box", resize: "vertical", fontFamily: "inherit", lineHeight: 1.6 }} />
           )}
 
           {step === 2 && (
@@ -150,11 +163,9 @@ function Wizard({ onSave, onClose }) {
                   background: data.stage === s.key ? s.bg : "#f9fafb",
                   color: data.stage === s.key ? s.color : "#6b7280",
                   border: `2px solid ${data.stage === s.key ? s.color + "60" : "#e5e7eb"}`,
-                  borderRadius: 10, padding: "14px 12px", fontSize: 13, fontWeight: 700, cursor: "pointer",
-                  textAlign: "center", transition: "all 0.15s",
+                  borderRadius: 10, padding: "14px 12px", fontSize: 13, fontWeight: 700, cursor: "pointer", textAlign: "center", transition: "all 0.15s",
                 }}>
-                  <div style={{ fontSize: 22, marginBottom: 4 }}>{s.emoji}</div>
-                  {s.label}
+                  <div style={{ fontSize: 22, marginBottom: 4 }}>{s.emoji}</div>{s.label}
                 </button>
               ))}
             </div>
@@ -162,31 +173,20 @@ function Wizard({ onSave, onClose }) {
 
           <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
             {step > 0 && (
-              <button onClick={() => setStep(s => s - 1)} style={{ flex: 1, background: "#f3f4f6", border: "none", borderRadius: 10, padding: "12px", color: "#374151", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
-                ← Atrás
-              </button>
+              <button onClick={() => setStep(s => s - 1)} style={{ flex: 1, background: "#f3f4f6", border: "none", borderRadius: 10, padding: "12px", color: "#374151", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>← Atrás</button>
             )}
             {step < WIZARD_STEPS.length - 1 ? (
-              <button onClick={() => canNext && setStep(s => s + 1)} disabled={!canNext} style={{
-                flex: 2, background: canNext ? "linear-gradient(135deg, #6366f1, #a855f7)" : "#f3f4f6",
-                border: "none", borderRadius: 10, padding: "12px",
-                color: canNext ? "#fff" : "#9ca3af", fontWeight: 800, fontSize: 14, cursor: canNext ? "pointer" : "not-allowed",
-              }}>
+              <button onClick={() => canNext && setStep(s => s + 1)} disabled={!canNext} style={{ flex: 2, background: canNext ? "linear-gradient(135deg, #6366f1, #a855f7)" : "#f3f4f6", border: "none", borderRadius: 10, padding: "12px", color: canNext ? "#fff" : "#9ca3af", fontWeight: 800, fontSize: 14, cursor: canNext ? "pointer" : "not-allowed" }}>
                 Siguiente →
               </button>
             ) : (
-              <button onClick={handleSubmit} style={{
-                flex: 2, background: "linear-gradient(135deg, #6366f1, #a855f7)",
-                border: "none", borderRadius: 10, padding: "12px",
-                color: "#fff", fontWeight: 800, fontSize: 14, cursor: "pointer",
-              }}>
+              <button onClick={() => onSave(data)} style={{ flex: 2, background: "linear-gradient(135deg, #6366f1, #a855f7)", border: "none", borderRadius: 10, padding: "12px", color: "#fff", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>
                 🦈 Agregar al board
               </button>
             )}
           </div>
-
-          <div style={{ marginTop: 16, background: "#f5f3ff", border: "1px solid #ede9fe", borderRadius: 10, padding: "10px 14px", fontSize: 12, color: "#7c3aed", textAlign: "center" }}>
-            El Shark genera automáticamente todo el análisis 🦈
+          <div style={{ marginTop: 14, background: "#f5f3ff", border: "1px solid #ede9fe", borderRadius: 10, padding: "10px 14px", fontSize: 12, color: "#7c3aed", textAlign: "center" }}>
+            El Shark genera todo el análisis automáticamente 🦈
           </div>
         </div>
       </div>
@@ -194,18 +194,16 @@ function Wizard({ onSave, onClose }) {
   );
 }
 
-// ── COMPARADOR ──────────────────────────────────────────────────
+// ── COMPARADOR ───────────────────────────────────────────────────
 function Comparador({ ideas }) {
   const sorted = [...ideas].sort((a, b) => (avg(b.analysis?.scores) || 0) - (avg(a.analysis?.scores) || 0));
   return (
     <div style={{ padding: "24px 16px", overflowX: "auto" }}>
       <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 4, color: "#111827" }}>📊 Ranking de Ideas</div>
-      <div style={{ color: "#6b7280", fontSize: 13, marginBottom: 20 }}>Comparativa de todas las ideas por score del Shark</div>
-      <div style={{ minWidth: 500 }}>
-        {/* Header */}
-        <div style={{ display: "grid", gridTemplateColumns: "28px 1fr 80px 80px 80px 80px 80px 90px", gap: 8, padding: "8px 12px", background: "#f3f4f6", borderRadius: 10, marginBottom: 6, fontSize: 11, fontWeight: 700, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-          <div>#</div>
-          <div>Idea</div>
+      <div style={{ color: "#6b7280", fontSize: 13, marginBottom: 20 }}>Comparativa por score del Shark</div>
+      <div style={{ minWidth: 520 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "28px 1fr 70px 70px 70px 70px 70px 90px", gap: 6, padding: "8px 12px", background: "#f3f4f6", borderRadius: 10, marginBottom: 6, fontSize: 11, fontWeight: 700, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+          <div>#</div><div>Idea</div>
           {SCORE_CRITERIA.map(c => <div key={c.key} style={{ textAlign: "center" }}>{c.icon}</div>)}
           <div style={{ textAlign: "center" }}>TOTAL</div>
         </div>
@@ -214,38 +212,27 @@ function Comparador({ ideas }) {
           const total = avg(sc);
           const stg = STAGES.find(x => x.key === idea.stage) || STAGES[0];
           return (
-            <div key={idea.id} style={{
-              display: "grid", gridTemplateColumns: "28px 1fr 80px 80px 80px 80px 80px 90px",
-              gap: 8, padding: "12px", background: "#fff",
-              border: "1px solid #e5e7eb", borderRadius: 10, marginBottom: 6,
-              alignItems: "center",
-            }}>
-              <div style={{ fontWeight: 800, fontSize: 14, color: idx === 0 ? "#f59e0b" : "#9ca3af" }}>{idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : idx + 1}</div>
+            <div key={idea.id} style={{ display: "grid", gridTemplateColumns: "28px 1fr 70px 70px 70px 70px 70px 90px", gap: 6, padding: "12px", background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, marginBottom: 6, alignItems: "center" }}>
+              <div style={{ fontWeight: 800, fontSize: 14 }}>{idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : <span style={{ color: "#9ca3af" }}>{idx + 1}</span>}</div>
               <div>
                 <div style={{ fontWeight: 700, fontSize: 13, color: "#111827", marginBottom: 3 }}>{idea.title}</div>
                 <span style={{ background: stg.bg, color: stg.color, fontSize: 10, fontWeight: 700, borderRadius: 4, padding: "1px 6px" }}>{stg.emoji} {stg.label}</span>
               </div>
               {SCORE_CRITERIA.map(c => (
                 <div key={c.key} style={{ textAlign: "center" }}>
-                  {sc?.[c.key] ? (
-                    <span style={{ fontSize: 13, fontWeight: 800, fontFamily: "monospace", color: scoreColor(sc[c.key]) }}>{sc[c.key]}</span>
-                  ) : <span style={{ color: "#d1d5db", fontSize: 12 }}>—</span>}
+                  {sc?.[c.key] ? <span style={{ fontSize: 13, fontWeight: 800, fontFamily: "monospace", color: scoreColor(sc[c.key]) }}>{sc[c.key]}</span> : <span style={{ color: "#d1d5db" }}>—</span>}
                 </div>
               ))}
               <div style={{ textAlign: "center" }}>
-                {total ? (
-                  <span style={{ background: scoreColor(total) + "15", color: scoreColor(total), border: `1.5px solid ${scoreColor(total)}30`, borderRadius: 8, padding: "3px 10px", fontWeight: 900, fontSize: 14, fontFamily: "monospace" }}>
-                    {total.toFixed(1)}
-                  </span>
-                ) : <span style={{ color: "#d1d5db", fontSize: 12 }}>—</span>}
+                {total ? <span style={{ background: scoreColor(total) + "15", color: scoreColor(total), border: `1.5px solid ${scoreColor(total)}30`, borderRadius: 8, padding: "3px 10px", fontWeight: 900, fontSize: 14, fontFamily: "monospace" }}>{total.toFixed(1)}</span>
+                  : <span style={{ color: "#d1d5db" }}>—</span>}
               </div>
             </div>
           );
         })}
         {sorted.length === 0 && (
           <div style={{ textAlign: "center", padding: "40px", color: "#9ca3af" }}>
-            <div style={{ fontSize: 36, marginBottom: 8 }}>📊</div>
-            No hay ideas aún para comparar
+            <div style={{ fontSize: 36, marginBottom: 8 }}>📊</div>No hay ideas para comparar
           </div>
         )}
       </div>
@@ -257,7 +244,7 @@ function Comparador({ ideas }) {
 export default function App() {
   const [ideas, setIdeas] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
-  const [view, setView] = useState("board"); // board | ranking
+  const [view, setView] = useState("board");
   const [tab, setTab] = useState("analysis");
   const [wizard, setWizard] = useState(false);
   const [comment, setComment] = useState("");
@@ -265,6 +252,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const analyzeRef = useRef(false); // prevent double calls
 
   useEffect(() => { loadIdeas(); }, []);
 
@@ -312,75 +300,93 @@ export default function App() {
   };
 
   const analyze = async () => {
-    if (!sel) return;
+    // Guard: prevent multiple simultaneous calls
+    if (analyzeRef.current || analyzing || !sel) return;
+    analyzeRef.current = true;
     setAnalyzing(true);
 
-    const prompt = `Sos un shark de negocios tech con expertise en AI, monetización y go-to-market. Analizá esta idea y respondé ÚNICAMENTE con un JSON válido, sin texto extra, sin markdown, sin backticks.
+    const ideaId = sel.id;
+    const ideaTitle = sel.title;
+    const ideaDesc = sel.description;
 
-IDEA: ${sel.title}
-DESCRIPCIÓN: ${sel.description}
+    const prompt = `Analizá esta idea de negocio de AI y devolvé SOLO un objeto JSON válido. Sin texto extra. Sin markdown. Sin backticks. Empezá directamente con { y terminá con }.
 
-JSON requerido (respetá exactamente los tipos):
+IDEA: ${ideaTitle}
+DESCRIPCIÓN: ${ideaDesc}
+
+Estructura requerida:
 {
-  "publicObj": "string",
-  "diferencial": "string",
-  "benchmark": "string - competidores existentes, alternativas actuales, y cómo se diferencia esta idea",
-  "stack": "string - stack técnico concreto recomendado",
-  "pros": ["string", "string", "string"],
-  "cons": ["string", "string", "string"],
-  "veredicto": "string - una línea brutal y directa",
-  "mayorRiesgo": "string",
+  "publicObj": "quién es el cliente y cuánto paga hoy por este problema",
+  "diferencial": "ventaja competitiva real y por qué no se copia fácil",
+  "benchmark": "competidores existentes y cómo se diferencia esta idea",
+  "stack": "stack técnico concreto recomendado",
+  "pros": ["pro 1", "pro 2", "pro 3"],
+  "cons": ["con 1", "con 2", "con 3"],
+  "veredicto": "una línea brutal y directa",
+  "mayorRiesgo": "el riesgo número 1 que puede matar este proyecto",
   "monetizacion": [
-    { "modelo": "string - nombre del modelo", "descripcion": "string", "pros": "string", "contras": "string", "mrrEstimado": "string" },
-    { "modelo": "string", "descripcion": "string", "pros": "string", "contras": "string", "mrrEstimado": "string" },
-    { "modelo": "string", "descripcion": "string", "pros": "string", "contras": "string", "mrrEstimado": "string" }
+    { "modelo": "nombre", "descripcion": "descripción corta", "pros": "ventaja principal", "contras": "desventaja principal", "mrrEstimado": "rango en USD" },
+    { "modelo": "nombre", "descripcion": "descripción corta", "pros": "ventaja principal", "contras": "desventaja principal", "mrrEstimado": "rango en USD" },
+    { "modelo": "nombre", "descripcion": "descripción corta", "pros": "ventaja principal", "contras": "desventaja principal", "mrrEstimado": "rango en USD" }
   ],
   "publicidad": {
-    "organico": "string - canales orgánicos recomendados y por qué",
-    "pago": "string - si vale la pena publicidad paga, cuándo y en qué canal",
-    "recomendacion": "string - orgánico primero o pago desde el día 1"
+    "organico": "canales orgánicos recomendados",
+    "pago": "si vale la pena publicidad paga y cuándo",
+    "recomendacion": "orgánico primero o pago desde día 1 y por qué"
   },
-  "gtm90dias": "string - plan concreto de go-to-market para los primeros 90 días",
-  "riesgoLegal": "string - riesgos regulatorios o legales específicos a considerar",
-  "primeros30dias": "string - 3 acciones concretas para validar antes de construir",
-  "scores": {
-    "traccion": número 1-10,
-    "moat": número 1-10,
-    "monetizacion": número 1-10,
-    "velocidad": número 1-10,
-    "mercado": número 1-10
-  }
+  "gtm90dias": "plan concreto go-to-market primeros 90 días",
+  "riesgoLegal": "riesgos regulatorios o legales específicos",
+  "primeros30dias": "3 acciones concretas para validar antes de construir",
+  "scores": { "traccion": 7, "moat": 6, "monetizacion": 8, "velocidad": 7, "mercado": 8 }
 }`;
 
     try {
-      const res = await fetch("/api/shark", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
+      const res = await fetch("/api/shark", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
       const data = await res.json();
       const text = data.content?.[0]?.text || "";
-      const clean = text.replace(/```json|```/g, "").trim();
-      const parsed = JSON.parse(clean);
+
+      // Robust JSON extraction
+      let jsonText = text.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
+      const firstBrace = jsonText.indexOf("{");
+      const lastBrace = jsonText.lastIndexOf("}");
+      if (firstBrace !== -1 && lastBrace !== -1) jsonText = jsonText.slice(firstBrace, lastBrace + 1);
+
+      const parsed = JSON.parse(jsonText);
       const avgScore = Object.values(parsed.scores).reduce((a, b) => a + b, 0) / 5;
-      await updateIdea(sel.id, { analysis: { ...parsed, avgScore } });
-    } catch {
-      await updateIdea(sel.id, { analysis: { error: true } });
+
+      // Update only the specific idea by ID
+      setIdeas(p => p.map(i => i.id === ideaId ? { ...i, analysis: { ...parsed, avgScore } } : i));
+      await supabase.from("ideas").update({ analysis: { ...parsed, avgScore } }).eq("id", ideaId);
+
+    } catch (err) {
+      setIdeas(p => p.map(i => i.id === ideaId ? { ...i, analysis: { error: true, msg: err.message } } : i));
+      await supabase.from("ideas").update({ analysis: { error: true } }).eq("id", ideaId);
     }
+
+    analyzeRef.current = false;
     setAnalyzing(false);
   };
 
   const a = sel?.analysis;
   const selScore = a?.avgScore;
+  const isMobile = window.innerWidth < 768;
 
   const TABS = [
     { key: "analysis", label: "🦈 Análisis" },
     { key: "monetizacion", label: "💰 Monetización" },
-    { key: "gtm", label: "🚀 Go-to-Market" },
+    { key: "gtm", label: "🚀 GTM" },
     { key: "comments", label: `💬${sel?.comments?.length ? ` (${sel.comments.length})` : ""}` },
   ];
 
   if (loading) return (
     <div style={{ minHeight: "100vh", background: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>🦈</div>
-        <div style={{ color: "#6366f1", fontWeight: 700 }}>Cargando...</div>
+        <SharkLogo size={56} />
+        <div style={{ color: "#6366f1", fontWeight: 700, marginTop: 14 }}>Cargando...</div>
       </div>
     </div>
   );
@@ -389,13 +395,15 @@ JSON requerido (respetá exactamente los tipos):
     <div style={{ minHeight: "100vh", background: "#f3f4f6", fontFamily: "'Segoe UI', system-ui, sans-serif", color: "#111827" }}>
 
       {/* TOP BAR */}
-      <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50, boxShadow: "0 1px 3px #0000000a" }}>
+      <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50, boxShadow: "0 1px 3px #0000000a" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <button onClick={() => setSidebarOpen(o => !o)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, padding: "2px 6px", display: "block" }} className="mobile-menu">☰</button>
-          <div style={{ width: 34, height: 34, borderRadius: 9, background: "linear-gradient(135deg, #6366f1, #a855f7)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🦈</div>
+          {isMobile && (
+            <button onClick={() => setSidebarOpen(o => !o)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, padding: "2px 4px", color: "#374151" }}>☰</button>
+          )}
+          <SharkLogo size={36} />
           <div>
-            <div style={{ fontWeight: 800, fontSize: 15 }}>AI Shark Board</div>
-            <div style={{ color: "#6b7280", fontSize: 11 }}>{ideas.length} ideas</div>
+            <div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "-0.3px" }}>Shark Board</div>
+            <div style={{ color: "#6b7280", fontSize: 11 }}>{ideas.length} idea{ideas.length !== 1 ? "s" : ""}</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -408,33 +416,20 @@ JSON requerido (respetá exactamente los tipos):
         </div>
       </div>
 
-      {/* RANKING VIEW */}
-      {view === "ranking" && (
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
-          <Comparador ideas={ideas} />
-        </div>
-      )}
+      {/* RANKING */}
+      {view === "ranking" && <div style={{ maxWidth: 900, margin: "0 auto" }}><Comparador ideas={ideas} /></div>}
 
-      {/* BOARD VIEW */}
+      {/* BOARD */}
       {view === "board" && (
-        <div style={{ display: "flex", height: "calc(100vh - 58px)", position: "relative" }}>
+        <div style={{ display: "flex", height: "calc(100vh - 57px)", position: "relative" }}>
 
-          {/* Overlay mobile */}
-          {sidebarOpen && (
-            <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: "#00000044", zIndex: 40 }} />
-          )}
+          {isMobile && sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: "#00000044", zIndex: 40 }} />}
 
           {/* SIDEBAR */}
           <div style={{
-            width: 250, flexShrink: 0, background: "#fff",
-            borderRight: "1px solid #e5e7eb", overflowY: "auto", padding: 10,
-            display: "flex", flexDirection: "column", gap: 6,
-            position: window.innerWidth < 768 ? "fixed" : "relative",
-            left: window.innerWidth < 768 ? (sidebarOpen ? 0 : -260) : 0,
-            top: window.innerWidth < 768 ? 58 : 0,
-            height: window.innerWidth < 768 ? "calc(100vh - 58px)" : "auto",
-            zIndex: window.innerWidth < 768 ? 45 : 1,
-            transition: "left 0.25s ease",
+            width: 248, flexShrink: 0, background: "#fff", borderRight: "1px solid #e5e7eb",
+            overflowY: "auto", padding: 10, display: "flex", flexDirection: "column", gap: 6,
+            ...(isMobile ? { position: "fixed", left: sidebarOpen ? 0 : -260, top: 57, height: "calc(100vh - 57px)", zIndex: 45, transition: "left 0.25s ease" } : {}),
           }}>
             <div style={{ padding: "6px 8px 8px", color: "#9ca3af", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px" }}>Ideas del equipo</div>
             {ideas.length === 0 && (
@@ -466,7 +461,6 @@ JSON requerido (respetá exactamente los tipos):
           {/* MAIN */}
           {sel ? (
             <div style={{ flex: 1, overflowY: "auto", minWidth: 0 }}>
-              {/* Idea header */}
               <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "16px 20px 0" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -483,35 +477,31 @@ JSON requerido (respetá exactamente los tipos):
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6, marginLeft: 12, flexShrink: 0 }}>
                     {selScore && (
                       <div style={{ textAlign: "center", background: "#f9fafb", borderRadius: 10, border: "1px solid #e5e7eb", padding: "8px 14px" }}>
-                        <div style={{ fontSize: 10, color: "#6b7280", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.4px" }}>Score</div>
+                        <div style={{ fontSize: 10, color: "#6b7280", fontWeight: 700, textTransform: "uppercase" }}>Score</div>
                         <div style={{ fontSize: 28, fontWeight: 900, fontFamily: "monospace", color: scoreColor(selScore), lineHeight: 1.1 }}>{selScore.toFixed(1)}</div>
                       </div>
                     )}
                     <button onClick={() => deleteIdea(sel.id)} style={{ background: "#fff", border: "1px solid #fecaca", borderRadius: 7, padding: "5px 12px", color: "#dc2626", fontWeight: 600, fontSize: 12, cursor: "pointer" }}>🗑</button>
                   </div>
                 </div>
-                <div style={{ display: "flex", gap: 0, overflowX: "auto" }}>
+                <div style={{ display: "flex", overflowX: "auto" }}>
                   {TABS.map(t => (
-                    <button key={t.key} onClick={() => setTab(t.key)} style={{
-                      border: "none", background: "none", borderBottom: `2.5px solid ${tab === t.key ? "#6366f1" : "transparent"}`,
-                      color: tab === t.key ? "#6366f1" : "#6b7280", padding: "9px 14px", cursor: "pointer",
-                      fontSize: 13, fontWeight: tab === t.key ? 700 : 500, marginBottom: -1, whiteSpace: "nowrap",
-                    }}>{t.label}</button>
+                    <button key={t.key} onClick={() => setTab(t.key)} style={{ border: "none", background: "none", borderBottom: `2.5px solid ${tab === t.key ? "#6366f1" : "transparent"}`, color: tab === t.key ? "#6366f1" : "#6b7280", padding: "9px 14px", cursor: "pointer", fontSize: 13, fontWeight: tab === t.key ? 700 : 500, marginBottom: -1, whiteSpace: "nowrap" }}>{t.label}</button>
                   ))}
                 </div>
               </div>
 
               <div style={{ padding: "20px 16px" }}>
 
-                {/* ── TAB: ANÁLISIS ── */}
+                {/* ANÁLISIS */}
                 {tab === "analysis" && (
                   <div>
                     {!a && !analyzing && (
                       <div style={{ textAlign: "center", padding: "50px 20px", background: "#fff", border: "1px solid #e5e7eb", borderRadius: 16 }}>
-                        <div style={{ fontSize: 52, marginBottom: 12 }}>🦈</div>
-                        <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 6 }}>Análisis del Shark</div>
-                        <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 24, maxWidth: 380, margin: "0 auto 24px" }}>
-                          Genera: público objetivo, diferencial, benchmark, stack, pros/cons, scoring, monetización, go-to-market y riesgo legal.
+                        <SharkLogo size={56} />
+                        <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 6, marginTop: 14 }}>Análisis del Shark</div>
+                        <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 24, maxWidth: 380, margin: "8px auto 24px" }}>
+                          Genera: público, diferencial, benchmark, stack, pros/cons, scoring, 3 modelos de monetización, go-to-market y riesgo legal.
                         </div>
                         <button onClick={analyze} style={{ background: "linear-gradient(135deg, #6366f1, #a855f7)", border: "none", borderRadius: 10, padding: "13px 28px", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
                           🦈 Analizar esta idea
@@ -520,8 +510,8 @@ JSON requerido (respetá exactamente los tipos):
                     )}
                     {analyzing && (
                       <div style={{ textAlign: "center", padding: "50px 20px", background: "#fff", border: "1px solid #e5e7eb", borderRadius: 16 }}>
-                        <div style={{ fontSize: 44, marginBottom: 12 }}>🦈</div>
-                        <div style={{ color: "#6366f1", fontWeight: 700, fontSize: 16 }}>Analizando sin piedad...</div>
+                        <SharkLogo size={52} />
+                        <div style={{ color: "#6366f1", fontWeight: 700, fontSize: 16, marginTop: 14 }}>Analizando sin piedad...</div>
                         <div style={{ color: "#9ca3af", fontSize: 13, marginTop: 6 }}>Esto tarda unos segundos</div>
                       </div>
                     )}
@@ -529,17 +519,16 @@ JSON requerido (respetá exactamente los tipos):
                       a.error ? (
                         <div style={{ textAlign: "center", padding: "40px", background: "#fff", border: "1px solid #fecaca", borderRadius: 16 }}>
                           <div style={{ fontSize: 32, marginBottom: 8 }}>⚠️</div>
-                          <div style={{ color: "#dc2626", fontWeight: 700, marginBottom: 12 }}>Error al analizar</div>
-                          <button onClick={() => { updateIdea(selectedId, { analysis: null }); setTimeout(analyze, 100); }} style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", borderRadius: 8, padding: "9px 18px", color: "#374151", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
+                          <div style={{ color: "#dc2626", fontWeight: 700, marginBottom: 4 }}>Error al analizar</div>
+                          <div style={{ color: "#9ca3af", fontSize: 12, marginBottom: 14 }}>{a.msg || "Intentá de nuevo"}</div>
+                          <button onClick={() => { updateIdea(selectedId, { analysis: null }); setTimeout(analyze, 200); }} style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", borderRadius: 8, padding: "9px 18px", color: "#374151", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
                             🔄 Reintentar
                           </button>
                         </div>
                       ) : (
                         <div style={{ display: "grid", gap: 14 }}>
                           <Verdict score={a.avgScore} />
-                          <Card title="🎯 Scoring">
-                            {SCORE_CRITERIA.map(c => <ScoreBar key={c.key} icon={c.icon} label={c.label} value={a.scores?.[c.key]} />)}
-                          </Card>
+                          <Card title="🎯 Scoring">{SCORE_CRITERIA.map(c => <ScoreBar key={c.key} icon={c.icon} label={c.label} value={a.scores?.[c.key]} />)}</Card>
                           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                             <Card title="👥 Público objetivo"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.publicObj}</p></Card>
                             <Card title="🔍 Benchmark"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.benchmark}</p></Card>
@@ -547,22 +536,16 @@ JSON requerido (respetá exactamente los tipos):
                           <Card title="✨ Diferencial"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.7 }}>{a.diferencial}</p></Card>
                           <Card title="⚙️ Stack técnico"><p style={{ margin: 0, color: "#374151", fontSize: 13, fontFamily: "monospace", background: "#f3f4f6", borderRadius: 6, padding: "10px 12px", lineHeight: 1.6 }}>{a.stack}</p></Card>
                           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                            <Card title="✅ Pros" accent="#059669">
-                              <ul style={{ margin: 0, paddingLeft: 18 }}>{a.pros?.map((p, i) => <li key={i} style={{ color: "#059669", fontSize: 14, marginBottom: 6, lineHeight: 1.5 }}>{p}</li>)}</ul>
-                            </Card>
-                            <Card title="⚠️ Cons" accent="#dc2626">
-                              <ul style={{ margin: 0, paddingLeft: 18 }}>{a.cons?.map((c, i) => <li key={i} style={{ color: "#dc2626", fontSize: 14, marginBottom: 6, lineHeight: 1.5 }}>{c}</li>)}</ul>
-                            </Card>
+                            <Card title="✅ Pros" accent="#059669"><ul style={{ margin: 0, paddingLeft: 18 }}>{a.pros?.map((p, i) => <li key={i} style={{ color: "#059669", fontSize: 14, marginBottom: 6, lineHeight: 1.5 }}>{p}</li>)}</ul></Card>
+                            <Card title="⚠️ Cons" accent="#dc2626"><ul style={{ margin: 0, paddingLeft: 18 }}>{a.cons?.map((c, i) => <li key={i} style={{ color: "#dc2626", fontSize: 14, marginBottom: 6, lineHeight: 1.5 }}>{c}</li>)}</ul></Card>
                           </div>
                           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                             <Card title="☠️ Mayor riesgo" accent="#f59e0b"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.mayorRiesgo}</p></Card>
-                            <Card title="⚖️ Riesgo legal / regulatorio" accent="#6366f1"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.riesgoLegal}</p></Card>
+                            <Card title="⚖️ Riesgo legal" accent="#6366f1"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.riesgoLegal}</p></Card>
                           </div>
                           <Card title="📅 Primeros 30 días"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.7 }}>{a.primeros30dias}</p></Card>
                           <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <button onClick={() => { updateIdea(selectedId, { analysis: null }); setTimeout(analyze, 100); }} style={{ background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "8px 16px", color: "#374151", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
-                              🔄 Re-analizar
-                            </button>
+                            <button onClick={() => { updateIdea(selectedId, { analysis: null }); setTimeout(analyze, 200); }} style={{ background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "8px 16px", color: "#374151", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>🔄 Re-analizar</button>
                           </div>
                         </div>
                       )
@@ -570,17 +553,17 @@ JSON requerido (respetá exactamente los tipos):
                   </div>
                 )}
 
-                {/* ── TAB: MONETIZACIÓN ── */}
+                {/* MONETIZACIÓN */}
                 {tab === "monetizacion" && (
                   <div>
-                    {!a && <div style={{ textAlign: "center", padding: "40px", color: "#9ca3af" }}>Primero generá el análisis en la tab 🦈</div>}
+                    {!a && <div style={{ textAlign: "center", padding: "40px", color: "#9ca3af", background: "#fff", borderRadius: 12, border: "1px solid #e5e7eb" }}>Primero generá el análisis en la tab 🦈</div>}
                     {a && !a.error && (
                       <div style={{ display: "grid", gap: 14 }}>
                         {a.monetizacion?.map((m, i) => (
                           <div key={i} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
-                            <div style={{ background: i === 0 ? "linear-gradient(135deg, #6366f1, #a855f7)" : i === 1 ? "#f8fafc" : "#f8fafc", padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <div style={{ background: i === 0 ? "linear-gradient(135deg, #6366f1, #a855f7)" : "#f8fafc", padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                               <div>
-                                <span style={{ fontSize: 11, fontWeight: 700, color: i === 0 ? "#ffffffaa" : "#9ca3af", textTransform: "uppercase", letterSpacing: "0.5px" }}>Opción {i + 1}</span>
+                                <span style={{ fontSize: 11, fontWeight: 700, color: i === 0 ? "#ffffffaa" : "#9ca3af", textTransform: "uppercase" }}>Opción {i + 1}</span>
                                 <div style={{ fontWeight: 800, fontSize: 16, color: i === 0 ? "#fff" : "#111827", marginTop: 2 }}>{m.modelo}</div>
                               </div>
                               <div style={{ textAlign: "right" }}>
@@ -588,7 +571,7 @@ JSON requerido (respetá exactamente los tipos):
                                 <div style={{ fontWeight: 800, fontSize: 14, color: i === 0 ? "#fff" : "#059669", fontFamily: "monospace" }}>{m.mrrEstimado}</div>
                               </div>
                             </div>
-                            <div style={{ padding: "16px 20px", display: "grid", gap: 12 }}>
+                            <div style={{ padding: "16px 20px", display: "grid", gap: 10 }}>
                               <p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{m.descripcion}</p>
                               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                                 <div style={{ background: "#f0fdf4", borderRadius: 8, padding: "10px 12px" }}>
@@ -603,10 +586,9 @@ JSON requerido (respetá exactamente los tipos):
                             </div>
                           </div>
                         ))}
-                        {/* Publicidad */}
                         {a.publicidad && (
                           <Card title="📣 Estrategia de adquisición">
-                            <div style={{ display: "grid", gap: 12 }}>
+                            <div style={{ display: "grid", gap: 10 }}>
                               <div style={{ background: "#f0fdf4", borderRadius: 8, padding: "12px 14px" }}>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: "#059669", marginBottom: 6 }}>🌱 ORGÁNICO</div>
                                 <p style={{ margin: 0, fontSize: 14, color: "#374151", lineHeight: 1.6 }}>{a.publicidad.organico}</p>
@@ -627,10 +609,10 @@ JSON requerido (respetá exactamente los tipos):
                   </div>
                 )}
 
-                {/* ── TAB: GO-TO-MARKET ── */}
+                {/* GTM */}
                 {tab === "gtm" && (
                   <div>
-                    {!a && <div style={{ textAlign: "center", padding: "40px", color: "#9ca3af" }}>Primero generá el análisis en la tab 🦈</div>}
+                    {!a && <div style={{ textAlign: "center", padding: "40px", color: "#9ca3af", background: "#fff", borderRadius: 12, border: "1px solid #e5e7eb" }}>Primero generá el análisis en la tab 🦈</div>}
                     {a && !a.error && (
                       <div style={{ display: "grid", gap: 14 }}>
                         <Card title="🚀 Go-to-Market · Primeros 90 días" accent="#6366f1">
@@ -644,7 +626,7 @@ JSON requerido (respetá exactamente los tipos):
                   </div>
                 )}
 
-                {/* ── TAB: COMENTARIOS ── */}
+                {/* COMENTARIOS */}
                 {tab === "comments" && (
                   <div>
                     <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "14px 16px", marginBottom: 16 }}>
@@ -684,8 +666,8 @@ JSON requerido (respetá exactamente los tipos):
           ) : (
             <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <div style={{ textAlign: "center", color: "#9ca3af" }}>
-                <div style={{ fontSize: 44, marginBottom: 10 }}>💡</div>
-                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>No hay ideas aún</div>
+                <SharkLogo size={52} />
+                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, marginTop: 14 }}>No hay ideas aún</div>
                 <div style={{ fontSize: 13 }}>Tocá + Idea para empezar</div>
               </div>
             </div>
@@ -695,12 +677,7 @@ JSON requerido (respetá exactamente los tipos):
 
       {wizard && <Wizard onSave={saveIdea} onClose={() => setWizard(false)} />}
 
-      <style>{`
-        * { box-sizing: border-box; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
-        input::placeholder, textarea::placeholder { color: #9ca3af; }
-      `}</style>
+      <style>{`* { box-sizing: border-box; } ::-webkit-scrollbar { width: 4px; height: 4px; } ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; } input::placeholder, textarea::placeholder { color: #9ca3af; }`}</style>
     </div>
   );
 }
