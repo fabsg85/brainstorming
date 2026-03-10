@@ -299,6 +299,115 @@ export default function App() {
     setComment("");
   };
 
+  const exportPrompt = (idea, a) => {
+    const score = a.avgScore?.toFixed(1) || "N/A";
+    const verdict = score >= 7.5 ? "INVERTIRÍA" : score >= 5.5 ? "NECESITA PIVOTE" : "PASS";
+    const mono = a.monetizacion?.[0];
+
+    const md = `# 🦈 Prompt de Construcción — ${idea.title}
+
+> Generado por Shark Board · Score: ${score}/10 · Veredicto: ${verdict}
+
+---
+
+## CONTEXTO DEL PROYECTO
+
+Sos un experto en producto digital y desarrollo con AI. Vas a ayudarme a construir el siguiente producto paso a paso.
+
+**Idea:** ${idea.title}
+**Descripción:** ${idea.description || "Sin descripción"}
+**Stage actual:** ${idea.stage}
+
+---
+
+## ANÁLISIS DEL SHARK (contexto para decisiones)
+
+**Público objetivo:** ${a.publicObj || "N/A"}
+**Diferencial clave:** ${a.diferencial || "N/A"}
+**Benchmark:** ${a.benchmark || "N/A"}
+**Stack recomendado:** ${a.stack || "N/A"}
+**Mayor riesgo:** ${a.mayorRiesgo || "N/A"}
+**Riesgo legal:** ${a.riesgoLegal || "N/A"}
+
+**Pros:**
+${a.pros?.map(p => `- ${p}`).join("
+") || "N/A"}
+
+**Cons:**
+${a.cons?.map(c => `- ${c}`).join("
+") || "N/A"}
+
+---
+
+## MODELO DE MONETIZACIÓN PRIMARIO
+
+**Modelo:** ${mono?.modelo || "N/A"}
+**Descripción:** ${mono?.descripcion || "N/A"}
+**MRR Estimado:** ${mono?.mrrEstimado || "N/A"}
+
+---
+
+## PRIMEROS 30 DÍAS DE VALIDACIÓN
+
+${a.primeros30dias || "N/A"}
+
+---
+
+## GO-TO-MARKET 90 DÍAS
+
+${a.gtm90dias || "N/A"}
+
+---
+
+## TU MISIÓN
+
+Usando todo el contexto anterior, ayudame a construir este producto siguiendo este orden:
+
+### PASO 1 — Validación (Semana 1-2)
+- Definí las 3 preguntas de validación más críticas antes de escribir una línea de código
+- Diseñá el experimento más simple para testear la hipótesis principal
+- ¿Cómo pre-vendo esto antes de construirlo?
+
+### PASO 2 — MVP Mínimo (Semana 3-6)
+- ¿Cuál es la feature mínima que genera valor real al usuario?
+- Definí el stack exacto con versiones y justificación
+- Dame la estructura de carpetas y archivos del proyecto
+- Empezá a generar el código del MVP comenzando por el core de valor
+
+### PASO 3 — Primeros Clientes (Mes 2-3)
+- ¿Cómo consigo los primeros 10 clientes pagos?
+- ¿Qué métricas trackeo desde el día 1?
+- ¿Qué feedback loop implemento?
+
+### PASO 4 — Iteración y Escala (Mes 4+)
+- ¿Cuándo sé que encontré product-market fit?
+- ¿Qué feature agrego primero según feedback?
+- ¿Cómo escalo sin romper lo que funciona?
+
+---
+
+## RESTRICCIONES
+
+- Stack: ${a.stack || "Next.js, Supabase, Vercel, Claude API"}
+- Sin código propio — todo generado con AI, revisado por freelancer
+- Parte-time, presupuesto limitado
+- Mercado objetivo: Uruguay / LATAM hispanohablante
+- Monetización desde el día 1, sin "crecer y luego ver cómo cobrar"
+
+---
+
+Empezá por el **PASO 1** y esperá mi confirmación antes de avanzar al siguiente.
+`;
+
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a2 = document.createElement("a");
+    a2.href = url;
+    a2.download = `shark-prompt-${idea.title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")}.md`;
+    a2.click();
+    URL.revokeObjectURL(url);
+  };
+
   const analyze = async () => {
     // Guard: prevent multiple simultaneous calls
     if (analyzeRef.current || analyzing || !sel) return;
@@ -569,7 +678,8 @@ Estructura requerida:
                             <Card title="⚖️ Riesgo legal" accent="#6366f1"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.riesgoLegal}</p></Card>
                           </div>
                           <Card title="📅 Primeros 30 días"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.7 }}>{a.primeros30dias}</p></Card>
-                          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
+                            <button onClick={() => exportPrompt(sel, a)} style={{ background: "linear-gradient(135deg, #6366f1, #a855f7)", border: "none", borderRadius: 8, padding: "8px 18px", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>⬇️ Exportar Prompt</button>
                             <button onClick={() => { updateIdea(selectedId, { analysis: null }); setTimeout(analyze, 200); }} style={{ background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "8px 16px", color: "#374151", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>🔄 Re-analizar</button>
                           </div>
                         </div>
