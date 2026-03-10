@@ -337,7 +337,15 @@ Estructura requerida:
   "gtm90dias": "plan concreto go-to-market primeros 90 días",
   "riesgoLegal": "riesgos regulatorios o legales específicos",
   "primeros30dias": "3 acciones concretas para validar antes de construir",
-  "scores": { "traccion": 7, "moat": 6, "monetizacion": 8, "velocidad": 7, "mercado": 8 }
+  "pagaHoy": "sí o no y quién paga qué monto aproximado por resolver este problema hoy",
+  "scoreRationale": {
+    "traccion": "justificación en 1 línea",
+    "moat": "justificación en 1 línea",
+    "monetizacion": "justificación en 1 línea",
+    "velocidad": "justificación en 1 línea",
+    "mercado": "justificación en 1 línea"
+  },
+  "scores": { "traccion": 0, "moat": 0, "monetizacion": 0, "velocidad": 0, "mercado": 0 }
 }`;
 
     try {
@@ -528,7 +536,24 @@ Estructura requerida:
                       ) : (
                         <div style={{ display: "grid", gap: 14 }}>
                           <Verdict score={a.avgScore} />
-                          <Card title="🎯 Scoring">{SCORE_CRITERIA.map(c => <ScoreBar key={c.key} icon={c.icon} label={c.label} value={a.scores?.[c.key]} />)}</Card>
+                          <Card title="🎯 Scoring">
+                            {a.pagaHoy && (
+                              <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 8, padding: "10px 12px", marginBottom: 14 }}>
+                                <div style={{ fontSize: 11, fontWeight: 700, color: "#059669", marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.5px" }}>💸 ¿Pagan por esto hoy?</div>
+                                <p style={{ margin: 0, fontSize: 13, color: "#374151", lineHeight: 1.5 }}>{a.pagaHoy}</p>
+                              </div>
+                            )}
+                            {SCORE_CRITERIA.map(c => (
+                              <div key={c.key}>
+                                <ScoreBar icon={c.icon} label={c.label} value={a.scores?.[c.key]} />
+                                {a.scoreRationale?.[c.key] && (
+                                  <div style={{ fontSize: 12, color: "#6b7280", marginTop: -6, marginBottom: 12, paddingLeft: 2, fontStyle: "italic" }}>
+                                    {a.scoreRationale[c.key]}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </Card>
                           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                             <Card title="👥 Público objetivo"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.publicObj}</p></Card>
                             <Card title="🔍 Benchmark"><p style={{ margin: 0, color: "#374151", fontSize: 14, lineHeight: 1.65 }}>{a.benchmark}</p></Card>
