@@ -330,12 +330,10 @@ Sos un experto en producto digital y desarrollo con AI. Vas a ayudarme a constru
 **Riesgo legal:** ${a.riesgoLegal || "N/A"}
 
 **Pros:**
-${a.pros?.map(p => `- ${p}`).join("
-") || "N/A"}
+${(a.pros || []).map(p => "- " + p).join("\n") || "N/A"}
 
 **Cons:**
-${a.cons?.map(c => `- ${c}`).join("
-") || "N/A"}
+${(a.cons || []).map(c => "- " + c).join("\n") || "N/A"}
 
 ---
 
