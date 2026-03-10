@@ -73,8 +73,8 @@ IMPORTANTE: Sé brutal. La mayoría de las ideas merecen entre 4 y 7. Un 8+ requ
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2500,
-        system: 'Sos un analista de negocios brutalmente honesto. Respondés ÚNICAMENTE con JSON válido y nada más. Sin markdown, sin texto antes o después, sin backticks. Solo el objeto JSON puro.',
+        max_tokens: 4000,
+        system: 'Sos un analista de negocios brutalmente honesto. Respondés ÚNICAMENTE con JSON válido y nada más. Sin markdown, sin texto antes o después, sin backticks. Solo el objeto JSON puro. Cada campo de texto máximo 2 oraciones. Sé conciso.',
         messages: [{ role: 'user', content: fullPrompt }],
       }),
     });
