@@ -62,7 +62,7 @@ export default function BudgetTab({ ideaId, budget, onSave }) {
     border: `1px solid var(--surface2)`,
     borderRadius: 8, padding: "9px 12px",
     fontSize: 13, outline: "none",
-    color: var(--text), background: "var(--surface)",
+    color: "var(--text)", background: "var(--surface)",
     fontFamily: "'DM Sans', sans-serif", width: "100%", boxSizing: "border-box",
     transition: "border-color 0.15s",
   };

@@ -25,7 +25,7 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
     conversion: presell.length > 0 ? Math.round((presell.filter(p => p.status === "pagado").length / presell.length) * 100) : 0,
   };
 
-  const inputStyle = { border:"1px solid var(--surface2)", borderRadius:9, padding:"10px 12px", fontSize:13, outline:"none", color:var(--text), background:"var(--surface)", fontFamily:"'DM Sans', sans-serif", width:"100%", boxSizing:"border-box", transition:"border-color 0.15s" };
+  const inputStyle = { border:"1px solid var(--surface2)", borderRadius:9, padding:"10px 12px", fontSize:13, outline:"none", color:"var(--text)", background:"var(--surface)", fontFamily:"'DM Sans', sans-serif", width:"100%", boxSizing:"border-box", transition:"border-color 0.15s" };
   const focus = e => (e.target.style.borderColor = "rgba(108,92,231,0.5)");
   const blur  = e => (e.target.style.borderColor = "var(--surface2)");
 
@@ -53,12 +53,12 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
       {/* Metrics */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
         {[
-          { label:"Total contactos", value:metrics.total,       color:var(--text),    icon:"👥" },
+          { label:"Total contactos", value:metrics.total,       color:"var(--text)",    icon:"👥" },
           { label:"Pagaron / Pre-vendieron", value:metrics.pagados,  color:"#00F5D4", icon:"💳" },
           { label:"% Conversión", value:`${metrics.conversion}%`, color: metrics.conversion >= 20 ? "#00F5D4" : metrics.conversion >= 10 ? "#FFB547" : "#FF5F7A", icon:"📈" },
         ].map(m => (
-          <div key={m.label} style={{ background:var(--surface), border:`1px solid ${var(--border)}`, borderRadius:14, padding:"16px 18px", backdropFilter:"blur(8px)" }}>
-            <div style={{ fontSize:10, fontWeight:700, color:var(--text)Mute, textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:7, fontFamily:"'Sora', sans-serif" }}>{m.icon} {m.label}</div>
+          <div key={m.label} style={{ background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:14, padding:"16px 18px", backdropFilter:"blur(8px)" }}>
+            <div style={{ fontSize:10, fontWeight:700, color:"var(--text)"Mute, textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:7, fontFamily:"'Sora', sans-serif" }}>{m.icon} {m.label}</div>
             <div style={{ fontSize:28, fontWeight:900, fontFamily:"monospace", color:m.color, lineHeight:1 }}>{m.value}</div>
           </div>
         ))}
@@ -69,7 +69,7 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
         <div style={{ background:"linear-gradient(135deg,rgba(0,245,212,0.15),rgba(108,92,231,0.06))", border:"1px solid rgba(0,245,212,0.25)", borderRadius:14, padding:"16px 22px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
           <div>
             <div style={{ fontSize:10, fontWeight:700, color:"#00F5D4", textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora', sans-serif" }}>💰 Revenue pre-vendido</div>
-            <div style={{ fontSize:11, color:var(--text)Mute, marginTop:3 }}>Plata real sobre la mesa antes del MVP</div>
+            <div style={{ fontSize:11, color:"var(--text)"Mute, marginTop:3 }}>Plata real sobre la mesa antes del MVP</div>
           </div>
           <div style={{ fontSize:36, fontWeight:900, fontFamily:"monospace", color:"#00F5D4", textShadow:"0 0 20px rgba(0,245,212,0.4)" }}>{fmt(metrics.mrr)}</div>
         </div>
@@ -77,8 +77,8 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
 
       {/* Funnel visual */}
       {presell.length > 0 && (
-        <div style={{ background:var(--surface), border:`1px solid ${var(--border)}`, borderRadius:14, padding:"16px 20px", backdropFilter:"blur(8px)" }}>
-          <div style={{ fontSize:10, fontWeight:700, color:var(--text)Mute, textTransform:"uppercase", letterSpacing:"1px", marginBottom:14, fontFamily:"'Sora', sans-serif" }}>Funnel de validación</div>
+        <div style={{ background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:14, padding:"16px 20px", backdropFilter:"blur(8px)" }}>
+          <div style={{ fontSize:10, fontWeight:700, color:"var(--text)"Mute, textTransform:"uppercase", letterSpacing:"1px", marginBottom:14, fontFamily:"'Sora', sans-serif" }}>Funnel de validación</div>
           {STATUS_OPTIONS.map(s => {
             const count = presell.filter(p => p.status === s.key).length;
             const pct   = presell.length > 0 ? (count / presell.length) * 100 : 0;
@@ -99,9 +99,9 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
       )}
 
       {/* Contact list */}
-      <div style={{ background:var(--surface), border:`1px solid ${var(--border)}`, borderRadius:14, overflow:"hidden", backdropFilter:"blur(8px)" }}>
+      <div style={{ background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:14, overflow:"hidden", backdropFilter:"blur(8px)" }}>
         <div style={{ padding:"14px 18px", borderBottom:`1px solid ${var(--border)}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-          <div style={{ fontSize:10, fontWeight:700, color:var(--text)Mute, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora', sans-serif" }}>Contactos · {presell.length}</div>
+          <div style={{ fontSize:10, fontWeight:700, color:"var(--text)"Mute, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora', sans-serif" }}>Contactos · {presell.length}</div>
           <button onClick={openAdd} style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:8, padding:"7px 14px", color:"#fff", fontWeight:700, fontSize:12, cursor:"pointer", fontFamily:"'Sora', sans-serif", boxShadow:"0 0 12px rgba(108,92,231,0.4)" }}>
             + Agregar
           </button>
@@ -110,8 +110,8 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
         {presell.length === 0 ? (
           <div style={{ textAlign:"center", padding:"40px 20px" }}>
             <div style={{ fontSize:32, marginBottom:10 }}>🤝</div>
-            <div style={{ color:var(--text)Mid, fontFamily:"'Sora', sans-serif", fontWeight:600, marginBottom:4 }}>Sin contactos todavía</div>
-            <div style={{ color:var(--text)Mute, fontSize:12 }}>Cargá los prospects que ya hablaste para trackear tu pre-venta</div>
+            <div style={{ color:"var(--text)"Mid, fontFamily:"'Sora', sans-serif", fontWeight:600, marginBottom:4 }}>Sin contactos todavía</div>
+            <div style={{ color:"var(--text)"Mute, fontSize:12 }}>Cargá los prospects que ya hablaste para trackear tu pre-venta</div>
           </div>
         ) : (
           presell.map((contact, i) => {
@@ -125,11 +125,11 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
                 {/* Info */}
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
-                    <span style={{ fontWeight:700, fontSize:13, color:var(--text), fontFamily:"'Sora', sans-serif" }}>{contact.nombre}</span>
-                    {contact.empresa && <span style={{ fontSize:11, color:var(--text)Mute }}>· {contact.empresa}</span>}
-                    {contact.rol && <span style={{ fontSize:11, color:var(--text)Mute }}>· {contact.rol}</span>}
+                    <span style={{ fontWeight:700, fontSize:13, color:"var(--text)", fontFamily:"'Sora', sans-serif" }}>{contact.nombre}</span>
+                    {contact.empresa && <span style={{ fontSize:11, color:"var(--text)"Mute }}>· {contact.empresa}</span>}
+                    {contact.rol && <span style={{ fontSize:11, color:"var(--text)"Mute }}>· {contact.rol}</span>}
                   </div>
-                  {contact.nota && <div style={{ fontSize:12, color:var(--text)Mute, lineHeight:1.4 }}>{contact.nota}</div>}
+                  {contact.nota && <div style={{ fontSize:12, color:"var(--text)"Mute, lineHeight:1.4 }}>{contact.nota}</div>}
                 </div>
                 {/* Status badge */}
                 <span style={{ background:s.bg, color:s.color, border:`1px solid ${s.border}`, borderRadius:99, padding:"3px 10px", fontSize:11, fontWeight:700, fontFamily:"'Sora', sans-serif", flexShrink:0 }}>
@@ -140,7 +140,7 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
                   <span style={{ fontWeight:800, fontSize:13, fontFamily:"monospace", color:"#00F5D4", flexShrink:0 }}>{fmt(contact.monto)}</span>
                 )}
                 {/* Fecha */}
-                <span style={{ fontSize:11, color:var(--text)Mute, fontFamily:"monospace", flexShrink:0 }}>{contact.fecha}</span>
+                <span style={{ fontSize:11, color:"var(--text)"Mute, fontFamily:"monospace", flexShrink:0 }}>{contact.fecha}</span>
                 {/* Actions */}
                 <div style={{ display:"flex", gap:4, flexShrink:0 }}>
                   <button onClick={() => openEdit(i)} style={{ background:"rgba(108,92,231,0.1)", border:"1px solid rgba(108,92,231,0.2)", borderRadius:6, color:"#6C5CE7", width:26, height:26, cursor:"pointer", fontSize:11, display:"flex", alignItems:"center", justifyContent:"center" }}>✏️</button>
@@ -158,7 +158,7 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
           <div style={{ fontSize:10, fontWeight:700, color: metrics.conversion >= 20 ? "#00F5D4" : metrics.conversion >= 10 ? "#FFB547" : "#FF5F7A", textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:6, fontFamily:"'Sora', sans-serif" }}>
             🦈 Lectura del Shark
           </div>
-          <p style={{ margin:0, fontSize:14, color:var(--text)Mid, lineHeight:1.65 }}>
+          <p style={{ margin:0, fontSize:14, color:"var(--text)"Mid, lineHeight:1.65 }}>
             {metrics.conversion >= 20
               ? `${metrics.conversion}% de conversión es señal fuerte. Tenés ${metrics.pagados} personas que pusieron plata antes del MVP — eso es PMF embrionario. Escalá el outreach ahora.`
               : metrics.conversion >= 10
@@ -189,7 +189,7 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
                   { key:"rol",     ph:"Rol / cargo", label:"Rol" },
                 ].map(f => (
                   <div key={f.key} style={{ gridColumn: f.key === "nombre" ? "1/-1" : "auto" }}>
-                    <div style={{ fontSize:11, fontWeight:700, color:var(--text)Mute, marginBottom:5, fontFamily:"'Sora', sans-serif", textTransform:"uppercase", letterSpacing:"0.5px" }}>{f.label}</div>
+                    <div style={{ fontSize:11, fontWeight:700, color:"var(--text)"Mute, marginBottom:5, fontFamily:"'Sora', sans-serif", textTransform:"uppercase", letterSpacing:"0.5px" }}>{f.label}</div>
                     <input value={form[f.key]} onChange={e => setForm(p => ({...p, [f.key]:e.target.value}))}
                       placeholder={f.ph} style={inputStyle} onFocus={focus} onBlur={blur}/>
                   </div>
@@ -198,11 +198,11 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
 
               {/* Status */}
               <div>
-                <div style={{ fontSize:11, fontWeight:700, color:var(--text)Mute, marginBottom:8, fontFamily:"'Sora', sans-serif", textTransform:"uppercase", letterSpacing:"0.5px" }}>Estado</div>
+                <div style={{ fontSize:11, fontWeight:700, color:"var(--text)"Mute, marginBottom:8, fontFamily:"'Sora', sans-serif", textTransform:"uppercase", letterSpacing:"0.5px" }}>Estado</div>
                 <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
                   {STATUS_OPTIONS.map(s => (
                     <button key={s.key} onClick={() => setForm(p => ({...p, status:s.key}))}
-                      style={{ background: form.status === s.key ? s.bg : "var(--surface)", color: form.status === s.key ? s.color : var(--text)Mute, border:`1px solid ${form.status === s.key ? s.border : "var(--surface2)"}`, borderRadius:99, padding:"5px 12px", fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"'Sora', sans-serif", transition:"all 0.12s" }}>
+                      style={{ background: form.status === s.key ? s.bg : "var(--surface)", color: form.status === s.key ? s.color : "var(--text)"Mute, border:`1px solid ${form.status === s.key ? s.border : "var(--surface2)"}`, borderRadius:99, padding:"5px 12px", fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"'Sora', sans-serif", transition:"all 0.12s" }}>
                       {s.emoji} {s.label}
                     </button>
                   ))}
@@ -216,7 +216,7 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
                   { key:"fecha", ph:"Fecha", label:"Fecha", type:"date" },
                 ].map(f => (
                   <div key={f.key}>
-                    <div style={{ fontSize:11, fontWeight:700, color:var(--text)Mute, marginBottom:5, fontFamily:"'Sora', sans-serif", textTransform:"uppercase", letterSpacing:"0.5px" }}>{f.label}</div>
+                    <div style={{ fontSize:11, fontWeight:700, color:"var(--text)"Mute, marginBottom:5, fontFamily:"'Sora', sans-serif", textTransform:"uppercase", letterSpacing:"0.5px" }}>{f.label}</div>
                     <input type={f.type||"text"} value={form[f.key]} onChange={e => setForm(p => ({...p, [f.key]:e.target.value}))}
                       placeholder={f.ph} style={{ ...inputStyle, fontFamily: f.type === "number" ? "monospace" : "'DM Sans', sans-serif" }} onFocus={focus} onBlur={blur}/>
                   </div>
@@ -225,15 +225,15 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
 
               {/* Nota */}
               <div>
-                <div style={{ fontSize:11, fontWeight:700, color:var(--text)Mute, marginBottom:5, fontFamily:"'Sora', sans-serif", textTransform:"uppercase", letterSpacing:"0.5px" }}>Nota</div>
+                <div style={{ fontSize:11, fontWeight:700, color:"var(--text)"Mute, marginBottom:5, fontFamily:"'Sora', sans-serif", textTransform:"uppercase", letterSpacing:"0.5px" }}>Nota</div>
                 <textarea value={form.nota} onChange={e => setForm(p => ({...p, nota:e.target.value}))}
                   placeholder="Qué dijo, objeciones, próximos pasos..." rows={2}
                   style={{ ...inputStyle, resize:"vertical", lineHeight:1.6 }} onFocus={focus} onBlur={blur}/>
               </div>
 
               <div style={{ display:"flex", gap:8 }}>
-                <button onClick={() => setShowForm(false)} style={{ flex:1, background:"var(--surface)", border:"1px solid var(--border)", borderRadius:10, padding:"11px", color:var(--text)Mid, fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"'Sora', sans-serif" }}>Cancelar</button>
-                <button onClick={submitForm} disabled={!form.nombre.trim()} style={{ flex:2, background: form.nombre.trim() ? "linear-gradient(135deg,#6C5CE7,#00F5D4)" : "var(--surface)", border:"none", borderRadius:10, padding:"11px", color: form.nombre.trim() ? "#fff" : var(--text)Mute, fontWeight:700, fontSize:13, cursor: form.nombre.trim() ? "pointer" : "not-allowed", fontFamily:"'Sora', sans-serif", boxShadow: form.nombre.trim() ? "0 0 16px rgba(108,92,231,0.4)" : "none" }}>
+                <button onClick={() => setShowForm(false)} style={{ flex:1, background:"var(--surface)", border:"1px solid var(--border)", borderRadius:10, padding:"11px", color:"var(--text)"Mid, fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"'Sora', sans-serif" }}>Cancelar</button>
+                <button onClick={submitForm} disabled={!form.nombre.trim()} style={{ flex:2, background: form.nombre.trim() ? "linear-gradient(135deg,#6C5CE7,#00F5D4)" : "var(--surface)", border:"none", borderRadius:10, padding:"11px", color: form.nombre.trim() ? "#fff" : "var(--text)"Mute, fontWeight:700, fontSize:13, cursor: form.nombre.trim() ? "pointer" : "not-allowed", fontFamily:"'Sora', sans-serif", boxShadow: form.nombre.trim() ? "0 0 16px rgba(108,92,231,0.4)" : "none" }}>
                   {editIdx !== null ? "✅ Guardar" : "🤝 Agregar"}
                 </button>
               </div>

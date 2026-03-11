@@ -19,7 +19,7 @@ export default function TimelineGTM({ gtm90dias }) {
             <div style={{ fontSize:10, fontWeight:800, color:p.color, textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:6, fontFamily:"'Sora', sans-serif" }}>
               {p.icon} {p.label}
             </div>
-            <p style={{ margin:0, fontSize:13, color:var(--text)Mid, lineHeight:1.65, fontFamily:"'DM Sans', sans-serif" }}>
+            <p style={{ margin:0, fontSize:13, color:"var(--text)"Mid, lineHeight:1.65, fontFamily:"'DM Sans', sans-serif" }}>
               {sentences[i]||"..."}
             </p>
           </div>
