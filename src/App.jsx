@@ -61,6 +61,7 @@ INDUSTRIA: ${industry}
 
 REGLAS CRÍTICAS DE FORMATO:
 - Todos los strings deben usar comillas dobles
+- NUNCA uses comillas dobles " dentro de un valor string — usá comillas simples ' si necesitás citar algo
 - No uses saltos de línea dentro de strings — usá \\n si necesitás
 - No uses caracteres especiales sin escapar dentro de strings
 - Todos los arrays deben tener exactamente los elementos indicados
@@ -470,7 +471,42 @@ export default function App() {
       jsonText = jsonText
         .replace(/,(\s*[}\]])/g, "$1")           // trailing commas
         .replace(/:\s*undefined/g, ": null")      // undefined values
-        .replace(/[\u0000-\u001F\u007F]/g, " ");  // control characters
+        .replace(/[\u0000-\u001F\u007F]/g, " "); // control characters
+
+      // Step 3b: fix unescaped double-quotes inside string values
+      // Walk char by char: when inside a JSON string value, escape any bare " that isn't already escaped
+      jsonText = (function fixQuotes(s) {
+        let out = "", inStr = false, escaped = false, prevColon = false;
+        for (let i = 0; i < s.length; i++) {
+          const ch = s[i];
+          if (escaped) { out += ch; escaped = false; continue; }
+          if (ch === "\\") { out += ch; escaped = true; continue; }
+          if (!inStr) {
+            if (ch === '"') { inStr = true; prevColon = false; }
+            else if (ch === ':') prevColon = true;
+            else if (ch !== ' ' && ch !== '\n' && ch !== '\r' && ch !== '\t') prevColon = false;
+            out += ch;
+          } else {
+            // Inside a string — check if this " ends the string or is a rogue quote
+            if (ch === '"') {
+              // Peek: after this quote, expect whitespace then : , } ]
+              let j = i + 1;
+              while (j < s.length && (s[j] === ' ' || s[j] === '\t')) j++;
+              const next = s[j];
+              if (next === ':' || next === ',' || next === '}' || next === ']' || next === '\n' || next === '\r' || j >= s.length) {
+                // Looks like a proper closing quote
+                out += ch; inStr = false;
+              } else {
+                // Rogue quote inside string value — escape it
+                out += '\\"';
+              }
+            } else {
+              out += ch;
+            }
+          }
+        }
+        return out;
+      })(jsonText);
 
       let parsed;
       try {
