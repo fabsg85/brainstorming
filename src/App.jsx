@@ -50,24 +50,24 @@ const GlobalStyles = ({ light }) => (
     /* ── LIGHT THEME ── */
     ${light ? `
     :root {
-      --bg:       #F4F4F8;
+      --bg:       #F0F0F5;
       --bg2:      #FFFFFF;
-      --bg3:      #EEEEF4;
+      --bg3:      #E8E8F0;
       --sidebar:  #FFFFFF;
-      --nav:      rgba(244,244,248,0.92);
-      --surface:  rgba(0,0,0,0.03);
-      --surface2: rgba(0,0,0,0.05);
-      --border:   rgba(0,0,0,0.08);
-      --border2:  rgba(0,0,0,0.14);
-      --text:     rgba(0,0,0,0.88);
-      --textMid:  rgba(0,0,0,0.52);
-      --textMute: rgba(0,0,0,0.3);
-      --scrollbg: #F4F4F8;
-      --inputbg:  rgba(0,0,0,0.04);
-      --inputbdr: rgba(0,0,0,0.1);
-      --inputclr: rgba(0,0,0,0.8);
-      --inputph:  rgba(0,0,0,0.28);
-      --cardsh:   0 2px 12px rgba(0,0,0,0.08);
+      --nav:      rgba(240,240,245,0.95);
+      --surface:  rgba(0,0,0,0.04);
+      --surface2: rgba(0,0,0,0.07);
+      --border:   rgba(0,0,0,0.10);
+      --border2:  rgba(0,0,0,0.18);
+      --text:     rgba(0,0,0,0.90);
+      --textMid:  rgba(0,0,0,0.62);
+      --textMute: rgba(0,0,0,0.42);
+      --scrollbg: #F0F0F5;
+      --inputbg:  rgba(0,0,0,0.05);
+      --inputbdr: rgba(0,0,0,0.14);
+      --inputclr: rgba(0,0,0,0.88);
+      --inputph:  rgba(0,0,0,0.36);
+      --cardsh:   0 2px 12px rgba(0,0,0,0.10);
     }` : ""}
 
     html, body {
@@ -178,27 +178,27 @@ IMPORTANTE: Todos los campos son obligatorios. El JSON debe ser parseable.
 // ── EMPTY BOARD ──────────────────────────────────────────────────
 function EmptyBoard({ onAdd, light }) {
   return (
-    <div style={{ minHeight:"100vh", background:"#0B0B0F", display:"flex", alignItems:"center", justifyContent:"center", padding:20, position:"relative", overflow:"hidden" }}>
+    <div style={{ minHeight:"100vh", background:"var(--bg)", display:"flex", alignItems:"center", justifyContent:"center", padding:20, position:"relative", overflow:"hidden" }}>
       <BackgroundEffects light={light}/>
       <div style={{ textAlign:"center", maxWidth:560, position:"relative", zIndex:1 }}>
         {/* Logo */}
         <div style={{ marginBottom:28, display:"inline-flex", animation:"glowPulse 3s ease-in-out infinite" }}>
           <SharkLogo size={80}/>
         </div>
-        <h1 style={{ margin:"0 0 12px", fontSize:56, fontWeight:800, color:"rgba(255,255,255,0.95)", letterSpacing:"-2px", fontFamily:"'Sora',sans-serif", lineHeight:1.05 }}>
+        <h1 style={{ margin:"0 0 12px", fontSize:56, fontWeight:800, color:"var(--text)", letterSpacing:"-2px", fontFamily:"'Sora',sans-serif", lineHeight:1.05 }}>
           Think Faster.<br/>
           <span style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
             Hunt Better Ideas.
           </span>
         </h1>
-        <p style={{ color:"rgba(255,255,255,0.42)", fontSize:16, lineHeight:1.75, marginBottom:48, fontWeight:300 }}>
+        <p style={{ color:"var(--textMid)", fontSize:16, lineHeight:1.75, marginBottom:48, fontWeight:300 }}>
           Tirá tus ideas. El Shark las puntúa sin filtro.<br/>Scoring calibrado, veredicto brutal, playbook ejecutable.
         </p>
 
         {/* Feature pills */}
         <div style={{ display:"flex", flexWrap:"wrap", gap:8, justifyContent:"center", marginBottom:48 }}>
           {[["🦈","Análisis brutal"],["📊","Scoring 5 ejes"],["📋","Pitch Deck auto"],["🗳️","Votación equipo"],["⚖️","Comparación"],["⬇️","Export .md"]].map(([e,l])=>(
-            <div key={l} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:99, padding:"7px 14px", fontSize:12, fontWeight:600, color:"rgba(255,255,255,0.5)", fontFamily:"'Sora',sans-serif", backdropFilter:"blur(8px)" }}>
+            <div key={l} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:99, padding:"7px 14px", fontSize:12, fontWeight:600, color:"var(--textMid)", fontFamily:"'Sora',sans-serif", backdropFilter:"blur(8px)" }}>
               {e} {l}
             </div>
           ))}
@@ -290,7 +290,7 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
       <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:14, alignItems:"start" }}>
         <Card title="🎯 Scoring detallado">
           {a.pagaHoy && (
-            <div style={{ background:"rgba(0,245,212,0.08)", border:"1px solid rgba(0,245,212,0.2)", borderRadius:10, padding:"10px 14px", marginBottom:18 }}>
+            <div style={{ background:"rgba(0,245,212,0.08)", border:"1px solid rgba(0,245,212,0.25)", borderRadius:10, padding:"10px 14px", marginBottom:18 }}>
               <div style={{ fontSize:10, fontWeight:700, color:"#00F5D4", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora',sans-serif" }}>💸 ¿Pagan por esto hoy?</div>
               <p style={{ margin:0, fontSize:13, color:"var(--textMid)", lineHeight:1.5 }}>{a.pagaHoy}</p>
             </div>
@@ -313,7 +313,7 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
       </div>
       <Card title="✨ Diferencial"><p style={{ margin:0, color:"var(--textMid)", fontSize:14, lineHeight:1.7 }}>{a.diferencial}</p></Card>
       <Card title="⚙️ Stack técnico">
-        <div style={{ background:"rgba(255,255,255,0.03)", borderRadius:8, padding:"12px 14px", border:"1px solid var(--border)" }}>
+        <div style={{ background:"var(--surface)", borderRadius:8, padding:"12px 14px", border:"1px solid var(--border)" }}>
           <p style={{ margin:0, color:"var(--text)", fontSize:13, fontFamily:"monospace", lineHeight:1.7 }}>{a.stack}</p>
         </div>
       </Card>
@@ -652,7 +652,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
 
   // ── LOADING ────────────────────────────────────────────────────
   if (loading) return (
-    <div style={{ minHeight:"100vh", background:"#0B0B0F", display:"flex", alignItems:"center", justifyContent:"center" }}>
+    <div style={{ minHeight:"100vh", background:"var(--bg)", display:"flex", alignItems:"center", justifyContent:"center" }}>
       <GlobalStyles light={lightMode}/>
       <BackgroundEffects/>
       <div style={{ textAlign:"center", position:"relative", zIndex:1 }}>
@@ -664,7 +664,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
 
   if (ideas.length === 0 && !wizard) return (
     <>
-      <GlobalStyles/>
+      <GlobalStyles light={lightMode}/>
       <EmptyBoard onAdd={()=>setWizard(true)} light={lightMode}/>
       {wizard&&<Wizard onSave={handleAdd} onClose={()=>setWizard(false)}/>}
     </>
@@ -755,7 +755,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
                   const active = sidebarFilter===f.k;
                   return (
                     <button key={f.k} onClick={()=>setSidebarFilter(f.k)}
-                      style={{ background:active?"rgba(108,92,231,0.25)":"var(--surface)", border:`1px solid ${active?"rgba(108,92,231,0.45)":"rgba(255,255,255,0.08)"}`, borderRadius:99, padding:"3px 9px", fontSize:10, fontWeight:700, color:active?"#6C5CE7":"rgba(255,255,255,0.35)", cursor:"pointer", fontFamily:"'Sora',sans-serif", transition:"all 0.12s", whiteSpace:"nowrap" }}>
+                      style={{ background:active?"rgba(108,92,231,0.25)":"var(--surface)", border:`1px solid ${active?"rgba(108,92,231,0.45)":"var(--border)"}`, borderRadius:99, padding:"3px 9px", fontSize:10, fontWeight:700, color:active?"#6C5CE7":"var(--textMid)", cursor:"pointer", fontFamily:"'Sora',sans-serif", transition:"all 0.12s", whiteSpace:"nowrap" }}>
                       {f.l}
                     </button>
                   );
@@ -765,7 +765,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
               <div style={{ display:"flex", gap:4 }}>
                 {[{k:"score",l:"Score"},{k:"votes",l:"Votos"},{k:"recent",l:"Reciente"}].map(opt=>(
                   <button key={opt.k} onClick={()=>setSidebarSort(opt.k)}
-                    style={{ flex:1, background:sidebarSort===opt.k?"rgba(108,92,231,0.2)":"var(--surface)", border:`1px solid ${sidebarSort===opt.k?"rgba(108,92,231,0.4)":"rgba(255,255,255,0.08)"}`, borderRadius:6, padding:"4px 2px", fontSize:10, fontWeight:700, color:sidebarSort===opt.k?"#6C5CE7":"rgba(255,255,255,0.3)", cursor:"pointer", fontFamily:"'Sora',sans-serif", transition:"all 0.12s" }}>
+                    style={{ flex:1, background:sidebarSort===opt.k?"rgba(108,92,231,0.2)":"var(--surface)", border:`1px solid ${sidebarSort===opt.k?"rgba(108,92,231,0.4)":"var(--border)"}`, borderRadius:6, padding:"4px 2px", fontSize:10, fontWeight:700, color:sidebarSort===opt.k?"#6C5CE7":"var(--textMid)", cursor:"pointer", fontFamily:"'Sora',sans-serif", transition:"all 0.12s" }}>
                     {sidebarSort===opt.k?"↓ ":""}{opt.l}
                   </button>
                 ))}
@@ -805,7 +805,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
                       {isAnalyzingThis ? (
                         <span style={{ fontSize:10, color:"var(--textMid)", animation:"pulse 1.5s infinite" }}>⏳</span>
                       ) : sc ? (
-                        <span style={{ color:sc, fontWeight:800, fontSize:12, fontFamily:"monospace", background:"rgba(0,0,0,0.35)", borderRadius:5, padding:"1px 7px", border:`1px solid ${sc}40` }}>{score.toFixed(1)}</span>
+                        <span style={{ color:sc, fontWeight:800, fontSize:12, fontFamily:"monospace", background:"var(--surface2)", borderRadius:5, padding:"1px 7px", border:`1px solid ${sc}40` }}>{score.toFixed(1)}</span>
                       ) : (
                         <span style={{ fontSize:10, color:"var(--textMute)", fontStyle:"italic" }}>–</span>
                       )}
