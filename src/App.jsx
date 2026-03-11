@@ -287,30 +287,35 @@ function EmptyBoard({ onAdd, light }) {
 }
 
 // ── ANALYSIS TAB ─────────────────────────────────────────────────
-function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt, onGoTab }) {
+function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt, onGoTab, activeShark }) {
+  const shark = activeShark || SHARK_PROFILES[0];
+
   if (!a && !analyzing) return (
     <div style={{ textAlign:"center", padding:"72px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
-      {/* Animated shark logo */}
       <div style={{ display:"inline-flex", marginBottom:24, animation:"glowPulse 3s ease-in-out infinite" }}>
         <SharkLogo size={64}/>
       </div>
       <div style={{ fontWeight:700, fontSize:22, marginBottom:10, fontFamily:"'Sora',sans-serif", color:"var(--text)", letterSpacing:"-0.5px" }}>Que el Shark hable</div>
-      <div style={{ color:"var(--textMute)", fontSize:14, marginBottom:36, maxWidth:360, margin:"10px auto 36px", lineHeight:1.7 }}>
+      <div style={{ color:"var(--textMute)", fontSize:14, margin:"10px auto 24px", lineHeight:1.7, maxWidth:360 }}>
         Scoring calibrado · Monetización · GTM · Riesgo legal · Veredicto sin anestesia
       </div>
+      <div style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:20, padding:"8px 16px", background: shark.bg, border:"1px solid "+shark.border, borderRadius:10 }}>
+        <span style={{ fontSize:16 }}>{shark.emoji}</span>
+        <span style={{ fontSize:12, fontWeight:700, color: shark.color, fontFamily:"'Sora',sans-serif" }}>{shark.name}</span>
+        <span style={{ fontSize:11, color:"var(--textMute)" }}>· {shark.tagline}</span>
+      </div>
+      <br/>
       <button onClick={onAnalyze} style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:12, padding:"14px 36px", color:"#fff", fontWeight:700, fontSize:15, cursor:"pointer", fontFamily:"'Sora',sans-serif", boxShadow:"0 0 30px rgba(108,92,231,0.5)" }}>
         🦈 Analizar esta idea
       </button>
     </div>
   );
 
-  const activeShark = SHARK_PROFILES.find(p => p.key === sharkProfile) || SHARK_PROFILES[0];
-
   if (analyzing) return (
     <div style={{ textAlign:"center", padding:"80px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ animation:"pulse 1.6s ease-in-out infinite", display:"inline-block" }}><SharkLogo size={64}/></div>
-      <div style={{ color:"var(--text)", fontWeight:700, fontSize:20, marginTop:24, fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px" }}>{activeShark.emoji} {activeShark.name} está pensando...</div>
-      <div style={{ color:"var(--textMute)", fontSize:13, marginTop:4, marginBottom:6 }}>{activeShark.tagline}</div>
+      <div style={{ color:"var(--text)", fontWeight:700, fontSize:20, marginTop:24, fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px" }}>{shark.emoji} {shark.name} está pensando...</div>
+      <div style={{ color:"var(--textMute)", fontSize:13, marginTop:4, marginBottom:6 }}>{shark.tagline}</div>
       <div style={{ color:"var(--textMute)", fontSize:11, marginBottom:28 }}>No lo toques. Esto tarda unos segundos.</div>
       <div style={{ display:"flex", justifyContent:"center", gap:6, flexWrap:"wrap" }}>
         {SCORE_CRITERIA.map((c,i) => (
@@ -347,11 +352,11 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
   return (
     <div style={{ display:"grid", gap:14, animation:"fadeUp 0.3s ease" }}>
       {/* Active shark badge */}
-      <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 14px", background: activeShark.bg, border:`1px solid ${activeShark.border}`, borderRadius:10 }}>
-        <span style={{ fontSize:18 }}>{activeShark.emoji}</span>
+      <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 14px", background: shark.bg, border:"1px solid "+shark.border, borderRadius:10 }}>
+        <span style={{ fontSize:18 }}>{shark.emoji}</span>
         <div>
-          <span style={{ fontSize:12, fontWeight:700, color: activeShark.color, fontFamily:"'Sora',sans-serif" }}>{activeShark.name}</span>
-          <span style={{ fontSize:11, color:"var(--textMute)", marginLeft:6 }}>· {activeShark.tagline}</span>
+          <span style={{ fontSize:12, fontWeight:700, color: shark.color, fontFamily:"'Sora',sans-serif" }}>{shark.name}</span>
+          <span style={{ fontSize:11, color:"var(--textMute)", marginLeft:6 }}>· {shark.tagline}</span>
         </div>
       </div>
       <VerdictBanner score={a.avgScore}/>
@@ -968,7 +973,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
                     </div>
                   </div>
                 )}
-                {tab==="analysis"     && <AnalysisTab     sel={sel} a={a} analyzing={analyzing} onAnalyze={analyze} onReanalyze={reanalyze} onExportPrompt={handleExportPrompt} onGoTab={setTab}/>}
+                {tab==="analysis"     && <AnalysisTab     sel={sel} a={a} analyzing={analyzing} onAnalyze={analyze} onReanalyze={reanalyze} onExportPrompt={handleExportPrompt} onGoTab={setTab} activeShark={SHARK_PROFILES.find(p=>p.key===sharkProfile)||SHARK_PROFILES[0]}/>}
                 {tab==="monetizacion" && <MonetizacionTab a={a} onGoAnalysis={()=>setTab("analysis")}/>}
                 {tab==="gtm"          && <GtmTab          a={a} onGoAnalysis={()=>setTab("analysis")}/>}
                 {tab==="hipotesis"    && <HipotesisTab    a={a} onGoAnalysis={()=>setTab("analysis")}/>}
