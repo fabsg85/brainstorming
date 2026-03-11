@@ -473,79 +473,99 @@ export default function App() {
 
           {/* SIDEBAR */}
           <div style={{
-            width:272, flexShrink:0,
-            background:"#13131A",
-            borderRight:"1px solid rgba(255,255,255,0.07)",
+            width:260, flexShrink:0,
+            background:"#1A1A24",
+            borderRight:"1px solid rgba(255,255,255,0.08)",
             overflowY:"auto",
-            padding:"8px 8px",
-            display:"flex", flexDirection:"column", gap:3,
-            ...(isMobile?{position:"fixed",left:sidebarOpen?0:-276,top:62,height:"calc(100vh - 62px)",zIndex:45,transition:"left 0.25s cubic-bezier(.4,0,.2,1)"}:{}),
+            display:"flex", flexDirection:"column",
+            ...(isMobile?{position:"fixed",left:sidebarOpen?0:-264,top:62,height:"calc(100vh - 62px)",zIndex:45,transition:"left 0.25s cubic-bezier(.4,0,.2,1)"}:{}),
           }}>
-            <div style={{ padding:"8px 10px 10px", color:"rgba(255,255,255,0.35)", fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:"1.2px", fontFamily:"'Sora',sans-serif" }}>
-              Ideas · {ideas.length}
+            {/* Sidebar header */}
+            <div style={{ padding:"14px 14px 8px", borderBottom:"1px solid rgba(255,255,255,0.06)", flexShrink:0 }}>
+              <div style={{ fontSize:10, fontWeight:700, color:"rgba(255,255,255,0.3)", textTransform:"uppercase", letterSpacing:"1.4px", fontFamily:"'Sora',sans-serif" }}>
+                IDEAS · {ideas.length}
+              </div>
             </div>
 
-            {ideas.map(idea => {
-              const isSelected      = idea.id === (sel?.id);
-              const stg             = STAGES.find(x=>x.key===idea.stage)||STAGES[0];
-              const score           = idea.analysis?.avgScore;
-              const sc              = score ? scoreColor(score) : null;
-              const isAnalyzingThis = analyzing && sel?.id===idea.id;
-              const voteCount       = (idea.votes||[]).length;
-              const upVotes         = (idea.votes||[]).filter(v=>v.vote==="up").length;
+            {/* Ideas list */}
+            <div style={{ flex:1, overflowY:"auto", padding:"8px 8px" }}>
+              {ideas.map(idea => {
+                const isSelected      = idea.id === (sel?.id);
+                const stg             = STAGES.find(x=>x.key===idea.stage)||STAGES[0];
+                const score           = idea.analysis?.avgScore;
+                const sc              = score ? scoreColor(score) : null;
+                const isAnalyzingThis = analyzing && sel?.id===idea.id;
+                const voteCount       = (idea.votes||[]).length;
+                const upVotes         = (idea.votes||[]).filter(v=>v.vote==="up").length;
 
-              return (
-                <div key={idea.id}
-                  onClick={()=>{ setSelectedId(idea.id); setTab("analysis"); setSidebarOpen(false); }}
-                  style={{
-                    borderRadius:10,
-                    padding:"10px 12px",
-                    cursor:"pointer",
-                    background: isSelected ? "rgba(108,92,231,0.18)" : "rgba(255,255,255,0.04)",
-                    border: `1px solid ${isSelected ? "rgba(108,92,231,0.45)" : "rgba(255,255,255,0.07)"}`,
-                    transition:"all 0.15s",
-                    position:"relative", overflow:"hidden",
-                  }}>
+                return (
+                  <div key={idea.id}
+                    onClick={()=>{ setSelectedId(idea.id); setTab("analysis"); setSidebarOpen(false); }}
+                    style={{
+                      borderRadius:8,
+                      padding:"10px 11px 10px 13px",
+                      cursor:"pointer",
+                      marginBottom:3,
+                      background: isSelected ? "rgba(108,92,231,0.22)" : "transparent",
+                      border: `1px solid ${isSelected ? "rgba(108,92,231,0.5)" : "transparent"}`,
+                      borderLeft: isSelected ? "3px solid #6C5CE7" : "3px solid transparent",
+                      transition:"all 0.12s",
+                    }}>
 
-                  {/* Selected accent line */}
-                  {isSelected && <div style={{ position:"absolute", left:0, top:0, bottom:0, width:2, background:"linear-gradient(180deg,#6C5CE7,#00F5D4)", borderRadius:"2px 0 0 2px" }}/>}
+                    {/* TITLE — always prominent, first thing you see */}
+                    <div style={{
+                      fontWeight: 700,
+                      fontSize: 13,
+                      color: isSelected ? "#FFFFFF" : "rgba(255,255,255,0.75)",
+                      lineHeight: 1.3,
+                      marginBottom: 6,
+                      fontFamily:"'Sora',sans-serif",
+                      wordBreak:"break-word",
+                    }}>
+                      {idea.title}
+                    </div>
 
-                  {/* Stage + Score row */}
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6, paddingLeft: isSelected ? 4 : 0 }}>
-                    <span style={{ background:stg.bg, color:stg.color, fontSize:10, fontWeight:600, borderRadius:99, padding:"2px 8px", fontFamily:"'Sora',sans-serif" }}>
-                      {stg.emoji} {stg.label}
-                    </span>
-                    {isAnalyzingThis ? (
-                      <span style={{ fontSize:10, color:"rgba(255,255,255,0.4)", fontWeight:600, animation:"pulse 1.5s infinite" }}>analizando...</span>
-                    ) : sc ? (
-                      <span style={{ color:sc, fontWeight:800, fontSize:12, fontFamily:"monospace", background:"rgba(0,0,0,0.3)", borderRadius:6, padding:"1px 7px", border:`1px solid ${sc}30` }}>
-                        {score.toFixed(1)}
-                      </span>
-                    ) : (
-                      <span style={{ fontSize:10, color:"rgba(255,255,255,0.25)" }}>—</span>
+                    {/* Score + Stage row — BELOW title */}
+                    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                        <span style={{ fontSize:11 }}>{stg.emoji}</span>
+                        <span style={{ fontSize:11, color: isSelected ? stg.color : "rgba(255,255,255,0.35)", fontWeight:600, fontFamily:"'Sora',sans-serif" }}>
+                          {stg.label}
+                        </span>
+                      </div>
+
+                      {isAnalyzingThis ? (
+                        <span style={{ fontSize:10, color:"rgba(255,255,255,0.35)", animation:"pulse 1.5s infinite" }}>⏳</span>
+                      ) : sc ? (
+                        <span style={{
+                          color: sc,
+                          fontWeight:800,
+                          fontSize:13,
+                          fontFamily:"monospace",
+                          background:"rgba(0,0,0,0.35)",
+                          borderRadius:5,
+                          padding:"1px 8px",
+                          border:`1px solid ${sc}40`,
+                          letterSpacing:"0.5px",
+                        }}>
+                          {score.toFixed(1)}
+                        </span>
+                      ) : (
+                        <span style={{ fontSize:11, color:"rgba(255,255,255,0.2)" }}>sin análisis</span>
+                      )}
+                    </div>
+
+                    {/* Vote pills — only if voted */}
+                    {voteCount > 0 && (
+                      <div style={{ display:"flex", gap:5, marginTop:7 }}>
+                        <span style={{ fontSize:10, fontWeight:600, color:"#00F5D4", background:"rgba(0,245,212,0.1)", borderRadius:99, padding:"1px 8px", border:"1px solid rgba(0,245,212,0.15)" }}>👍 {upVotes}</span>
+                        <span style={{ fontSize:10, fontWeight:600, color:"#FF5F7A", background:"rgba(255,95,122,0.1)", borderRadius:99, padding:"1px 8px", border:"1px solid rgba(255,95,122,0.15)" }}>👎 {voteCount-upVotes}</span>
+                      </div>
                     )}
                   </div>
-
-                  {/* Title */}
-                  <div style={{ fontWeight:600, fontSize:13, color: isSelected ? "#FFFFFF" : "rgba(255,255,255,0.82)", lineHeight:1.35, marginBottom:3, fontFamily:"'Sora',sans-serif", paddingLeft: isSelected ? 4 : 0 }}>
-                    {idea.title}
-                  </div>
-
-                  {/* Description preview */}
-                  <div style={{ color:"rgba(255,255,255,0.38)", fontSize:11, lineHeight:1.45, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden", marginBottom:voteCount?7:0, paddingLeft: isSelected ? 4 : 0 }}>
-                    {idea.description}
-                  </div>
-
-                  {/* Vote pills */}
-                  {voteCount>0&&(
-                    <div style={{ display:"flex", gap:5, paddingLeft: isSelected ? 4 : 0 }}>
-                      <span style={{ fontSize:10, fontWeight:600, color:"#00F5D4", background:"rgba(0,245,212,0.1)", borderRadius:99, padding:"1px 7px" }}>👍 {upVotes}</span>
-                      <span style={{ fontSize:10, fontWeight:600, color:"#FF5F7A", background:"rgba(255,95,122,0.1)", borderRadius:99, padding:"1px 7px" }}>👎 {voteCount-upVotes}</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
           {/* MAIN PANEL */}
