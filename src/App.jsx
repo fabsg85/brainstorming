@@ -50,24 +50,24 @@ const GlobalStyles = ({ light }) => (
     /* ── LIGHT THEME ── */
     ${light ? `
     :root {
-      --bg:       #F0F0F5;
+      --bg:       #EEEEF4;
       --bg2:      #FFFFFF;
-      --bg3:      #E8E8F0;
-      --sidebar:  #FFFFFF;
-      --nav:      rgba(240,240,245,0.95);
-      --surface:  rgba(0,0,0,0.04);
-      --surface2: rgba(0,0,0,0.07);
-      --border:   rgba(0,0,0,0.10);
-      --border2:  rgba(0,0,0,0.18);
-      --text:     rgba(0,0,0,0.90);
-      --textMid:  rgba(0,0,0,0.62);
-      --textMute: rgba(0,0,0,0.42);
-      --scrollbg: #F0F0F5;
+      --bg3:      #E4E4EC;
+      --sidebar:  #FAFAFD;
+      --nav:      rgba(238,238,244,0.97);
+      --surface:  rgba(0,0,0,0.045);
+      --surface2: rgba(0,0,0,0.08);
+      --border:   rgba(0,0,0,0.11);
+      --border2:  rgba(0,0,0,0.20);
+      --text:     #1A1A2E;
+      --textMid:  #4A4A6A;
+      --textMute: #7A7A9A;
+      --scrollbg: #EEEEF4;
       --inputbg:  rgba(0,0,0,0.05);
-      --inputbdr: rgba(0,0,0,0.14);
-      --inputclr: rgba(0,0,0,0.88);
-      --inputph:  rgba(0,0,0,0.36);
-      --cardsh:   0 2px 12px rgba(0,0,0,0.10);
+      --inputbdr: rgba(0,0,0,0.15);
+      --inputclr: #1A1A2E;
+      --inputph:  #9A9ABB;
+      --cardsh:   0 2px 16px rgba(0,0,0,0.08);
     }` : ""}
 
     html, body {
@@ -77,6 +77,7 @@ const GlobalStyles = ({ light }) => (
       -webkit-font-smoothing: antialiased;
       transition: background 0.25s, color 0.25s;
     }
+    select option { background: var(--bg2); color: var(--text); }
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: var(--scrollbg); }
     ::-webkit-scrollbar-thumb { background: #6C5CE7; border-radius: 99px; }
