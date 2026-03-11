@@ -71,18 +71,18 @@ const GlobalStyles = ({ light }) => (
     }` : ""}
 
     html, body {
-      background: var(--bg);
-      color: var(--text);
+      background: "var(--bg)";
+      color: "var(--text)";
       font-family: 'DM Sans', system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
       transition: background 0.25s, color 0.25s;
     }
-    select option { background: var(--bg2); color: var(--text); }
+    select option { background: "var(--bg2)"; color: "var(--text)"; }
     ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: var(--scrollbg); }
+    ::-webkit-scrollbar-track { background: "var(--scrollbg)"; }
     ::-webkit-scrollbar-thumb { background: #6C5CE7; border-radius: 99px; }
-    input, textarea, select { color: var(--inputclr) !important; background: transparent; }
-    input::placeholder, textarea::placeholder { color: var(--inputph) !important; }
+    input, textarea, select { color: "var(--inputclr)" !important; background: transparent; }
+    input::placeholder, textarea::placeholder { color: "var(--inputph)" !important; }
     button { transition: opacity 0.12s, transform 0.1s; }
     button:active:not(:disabled) { opacity: 0.82; transform: scale(0.98); }
     textarea { resize: vertical; }
