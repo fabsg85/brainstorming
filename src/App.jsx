@@ -320,12 +320,12 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
         <Card title="✅ Pros" accent="#00F5D4">
           <ul style={{ margin:0, paddingLeft:18 }}>
-            {a.pros?.map((p,i) => <li key={i} style={{ color:"#00F5D4", fontSize:14, marginBottom:7, lineHeight:1.5 }}><span style={{ color:"var(--text)"Mid }}>{p}</span></li>)}
+            {a.pros?.map((p,i) => <li key={i} style={{ color:"#00F5D4", fontSize:14, marginBottom:7, lineHeight:1.5 }}><span style={{ color:"var(--textMid)" }}>{p}</span></li>)}
           </ul>
         </Card>
         <Card title="⚠️ Cons" accent="#FF5F7A">
           <ul style={{ margin:0, paddingLeft:18 }}>
-            {a.cons?.map((c,i) => <li key={i} style={{ color:"#FF5F7A", fontSize:14, marginBottom:7, lineHeight:1.5 }}><span style={{ color:"var(--text)"Mid }}>{c}</span></li>)}
+            {a.cons?.map((c,i) => <li key={i} style={{ color:"#FF5F7A", fontSize:14, marginBottom:7, lineHeight:1.5 }}><span style={{ color:"var(--textMid)" }}>{c}</span></li>)}
           </ul>
         </Card>
       </div>
@@ -894,7 +894,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
             </div>
           ) : (
             <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", position:"relative", zIndex:1 }}>
-              <div style={{ textAlign:"center", color:"var(--text)"Mute }}>
+              <div style={{ textAlign:"center", color:"var(--textMute)" }}>
                 <SharkLogo size={56}/>
                 <div style={{ fontWeight:700, fontSize:16, marginBottom:6, marginTop:20, color:"var(--textMid)", fontFamily:"'Sora',sans-serif" }}>Seleccioná una idea</div>
                 <div style={{ fontSize:13 }}>o agregá una con + Idea</div>
