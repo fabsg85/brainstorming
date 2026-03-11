@@ -1,29 +1,48 @@
 export const T = {
-  bg: "#FAFAF8",
-  surface: "#FFFFFF",
-  border: "#E8E6E0",
-  text: "#1A1A18",
-  textMid: "#5C5A54",
-  textMute: "#A8A49E",
-  coral: "#FF5C3A",
-  coralLight: "#FFF0EC",
-  mint: "#00C98D",
-  mintLight: "#E6FBF4",
-  cobalt: "#2255E8",
-  cobaltLight: "#EEF2FF",
-  amber: "#F5A623",
-  amberLight: "#FFF8EC",
-  purple: "#7C3AED",
-  purpleLight: "#F5F0FF",
-  font: "'DM Sans', system-ui, sans-serif",
-  fontDisplay: "'DM Serif Display', Georgia, serif",
+  // Backgrounds
+  bg:           "#0B0B0F",
+  bg2:          "#111118",
+  bg3:          "#16161F",
+  surface:      "rgba(255,255,255,0.04)",
+  surface2:     "rgba(255,255,255,0.07)",
+  surface3:     "rgba(255,255,255,0.10)",
+  // Borders
+  border:       "rgba(255,255,255,0.08)",
+  border2:      "rgba(255,255,255,0.14)",
+  // Text
+  text:         "rgba(255,255,255,0.92)",
+  textMid:      "rgba(255,255,255,0.52)",
+  textMute:     "rgba(255,255,255,0.26)",
+  white:        "#FFFFFF",
+  // Brand
+  purple:       "#6C5CE7",
+  purpleGlow:   "rgba(108,92,231,0.35)",
+  purpleLight:  "rgba(108,92,231,0.12)",
+  teal:         "#00F5D4",
+  tealGlow:     "rgba(0,245,212,0.25)",
+  tealLight:    "rgba(0,245,212,0.10)",
+  // Semantic (mapped to brand)
+  mint:         "#00F5D4",
+  mintLight:    "rgba(0,245,212,0.10)",
+  coral:        "#FF5F7A",
+  coralLight:   "rgba(255,95,122,0.12)",
+  amber:        "#FFB547",
+  amberLight:   "rgba(255,181,71,0.12)",
+  cobalt:       "#6C5CE7",
+  cobaltLight:  "rgba(108,92,231,0.12)",
+  // Gradients
+  grad:         "linear-gradient(135deg,#6C5CE7,#00F5D4)",
+  gradR:        "linear-gradient(135deg,#00F5D4,#6C5CE7)",
+  // Typography
+  font:         "'DM Sans', system-ui, sans-serif",
+  fontDisplay:  "'Sora', system-ui, sans-serif",
 };
 
 export const STAGES = [
-  { key: "idea",         label: "Idea",          emoji: "💡", bg: T.purpleLight, color: T.purple },
-  { key: "validando",    label: "Validando",      emoji: "🔍", bg: T.amberLight,  color: T.amber  },
-  { key: "construyendo", label: "Construyendo",   emoji: "🔨", bg: T.cobaltLight, color: T.cobalt },
-  { key: "lanzado",      label: "Lanzado",        emoji: "🚀", bg: T.mintLight,   color: T.mint   },
+  { key: "idea",         label: "Idea",          emoji: "💡", bg: "rgba(108,92,231,0.15)", color: "#6C5CE7" },
+  { key: "validando",    label: "Validando",      emoji: "🔍", bg: "rgba(255,181,71,0.15)", color: "#FFB547" },
+  { key: "construyendo", label: "Construyendo",   emoji: "🔨", bg: "rgba(0,245,212,0.12)",  color: "#00F5D4" },
+  { key: "lanzado",      label: "Lanzado",        emoji: "🚀", bg: "rgba(0,245,212,0.18)",  color: "#00F5D4" },
 ];
 
 export const WIZARD_STEPS = [
