@@ -13,6 +13,11 @@ import Comparador      from "./components/Comparador";
 import TimelineGTM     from "./components/TimelineGTM";
 import { Card, StageBadge, ScoreBar, EmptyTab, GlowBtn } from "./components/UI";
 import BudgetTab         from "./components/BudgetTab";
+import HipotesisTab      from "./components/HipotesisTab";
+import PersonasTab       from "./components/PersonasTab";
+import CompetidoresTab   from "./components/CompetidoresTab";
+import CanvasTab         from "./components/CanvasTab";
+import PreSellTab        from "./components/PreSellTab";
 
 // ── FONTS + GLOBAL STYLES ────────────────────────────────────────
 const GlobalStyles = () => (
@@ -48,45 +53,76 @@ const BackgroundEffects = () => (
   </div>
 );
 
-const ANALYZE_PROMPT = (title, description) => `Analizá esta idea de negocio AI. Devolvé SOLO un objeto JSON válido. Sin markdown, sin texto extra, sin backticks. Empezá con { y terminá con }.
+const ANALYZE_PROMPT = (title, description, industry = "") => `Sos un Shark board: inversor brutal, técnico, rioplatense. Analizá esta idea y devolvé SOLO JSON válido. Sin markdown, sin backticks, sin texto extra. Empezá con { terminá con }.
 
 IDEA: ${title}
 DESCRIPCIÓN: ${description}
+INDUSTRIA: ${industry}
 
-El veredicto tiene que sonar como Kevin O'Leary pero rioplatense: directo, sarcástico, sin filtro.
+IMPORTANTE: Todos los campos son obligatorios. El JSON debe ser parseable.
 
-ESTRUCTURA EXACTA:
 {
-  "pagaHoy": "sí/no, quién, cuánto aproximadamente",
-  "publicObj": "cliente objetivo y cuánto paga actualmente",
-  "diferencial": "ventaja real y por qué no se copia fácil",
-  "benchmark": "competidores reales y diferenciación concreta",
-  "stack": "stack técnico concreto y específico",
-  "pros": ["pro concreto 1", "pro concreto 2", "pro concreto 3"],
-  "cons": ["con concreto 1", "con concreto 2", "con concreto 3"],
-  "veredicto": "una línea brutal, directa y con algo de humor sarcástico",
-  "mayorRiesgo": "el riesgo principal que puede matar este proyecto",
+  "pagaHoy": "quién paga, cuánto, cómo",
+  "publicObj": "cliente específico con contexto LATAM",
+  "diferencial": "ventaja real, difícil de copiar",
+  "benchmark": "competidores reales con nombre",
+  "stack": "stack técnico concreto",
+  "pros": ["pro 1", "pro 2", "pro 3"],
+  "cons": ["con 1", "con 2", "con 3"],
+  "veredicto": "una línea brutal, directa, sarcástica",
+  "mayorRiesgo": "el riesgo que puede matar esto",
   "monetizacion": [
-    { "modelo": "nombre", "descripcion": "descripción corta", "pros": "ventaja principal", "contras": "desventaja principal", "mrrEstimado": "rango USD" },
-    { "modelo": "nombre", "descripcion": "descripción corta", "pros": "ventaja principal", "contras": "desventaja principal", "mrrEstimado": "rango USD" },
-    { "modelo": "nombre", "descripcion": "descripción corta", "pros": "ventaja principal", "contras": "desventaja principal", "mrrEstimado": "rango USD" }
+    { "modelo": "nombre", "descripcion": "desc", "pros": "ventaja", "contras": "desventaja", "mrrEstimado": "rango USD" },
+    { "modelo": "nombre", "descripcion": "desc", "pros": "ventaja", "contras": "desventaja", "mrrEstimado": "rango USD" },
+    { "modelo": "nombre", "descripcion": "desc", "pros": "ventaja", "contras": "desventaja", "mrrEstimado": "rango USD" }
   ],
-  "publicidad": {
-    "organico": "canales orgánicos concretos",
-    "pago": "cuándo y si vale publicidad paga",
-    "recomendacion": "orgánico vs pago con justificación"
+  "publicidad": { "organico": "canales orgánicos", "pago": "si vale y cuándo", "recomendacion": "qué hacer primero" },
+  "gtm90dias": "plan 90 días exactamente 3 frases separadas por punto",
+  "riesgoLegal": "riesgos regulatorios LATAM",
+  "primeros30dias": "3 acciones concretas antes de escribir código",
+  "scoreRationale": { "traccion": "1 línea", "moat": "1 línea", "monetizacion": "1 línea", "velocidad": "1 línea", "mercado": "1 línea" },
+  "scores": { "traccion": 0, "moat": 0, "monetizacion": 0, "velocidad": 0, "mercado": 0 },
+  "nextStep": { "accion": "qué hacer hoy", "razon": "por qué esta acción primero", "urgencia": "alta|media|baja" },
+  "hipotesis": [
+    { "hipotesis": "suposición crítica 1", "porqueCritica": "si falla esto, el negocio muere", "riesgo": "alta|media|baja", "metodo": "cómo testearla", "metrica": "cómo saber si pasó o falló", "tiempoEstimado": "X días", "costoEstimado": "$X", "siFalla": "qué hacer si esta hipótesis es falsa" },
+    { "hipotesis": "suposición crítica 2", "porqueCritica": "impacto si falla", "riesgo": "alta|media|baja", "metodo": "método", "metrica": "métrica", "tiempoEstimado": "X días", "costoEstimado": "$X", "siFalla": "plan B" },
+    { "hipotesis": "suposición crítica 3", "porqueCritica": "impacto si falla", "riesgo": "alta|media|baja", "metodo": "método", "metrica": "métrica", "tiempoEstimado": "X días", "costoEstimado": "$X", "siFalla": "plan B" }
+  ],
+  "personas": [
+    { "nombre": "nombre ficticio realista", "rol": "cargo y empresa", "edad": "rango de edad", "frase": "quote que diría sobre el problema", "frustracion": "qué lo frustra hoy", "objetivo": "qué quiere lograr", "disposicionPago": "cuánto pagaría y por qué", "canal": "dónde lo encontramos", "triggers": ["trigger de compra 1", "trigger 2"] },
+    { "nombre": "nombre ficticio 2", "rol": "cargo", "edad": "rango", "frase": "quote", "frustracion": "frustración", "objetivo": "objetivo", "disposicionPago": "disposición", "canal": "canal", "triggers": ["trigger 1", "trigger 2"] }
+  ],
+  "personaInsight": "qué tienen en común estos dos perfiles y cómo impacta el go-to-market",
+  "canvas": {
+    "propuestaValor": "qué valor único entregás",
+    "segmentoClientes": ["segmento 1", "segmento 2"],
+    "canales": ["canal 1", "canal 2"],
+    "relacionClientes": "cómo te relacionás con clientes",
+    "actividadesClave": ["actividad 1", "actividad 2", "actividad 3"],
+    "recursosClave": ["recurso 1", "recurso 2"],
+    "sociosClave": ["socio/partner 1", "socio 2"],
+    "estructuraCostos": ["costo principal 1", "costo 2", "costo 3"],
+    "fuentesIngreso": ["ingreso 1", "ingreso 2"]
   },
-  "gtm90dias": "plan 90 días en exactamente 3 frases separadas por punto. Una por mes.",
-  "riesgoLegal": "riesgos regulatorios específicos del mercado LATAM",
-  "primeros30dias": "3 acciones concretas antes de escribir una línea de código",
-  "scoreRationale": {
-    "traccion": "justificación en 1 línea",
-    "moat": "justificación en 1 línea",
-    "monetizacion": "justificación en 1 línea",
-    "velocidad": "justificación en 1 línea",
-    "mercado": "justificación en 1 línea"
-  },
-  "scores": { "traccion": 0, "moat": 0, "monetizacion": 0, "velocidad": 0, "mercado": 0 }
+  "budget": {
+    "items": [
+      GENERA entre 8 y 14 items REALES para esta idea específica. Para cada item:
+      - "id": número entero incremental
+      - "category": una de: "infra" | "ai" | "tools" | "ads" | "freelancer" | "legal" | "other"
+      - "description": descripción concreta del gasto (ej: "Vercel Pro para el frontend", "Claude API — estimado 50K tokens/día", "Meta Ads — test inicial de audiencia")
+      - "amount": monto en USD (realista para el tipo de producto y mercado LATAM)
+      - "phase": una de: "MVP" | "Pre-lanzamiento" | "Mes 1" | "Mes 2-3" | "Recurrente"
+      - "recurring": true si es gasto mensual recurrente, false si es one-time
+
+      SIEMPRE incluí: dominio, hosting, al menos 1 item de AI/API, herramientas de desarrollo.
+      Si la idea usa AI generativa: calculá el costo de API según el uso esperado.
+      Si es un SaaS: incluí costos de DB, auth, email transaccional.
+      Si requiere validación de mercado: incluí presupuesto de ads para smoke test.
+      Sé REALISTA: ni muy bajo ni inflado. Un MVP típico en LATAM cuesta $500-2000 one-time + $100-300/mes recurrente.
+    ],
+    "notes": "Budget estimado por el Shark basado en el stack y modelo de negocio. Ajustá según proveedores locales.",
+    "currency": "USD"
+  }
 }`;
 
 // ── EMPTY BOARD ──────────────────────────────────────────────────
@@ -128,7 +164,7 @@ function EmptyBoard({ onAdd }) {
 }
 
 // ── ANALYSIS TAB ─────────────────────────────────────────────────
-function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt }) {
+function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt, onGoTab }) {
   if (!a && !analyzing) return (
     <div style={{ textAlign:"center", padding:"72px 20px", background:T.surface, border:`1px solid ${T.border}`, borderRadius:20, backdropFilter:"blur(12px)" }}>
       {/* Animated shark logo */}
@@ -169,9 +205,37 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
     </div>
   );
 
+  // Score evolution delta
+  const prevScore = a.prevScore || null;
+  const scoreDelta = prevScore ? (a.avgScore - prevScore).toFixed(1) : null;
+
+  // Next step CTA config
+  const getNextStep = (score, a) => {
+    if (!score) return null;
+    if (score >= 7.5) return { tab:"canvas",    icon:"📋", label:"Generá el Lean Canvas", sub:"Tu idea tiene score alto — siguiente paso: estructurala formalmente", color:"#6C5CE7", bg:"rgba(108,92,231,0.15)", border:"rgba(108,92,231,0.3)" };
+    if (score >= 5)   return { tab:"hipotesis",  icon:"🧪", label:"Definí tus hipótesis de validación", sub:"Antes de construir, testéa estos supuestos críticos — alguno puede cambiar todo", color:"#FFB547", bg:"rgba(255,181,71,0.12)", border:"rgba(255,181,71,0.25)" };
+    return              { tab:"analysis",   icon:"🔄", label:"El Shark dice: pivoteá antes de seguir", sub:"Score bajo. Describí el cambio y re-analizá antes de invertir más tiempo", color:"#FF5F7A", bg:"rgba(255,95,122,0.12)", border:"rgba(255,95,122,0.25)", action:"reanalyze" };
+  };
+  const nextStep = getNextStep(a.avgScore, a);
+
   return (
     <div style={{ display:"grid", gap:14, animation:"fadeUp 0.3s ease" }}>
       <VerdictBanner score={a.avgScore}/>
+
+      {/* Score evolution */}
+      {scoreDelta && (
+        <div style={{ background: parseFloat(scoreDelta) >= 0 ? "rgba(0,245,212,0.08)" : "rgba(255,95,122,0.08)", border: `1px solid ${parseFloat(scoreDelta) >= 0 ? "rgba(0,245,212,0.2)" : "rgba(255,95,122,0.2)"}`, borderRadius:12, padding:"12px 18px", display:"flex", alignItems:"center", gap:12 }}>
+          <span style={{ fontSize:22 }}>{parseFloat(scoreDelta) >= 0 ? "📈" : "📉"}</span>
+          <div>
+            <div style={{ fontWeight:700, fontSize:13, color: parseFloat(scoreDelta) >= 0 ? "#00F5D4" : "#FF5F7A", fontFamily:T.fontDisplay }}>
+              Score {parseFloat(scoreDelta) >= 0 ? "subió" : "bajó"} {parseFloat(scoreDelta) >= 0 ? "+" : ""}{scoreDelta} puntos desde el análisis anterior
+            </div>
+            <div style={{ fontSize:11, color:T.textMute, marginTop:2 }}>
+              {prevScore?.toFixed(1)} → {a.avgScore?.toFixed(1)} · {a.analyzedAt ? new Date(a.analyzedAt).toLocaleDateString("es-AR") : "hoy"}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:14, alignItems:"start" }}>
         <Card title="🎯 Scoring detallado">
@@ -220,6 +284,21 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
         <Card title="⚖️ Riesgo legal"  accent="#6C5CE7"><p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.65 }}>{a.riesgoLegal}</p></Card>
       </div>
       <Card title="📅 Primeros 30 días"><p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.7 }}>{a.primeros30dias}</p></Card>
+
+      {/* Next step CTA */}
+      {nextStep && (
+        <div style={{ background:nextStep.bg, border:`1px solid ${nextStep.border}`, borderRadius:16, padding:"20px 22px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:14 }}>
+          <div>
+            <div style={{ fontSize:10, fontWeight:700, color:nextStep.color, textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:6, fontFamily:T.fontDisplay }}>🦈 Próximo paso recomendado</div>
+            <div style={{ fontWeight:700, fontSize:16, color:T.text, marginBottom:4, fontFamily:T.fontDisplay, letterSpacing:"-0.3px" }}>{nextStep.icon} {nextStep.label}</div>
+            <div style={{ fontSize:13, color:T.textMute, lineHeight:1.5 }}>{nextStep.sub}</div>
+          </div>
+          <button onClick={()=>nextStep.action==="reanalyze" ? onReanalyze() : onGoTab(nextStep.tab)}
+            style={{ background:`linear-gradient(135deg,${nextStep.color}CC,${nextStep.color}88)`, border:"none", borderRadius:10, padding:"11px 20px", color:"#fff", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:T.fontDisplay, flexShrink:0, whiteSpace:"nowrap", boxShadow:`0 0 16px ${nextStep.color}40` }}>
+            Ir →
+          </button>
+        </div>
+      )}
 
       <div style={{ display:"flex", justifyContent:"flex-end", gap:10 }}>
         <GlowBtn onClick={onExportPrompt} variant="ghost">⬇️ Exportar Prompt</GlowBtn>
@@ -377,7 +456,7 @@ export default function App() {
     setAnalyzing(true);
     const ideaId = sel.id;
     try {
-      const res  = await fetch("/api/shark", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ prompt:ANALYZE_PROMPT(sel.title, sel.description) }) });
+      const res  = await fetch("/api/shark", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ prompt:ANALYZE_PROMPT(sel.title, sel.description, sel.industry||"") }) });
       const data = await res.json();
       const text = data.content?.[0]?.text || "";
       let jsonText = text.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
@@ -385,7 +464,8 @@ export default function App() {
       if (fb!==-1&&lb!==-1) jsonText = jsonText.slice(fb,lb+1);
       const parsed   = JSON.parse(jsonText);
       const avgScore = Object.values(parsed.scores).reduce((a,b)=>a+b,0)/5;
-      await saveAnalysis(ideaId, {...parsed, avgScore});
+      const prevScore = ideas.find(i=>i.id===ideaId)?.analysis?.avgScore || null;
+      await saveAnalysis(ideaId, {...parsed, avgScore, prevScore, analyzedAt: new Date().toISOString()});
     } catch(err) {
       await saveAnalysis(ideaId, {error:true, msg:err.message});
     }
@@ -407,6 +487,59 @@ export default function App() {
     if (!idea) return;
     const newAnalysis = { ...(idea.analysis || {}), budget };
     saveAnalysis(ideaId, newAnalysis);
+  };
+
+  const savePresell = (ideaId, presell) => {
+    updateIdea(ideaId, { presell });
+  };
+
+  const refreshCompetitors = async () => {
+    if (!sel) return;
+    const ideaId = sel.id;
+    const competitorPrompt = `Buscá competidores reales en internet para esta idea de negocio. Devolvé SOLO JSON. Sin markdown, sin backticks.
+
+IDEA: ${sel.title}
+DESCRIPCIÓN: ${sel.description}
+
+Buscá exactamente: competidores directos, productos alternativos, herramientas que resuelvan el mismo problema.
+
+{
+  "competidores": [
+    {
+      "nombre": "nombre real del producto/empresa",
+      "url": "https://...",
+      "modelo": "SaaS/marketplace/etc",
+      "mercado": "mercado objetivo",
+      "amenaza": "alta|media|baja",
+      "funding": "financiamiento conocido o bootstrapped",
+      "fortaleza": "qué hacen bien",
+      "debilidad": "punto débil explotable",
+      "precio": "modelo de precios actual",
+      "nuestroDiferencial": "cómo nos diferenciamos de este específicamente"
+    }
+  ],
+  "mapaCompetitivo": "resumen del landscape en 2-3 líneas: quiénes dominan, qué nicho está vacío",
+  "brechaCompetitiva": "la oportunidad concreta que estos competidores dejan libre"
+}`;
+    try {
+      const res = await fetch("/api/shark", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: competitorPrompt, useWebSearch: true }),
+      });
+      const data = await res.json();
+      // Extract text from response (may contain tool_use blocks)
+      const textBlocks = (data.content || []).filter(b => b.type === "text");
+      const text = textBlocks.map(b => b.text).join("\n");
+      let jsonText = text.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
+      const fb = jsonText.indexOf("{"), lb = jsonText.lastIndexOf("}");
+      if (fb !== -1 && lb !== -1) jsonText = jsonText.slice(fb, lb+1);
+      const parsed = JSON.parse(jsonText);
+      const newAnalysis = { ...(sel.analysis || {}), ...parsed };
+      await saveAnalysis(ideaId, newAnalysis);
+    } catch(err) {
+      console.error("Competitors fetch error:", err);
+    }
   };
 
   // ── LOADING ────────────────────────────────────────────────────
@@ -635,10 +768,15 @@ export default function App() {
                     </div>
                   </div>
                 )}
-                {tab==="analysis"     && <AnalysisTab     sel={sel} a={a} analyzing={analyzing} onAnalyze={analyze} onReanalyze={reanalyze} onExportPrompt={handleExportPrompt}/>}
+                {tab==="analysis"     && <AnalysisTab     sel={sel} a={a} analyzing={analyzing} onAnalyze={analyze} onReanalyze={reanalyze} onExportPrompt={handleExportPrompt} onGoTab={setTab}/>}
                 {tab==="monetizacion" && <MonetizacionTab a={a} onGoAnalysis={()=>setTab("analysis")}/>}
                 {tab==="gtm"          && <GtmTab          a={a} onGoAnalysis={()=>setTab("analysis")}/>}
+                {tab==="hipotesis"    && <HipotesisTab    a={a} onGoAnalysis={()=>setTab("analysis")}/>}
+                {tab==="personas"     && <PersonasTab     a={a} onGoAnalysis={()=>setTab("analysis")}/>}
+                {tab==="competidores" && <CompetidoresTab a={a} idea={sel} onGoAnalysis={()=>setTab("analysis")} onRefreshCompetitors={refreshCompetitors}/>}
+                {tab==="canvas"       && <CanvasTab       a={a} onGoAnalysis={()=>setTab("analysis")}/>}
                 {tab==="budget"       && <BudgetTab       ideaId={sel.id} budget={sel.analysis?.budget} onSave={saveBudget}/>}
+                {tab==="presell"      && <PreSellTab      ideaId={sel.id} presell={sel.presell||[]} onSave={savePresell}/>}
                 {tab==="comments"     && <CommentsTab     sel={sel} onAdd={addComment}/>}
               </div>
             </div>
