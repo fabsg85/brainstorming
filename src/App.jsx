@@ -176,10 +176,10 @@ IMPORTANTE: Todos los campos son obligatorios. El JSON debe ser parseable.
 }`;
 
 // ── EMPTY BOARD ──────────────────────────────────────────────────
-function EmptyBoard({ onAdd }) {
+function EmptyBoard({ onAdd, light }) {
   return (
     <div style={{ minHeight:"100vh", background:"#0B0B0F", display:"flex", alignItems:"center", justifyContent:"center", padding:20, position:"relative", overflow:"hidden" }}>
-      <BackgroundEffects light={lightMode}/>
+      <BackgroundEffects light={light}/>
       <div style={{ textAlign:"center", maxWidth:560, position:"relative", zIndex:1 }}>
         {/* Logo */}
         <div style={{ marginBottom:28, display:"inline-flex", animation:"glowPulse 3s ease-in-out infinite" }}>
@@ -364,7 +364,7 @@ function MonetizacionTab({ a, onGoAnalysis }) {
   return (
     <div style={{ display:"grid", gap:14 }}>
       {a.monetizacion?.map((m,i) => (
-        <div key={i} style={{ background:"var(--surface)", border:`1px solid ${i===0?"rgba(108,92,231,0.3)":"var(--border)"}, borderRadius:16, overflow:"hidden", backdropFilter:"blur(12px)", boxShadow:i===0?"0 0 30px rgba(108,92,231,0.15)":"none" }}>
+        <div key={i} style={{ background:"var(--surface)", border:`1px solid ${i===0?"rgba(108,92,231,0.3)":"var(--border)"}`, borderRadius:16, overflow:"hidden", backdropFilter:"blur(12px)", boxShadow:i===0?"0 0 30px rgba(108,92,231,0.15)":"none" }}>
           <div style={{ background:i===0?"linear-gradient(135deg,rgba(108,92,231,0.2),rgba(0,245,212,0.08))":"rgba(255,255,255,0.03)", padding:"16px 22px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:"1px solid var(--border)", position:"relative", overflow:"hidden" }}>
             {i===0&&<div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(108,92,231,0.6),rgba(0,245,212,0.3),transparent)" }}/>}
             <div>
@@ -665,7 +665,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
   if (ideas.length === 0 && !wizard) return (
     <>
       <GlobalStyles/>
-      <EmptyBoard onAdd={()=>setWizard(true)}/>
+      <EmptyBoard onAdd={()=>setWizard(true)} light={lightMode}/>
       {wizard&&<Wizard onSave={handleAdd} onClose={()=>setWizard(false)}/>}
     </>
   );
@@ -820,8 +820,9 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
                 </div>
               )}
             </div>
+          </div>
 
-                    {/* MAIN PANEL */}
+          {/* MAIN PANEL */}
           {sel ? (
             <div style={{ flex:1, overflowY:"auto", minWidth:0, position:"relative", zIndex:1, background:"var(--bg)" }}>
               {/* Idea header */}
