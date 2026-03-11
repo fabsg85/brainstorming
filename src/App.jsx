@@ -106,21 +106,16 @@ IMPORTANTE: Todos los campos son obligatorios. El JSON debe ser parseable.
   },
   "budget": {
     "items": [
-      GENERA entre 8 y 14 items REALES para esta idea específica. Para cada item:
-      - "id": número entero incremental
-      - "category": una de: "infra" | "ai" | "tools" | "ads" | "freelancer" | "legal" | "other"
-      - "description": descripción concreta del gasto (ej: "Vercel Pro para el frontend", "Claude API — estimado 50K tokens/día", "Meta Ads — test inicial de audiencia")
-      - "amount": monto en USD (realista para el tipo de producto y mercado LATAM)
-      - "phase": una de: "MVP" | "Pre-lanzamiento" | "Mes 1" | "Mes 2-3" | "Recurrente"
-      - "recurring": true si es gasto mensual recurrente, false si es one-time
-
-      SIEMPRE incluí: dominio, hosting, al menos 1 item de AI/API, herramientas de desarrollo.
-      Si la idea usa AI generativa: calculá el costo de API según el uso esperado.
-      Si es un SaaS: incluí costos de DB, auth, email transaccional.
-      Si requiere validación de mercado: incluí presupuesto de ads para smoke test.
-      Sé REALISTA: ni muy bajo ni inflado. Un MVP típico en LATAM cuesta $500-2000 one-time + $100-300/mes recurrente.
+      { "id": 1, "category": "infra",      "description": "Dominio .com/.io (anual)", "amount": 15,  "phase": "MVP",           "recurring": false },
+      { "id": 2, "category": "infra",      "description": "Hosting / Vercel Pro",     "amount": 20,  "phase": "MVP",           "recurring": true  },
+      { "id": 3, "category": "ai",         "description": "API LLM — estimado MVP",   "amount": 50,  "phase": "MVP",           "recurring": true  },
+      { "id": 4, "category": "tools",      "description": "Supabase Free/Pro",        "amount": 25,  "phase": "MVP",           "recurring": true  },
+      { "id": 5, "category": "tools",      "description": "Email transaccional (Resend/SendGrid)", "amount": 10, "phase": "MVP", "recurring": true },
+      { "id": 6, "category": "ads",        "description": "Meta Ads — smoke test inicial", "amount": 150, "phase": "Pre-lanzamiento", "recurring": false },
+      { "id": 7, "category": "freelancer", "description": "Dev freelancer — revisión y deploy", "amount": 300, "phase": "MVP", "recurring": false },
+      { "id": 8, "category": "tools",      "description": "Figma / diseño UI",        "amount": 15,  "phase": "MVP",           "recurring": true  }
     ],
-    "notes": "Budget estimado por el Shark basado en el stack y modelo de negocio. Ajustá según proveedores locales.",
+    "notes": "Budget estimado por el Shark según el stack y modelo. IMPORTANTE: ajustá los montos según el tipo de producto — si es AI-heavy aumentá el ítem de API, si necesitás validación rápida aumentá ads.",
     "currency": "USD"
   }
 }`;
@@ -462,7 +457,11 @@ export default function App() {
       let jsonText = text.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
       const fb = jsonText.indexOf("{"), lb = jsonText.lastIndexOf("}");
       if (fb!==-1&&lb!==-1) jsonText = jsonText.slice(fb,lb+1);
-      const parsed   = JSON.parse(jsonText);
+      // Repair common JSON issues: trailing commas before ] or }
+      jsonText = jsonText
+        .replace(/,(\s*[}\]])/g, "$1")        // trailing commas
+        .replace(/:\s*undefined/g, ': null');  // undefined values
+      const parsed = JSON.parse(jsonText);
       const avgScore = Object.values(parsed.scores).reduce((a,b)=>a+b,0)/5;
       const prevScore = ideas.find(i=>i.id===ideaId)?.analysis?.avgScore || null;
       await saveAnalysis(ideaId, {...parsed, avgScore, prevScore, analyzedAt: new Date().toISOString()});
