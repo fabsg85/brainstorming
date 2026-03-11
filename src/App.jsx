@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { T, STAGES, SCORE_CRITERIA, TABS } from "./constants";
+import { T, STAGES, SCORE_CRITERIA, TABS, SHARK_PROFILES } from "./constants";
 import { scoreColor, scoreLabel, exportMarkdown } from "./utils";
 import { useIdeas } from "./hooks/useIdeas";
 
@@ -104,7 +104,9 @@ const BackgroundEffects = ({ light }) => (
   </div>
 );
 
-const ANALYZE_PROMPT = (title, description, industry = "") => `Sos un Shark board: inversor brutal, técnico, rioplatense. Analizá esta idea y devolvé SOLO JSON válido. Sin markdown, sin backticks, sin texto extra. Empezá con { terminá con }.
+const ANALYZE_PROMPT = (title, description, industry = "", sharkPrompt = "") => `${sharkPrompt || "Sos un Shark board: inversor brutal, técnico, rioplatense."}
+
+Analizá esta idea y devolvé SOLO JSON válido. Sin markdown, sin backticks, sin texto extra. Empezá con { terminá con }.
 
 IDEA: ${title}
 DESCRIPCIÓN: ${description}
@@ -176,6 +178,76 @@ IMPORTANTE: Todos los campos son obligatorios. El JSON debe ser parseable.
   }
 }`;
 
+// ── SHARK PICKER ─────────────────────────────────────────────────
+function SharkPicker({ value, onChange, light }) {
+  const [open, setOpen] = useState(false);
+  const active = SHARK_PROFILES.find(p => p.key === value) || SHARK_PROFILES[0];
+
+  return (
+    <div style={{ position:"relative" }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        title="Cambiar Shark"
+        style={{
+          display:"flex", alignItems:"center", gap:7,
+          background: open ? active.bg : "var(--surface2)",
+          border:`1px solid ${open ? active.border : "var(--border)"}`,
+          borderRadius:9, padding:"6px 12px 6px 10px",
+          cursor:"pointer", transition:"all 0.15s",
+          color:"var(--text)", fontFamily:"'Sora',sans-serif",
+        }}
+      >
+        <span style={{ fontSize:16, lineHeight:1 }}>{active.emoji}</span>
+        <span style={{ fontSize:12, fontWeight:700, color: open ? active.color : "var(--textMid)", letterSpacing:"-0.2px" }}>{active.name}</span>
+        <span style={{ fontSize:9, color:"var(--textMute)", marginTop:1 }}>{open ? "▲" : "▼"}</span>
+      </button>
+
+      {open && (
+        <>
+          <div onClick={() => setOpen(false)} style={{ position:"fixed", inset:0, zIndex:98 }}/>
+          <div style={{
+            position:"absolute", top:"calc(100% + 8px)", right:0,
+            background:"var(--bg2)", border:"1px solid var(--border2)",
+            borderRadius:14, padding:8, zIndex:99, minWidth:280,
+            boxShadow:"0 16px 48px rgba(0,0,0,0.3)",
+            animation:"fadeUp 0.15s ease",
+          }}>
+            <div style={{ fontSize:10, fontWeight:700, color:"var(--textMute)", textTransform:"uppercase", letterSpacing:"1.2px", padding:"4px 8px 8px", fontFamily:"'Sora',sans-serif" }}>
+              Elegí tu Shark
+            </div>
+            {SHARK_PROFILES.map(p => (
+              <button
+                key={p.key}
+                onClick={() => { onChange(p.key); localStorage.setItem("sb-shark", p.key); setOpen(false); }}
+                style={{
+                  width:"100%", display:"flex", alignItems:"center", gap:10,
+                  background: value === p.key ? p.bg : "transparent",
+                  border:`1px solid ${value === p.key ? p.border : "transparent"}`,
+                  borderRadius:10, padding:"9px 12px",
+                  cursor:"pointer", transition:"all 0.12s", textAlign:"left",
+                  marginBottom:3,
+                }}
+              >
+                <span style={{ fontSize:22, lineHeight:1, flexShrink:0 }}>{p.emoji}</span>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                    <span style={{ fontSize:13, fontWeight:700, color: value === p.key ? p.color : "var(--text)", fontFamily:"'Sora',sans-serif" }}>{p.name}</span>
+                    <span style={{ fontSize:10, color:"var(--textMute)", fontStyle:"italic" }}>({p.aka})</span>
+                  </div>
+                  <div style={{ fontSize:11, color:"var(--textMute)", marginTop:2, lineHeight:1.3 }}>{p.tagline}</div>
+                </div>
+                {value === p.key && (
+                  <span style={{ fontSize:14, color: p.color, flexShrink:0 }}>✓</span>
+                )}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ── EMPTY BOARD ──────────────────────────────────────────────────
 function EmptyBoard({ onAdd, light }) {
   return (
@@ -232,11 +304,14 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
     </div>
   );
 
+  const activeShark = SHARK_PROFILES.find(p => p.key === sharkProfile) || SHARK_PROFILES[0];
+
   if (analyzing) return (
     <div style={{ textAlign:"center", padding:"80px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ animation:"pulse 1.6s ease-in-out infinite", display:"inline-block" }}><SharkLogo size={64}/></div>
-      <div style={{ color:"var(--text)", fontWeight:700, fontSize:20, marginTop:24, fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px" }}>El Shark está pensando...</div>
-      <div style={{ color:"var(--textMute)", fontSize:13, marginTop:8, marginBottom:28 }}>No lo toques. Esto tarda unos segundos.</div>
+      <div style={{ color:"var(--text)", fontWeight:700, fontSize:20, marginTop:24, fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px" }}>{activeShark.emoji} {activeShark.name} está pensando...</div>
+      <div style={{ color:"var(--textMute)", fontSize:13, marginTop:4, marginBottom:6 }}>{activeShark.tagline}</div>
+      <div style={{ color:"var(--textMute)", fontSize:11, marginBottom:28 }}>No lo toques. Esto tarda unos segundos.</div>
       <div style={{ display:"flex", justifyContent:"center", gap:6, flexWrap:"wrap" }}>
         {SCORE_CRITERIA.map((c,i) => (
           <span key={c.key} style={{ fontSize:11, color:"var(--textMid)", background:"var(--surface2)", border:"1px solid var(--border)", borderRadius:99, padding:"4px 12px", fontWeight:600, fontFamily:"'Sora',sans-serif", animation:`pulse 1.6s ${i*0.2}s infinite` }}>
@@ -271,6 +346,14 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
 
   return (
     <div style={{ display:"grid", gap:14, animation:"fadeUp 0.3s ease" }}>
+      {/* Active shark badge */}
+      <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 14px", background: activeShark.bg, border:`1px solid ${activeShark.border}`, borderRadius:10 }}>
+        <span style={{ fontSize:18 }}>{activeShark.emoji}</span>
+        <div>
+          <span style={{ fontSize:12, fontWeight:700, color: activeShark.color, fontFamily:"'Sora',sans-serif" }}>{activeShark.name}</span>
+          <span style={{ fontSize:11, color:"var(--textMute)", marginLeft:6 }}>· {activeShark.tagline}</span>
+        </div>
+      </div>
       <VerdictBanner score={a.avgScore}/>
 
       {/* Score evolution */}
@@ -488,6 +571,7 @@ export default function App() {
   const [sidebarFilter, setSidebarFilter] = useState("");
   const [sidebarSort,   setSidebarSort]   = useState("score");
   const [lightMode,     setLightMode]     = useState(() => localStorage.getItem("sb-theme") === "light");
+  const [sharkProfile,  setSharkProfile]  = useState(() => localStorage.getItem("sb-shark") || "tiburon");
   const analyzeRef = useRef(false);
 
   const toggleTheme = () => setLightMode(v => {
@@ -537,8 +621,9 @@ export default function App() {
     analyzeRef.current = true;
     setAnalyzing(true);
     const ideaId = sel.id;
+    const activeShark = SHARK_PROFILES.find(p => p.key === sharkProfile) || SHARK_PROFILES[0];
     try {
-      const res  = await fetch("/api/shark", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ prompt:ANALYZE_PROMPT(sel.title, sel.description, sel.industry||"") }) });
+      const res  = await fetch("/api/shark", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ prompt:ANALYZE_PROMPT(sel.title, sel.description, sel.industry||"", activeShark.systemPrompt) }) });
       const data = await res.json();
       const text = data.content?.[0]?.text || "";
       let jsonText = text.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
@@ -703,6 +788,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
             style={{ background:"var(--surface2)", border:"1px solid var(--border)", borderRadius:9, padding:"7px 12px", color:"var(--textMid)", fontWeight:600, fontSize:16, cursor:"pointer", lineHeight:1 }}>
             {lightMode ? "🌙" : "☀️"}
           </button>
+          <SharkPicker value={sharkProfile} onChange={setSharkProfile} light={lightMode}/>
           <button onClick={()=>setWizard(true)}
             style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:9, padding:"8px 18px", color:"#fff", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"'Sora',sans-serif", boxShadow:"0 0 16px rgba(108,92,231,0.4)" }}>
             + Idea
