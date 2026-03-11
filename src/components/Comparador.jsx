@@ -19,7 +19,7 @@ export default function Comparador({ ideas }) {
   const ideaB = ideas.find(i=>i.id===selB);
 
   const selectStyle = {
-    border: `1px solid ${var(--border2)}`, borderRadius:10, padding:"10px 12px",
+    border: "1px solid var(--border2)", borderRadius:10, padding:"10px 12px",
     fontSize:13, color:"var(--text)",
     background:"var(--surface)",
     cursor:"pointer", fontFamily:"'Sora', sans-serif", fontWeight:600,
@@ -34,7 +34,7 @@ export default function Comparador({ ideas }) {
         <div style={{ color:"var(--text)"Mute, fontSize:13, marginBottom:24 }}>{analyzed.length} analizadas · ordenadas por score del Shark</div>
 
         {ideas.length>1 && (
-          <div style={{ background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:18, padding:"22px", marginBottom:28, backdropFilter:"blur(12px)", boxShadow:"0 4px 24px rgba(0,0,0,0.3)" }}>
+          <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:18, padding:"22px", marginBottom:28, backdropFilter:"blur(12px)", boxShadow:"0 4px 24px rgba(0,0,0,0.3)" }}>
             <div style={{ fontSize:10, fontWeight:700, color:"var(--text)"Mute, textTransform:"uppercase", letterSpacing:"1px", marginBottom:18, fontFamily:"'Sora', sans-serif" }}>Comparativa de scores</div>
             <MiniBarChart ideas={ideas}/>
           </div>
@@ -43,7 +43,7 @@ export default function Comparador({ ideas }) {
         {/* Table */}
         <div style={{ overflowX:"auto" }}>
           <div style={{ minWidth:560 }}>
-            <div style={{ display:"grid", gridTemplateColumns:"28px 1fr 56px 56px 56px 56px 56px 80px", gap:6, padding:"8px 14px", background:"var(--surface)", borderRadius:10, marginBottom:6, fontSize:10, fontWeight:700, color:"var(--text)"Mute, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora', sans-serif", border:`1px solid ${var(--border)}` }}>
+            <div style={{ display:"grid", gridTemplateColumns:"28px 1fr 56px 56px 56px 56px 56px 80px", gap:6, padding:"8px 14px", background:"var(--surface)", borderRadius:10, marginBottom:6, fontSize:10, fontWeight:700, color:"var(--text)"Mute, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora', sans-serif", border:"1px solid var(--border)" }}>
               <div>#</div><div>Idea</div>
               {SCORE_CRITERIA.map(c=><div key={c.key} style={{textAlign:"center"}}>{c.icon}</div>)}
               <div style={{textAlign:"center"}}>TOTAL</div>
@@ -51,7 +51,7 @@ export default function Comparador({ ideas }) {
             {sorted.map((idea,idx)=>{
               const sc=idea.analysis?.scores, total=avg(sc);
               return (
-                <div key={idea.id} style={{ display:"grid", gridTemplateColumns:"28px 1fr 56px 56px 56px 56px 56px 80px", gap:6, padding:"12px 14px", background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:12, marginBottom:6, alignItems:"center", backdropFilter:"blur(8px)", transition:"border-color 0.2s" }}>
+                <div key={idea.id} style={{ display:"grid", gridTemplateColumns:"28px 1fr 56px 56px 56px 56px 56px 80px", gap:6, padding:"12px 14px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:12, marginBottom:6, alignItems:"center", backdropFilter:"blur(8px)", transition:"border-color 0.2s" }}>
                   <div style={{fontWeight:800,fontSize:14}}>
                     {idx===0?"🥇":idx===1?"🥈":idx===2?"🥉":<span style={{color:"var(--text)"Mute,fontSize:13}}>{idx+1}</span>}
                   </div>
@@ -83,7 +83,7 @@ export default function Comparador({ ideas }) {
       <div style={{ color:"var(--text)"Mute, fontSize:13, marginBottom:20 }}>Dos ideas. Una gana.</div>
 
       {analyzed.length<2 ? (
-        <div style={{ textAlign:"center", padding:"44px", background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:16, backdropFilter:"blur(8px)" }}>
+        <div style={{ textAlign:"center", padding:"44px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, backdropFilter:"blur(8px)" }}>
           <div style={{fontSize:32,marginBottom:8}}>⚖️</div>
           <div style={{color:"var(--text)"Mid,fontFamily:"'Sora', sans-serif"}}>Necesitás al menos 2 ideas analizadas</div>
         </div>
@@ -108,7 +108,7 @@ export default function Comparador({ ideas }) {
                 const ia=idea.analysis, sc=ia?.avgScore;
                 return (
                   <div key={idea.id} style={{border:`1px solid ${color}20`,borderRadius:18,overflow:"hidden",boxShadow:`0 0 40px ${color}10`,backdropFilter:"blur(12px)"}}>
-                    <div style={{background:`linear-gradient(135deg,${color}18,${color}06)`,padding:"18px 20px",borderBottom:`1px solid ${var(--border)}`,position:"relative",overflow:"hidden"}}>
+                    <div style={{background:`linear-gradient(135deg,${color}18,${color}06)`,padding:"18px 20px",borderBottom:"1px solid var(--border)",position:"relative",overflow:"hidden"}}>
                       <div style={{position:"absolute",top:0,left:0,right:0,height:1,background:`linear-gradient(90deg,transparent,${color}60,transparent)`}}/>
                       <div style={{color:"var(--text)"Mute,fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:5,fontFamily:"'Sora', sans-serif"}}>Idea {col===0?"A":"B"}</div>
                       <div style={{color:"var(--text)",fontWeight:700,fontSize:16,lineHeight:1.3,marginBottom:12,fontFamily:"'Sora', sans-serif",letterSpacing:"-0.3px"}}>{idea.title}</div>
@@ -134,7 +134,7 @@ export default function Comparador({ ideas }) {
                         return <ScoreBar key={c.key} icon={c.icon} label={c.label} value={val}/>;
                       })}
                       {ia?.veredicto&&(
-                        <div style={{background:"var(--surface)",borderRadius:10,padding:"12px 14px",border:`1px solid ${var(--border)}`}}>
+                        <div style={{background:"var(--surface)",borderRadius:10,padding:"12px 14px",border:"1px solid var(--border)"}}>
                           <div style={{fontSize:10,fontWeight:700,color:"var(--text)"Mute,marginBottom:5,textTransform:"uppercase",letterSpacing:"0.8px",fontFamily:"'Sora', sans-serif"}}>Veredicto</div>
                           <p style={{margin:0,fontSize:13,color:"var(--text)"Mid,lineHeight:1.5,fontStyle:"italic"}}>"{ia.veredicto}"</p>
                         </div>

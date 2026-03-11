@@ -27,7 +27,7 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
       content:(
         <div style={{display:"grid",gap:12}}>
           <p style={{fontSize:15,lineHeight:1.8,color:"var(--text)"Mid,margin:0}}>{a?.diferencial}</p>
-          <div style={{background:"var(--surface)",border:`1px solid ${var(--border2)}`,borderRadius:10,padding:"14px 16px"}}>
+          <div style={{background:"var(--surface)",border:"1px solid var(--border2)",borderRadius:10,padding:"14px 16px"}}>
             <div style={{fontSize:10,fontWeight:700,color:"var(--text)"Mute,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.8px",fontFamily:"'Sora', sans-serif"}}>⚙️ Stack técnico</div>
             <p style={{margin:0,fontSize:13,color:"var(--text)",fontFamily:"monospace",lineHeight:1.7}}>{a?.stack}</p>
           </div>
@@ -123,9 +123,9 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
 
   return (
     <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:400, padding:16, backdropFilter:"blur(6px)" }}>
-      <div style={{ background:"var(--bg2)", border:`1px solid ${var(--border2)}`, borderRadius:24, width:"100%", maxWidth:680, maxHeight:"92vh", overflow:"hidden", boxShadow:"0 40px 120px rgba(0,0,0,0.7)", display:"flex", flexDirection:"column" }}>
+      <div style={{ background:"var(--bg2)", border:"1px solid var(--border2)", borderRadius:24, width:"100%", maxWidth:680, maxHeight:"92vh", overflow:"hidden", boxShadow:"0 40px 120px rgba(0,0,0,0.7)", display:"flex", flexDirection:"column" }}>
         {/* Header */}
-        <div style={{ background:"linear-gradient(135deg,rgba(108,92,231,0.15),rgba(0,245,212,0.06))", padding:"16px 22px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${var(--border)}`, position:"relative", overflow:"hidden" }}>
+        <div style={{ background:"linear-gradient(135deg,rgba(108,92,231,0.15),rgba(0,245,212,0.06))", padding:"16px 22px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:"1px solid var(--border)", position:"relative", overflow:"hidden" }}>
           <div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(108,92,231,0.5),rgba(0,245,212,0.3),transparent)" }}/>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             <SharkLogo size={30}/>
@@ -136,7 +136,7 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             <span style={{ color:"var(--text)"Mute, fontSize:12, fontFamily:"monospace" }}>{slide+1}/{slides.length}</span>
-            <button onClick={onClose} style={{ background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:8, color:"var(--text)"Mid, width:32, height:32, cursor:"pointer", fontSize:16 }}>✕</button>
+            <button onClick={onClose} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:8, color:"var(--text)"Mid, width:32, height:32, cursor:"pointer", fontSize:16 }}>✕</button>
           </div>
         </div>
 
@@ -160,9 +160,9 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
         </div>
 
         {/* Footer nav */}
-        <div style={{ padding:"12px 22px 18px", display:"flex", gap:8, borderTop:`1px solid ${var(--border)}`, background:"rgba(17,17,24,0.8)", backdropFilter:"blur(12px)" }}>
+        <div style={{ padding:"12px 22px 18px", display:"flex", gap:8, borderTop:"1px solid var(--border)", background:"rgba(17,17,24,0.8)", backdropFilter:"blur(12px)" }}>
           <button onClick={()=>setSlide(s=>Math.max(0,s-1))} disabled={slide===0}
-            style={{ flex:1, background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:10, padding:"11px", color:slide===0?"var(--text)"Mute:"var(--text)", fontWeight:700, fontSize:13, cursor:slide===0?"not-allowed":"pointer", fontFamily:"'Sora', sans-serif" }}>
+            style={{ flex:1, background:"var(--surface)", border:"1px solid var(--border)", borderRadius:10, padding:"11px", color:slide===0?"var(--text)"Mute:"var(--text)", fontWeight:700, fontSize:13, cursor:slide===0?"not-allowed":"pointer", fontFamily:"'Sora', sans-serif" }}>
             ← Anterior
           </button>
           <button onClick={handleExport}

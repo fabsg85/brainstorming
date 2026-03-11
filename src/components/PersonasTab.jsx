@@ -2,7 +2,7 @@ import { T } from "../constants";
 
 export default function PersonasTab({ a, onGoAnalysis }) {
   if (!a?.personas?.length) return (
-    <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:20, backdropFilter:"blur(12px)" }}>
+    <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ fontSize:44, marginBottom:16 }}>👤</div>
       <div style={{ fontWeight:700, fontSize:18, color:"var(--text)", marginBottom:8, fontFamily:"'Sora', sans-serif" }}>Sin personas todavía</div>
       <div style={{ color:"var(--text)"Mute, fontSize:14, marginBottom:28 }}>Generá el análisis primero</div>
@@ -23,7 +23,7 @@ export default function PersonasTab({ a, onGoAnalysis }) {
           return (
             <div key={i} style={{ background:"var(--surface)", border:`1px solid ${col.border}`, borderRadius:18, overflow:"hidden", backdropFilter:"blur(12px)", boxShadow:`0 0 30px ${col.accent}10` }}>
               {/* Persona header */}
-              <div style={{ background:col.grad, padding:"20px 20px 16px", borderBottom:`1px solid ${var(--border)}`, position:"relative", overflow:"hidden" }}>
+              <div style={{ background:col.grad, padding:"20px 20px 16px", borderBottom:"1px solid var(--border)", position:"relative", overflow:"hidden" }}>
                 <div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:`linear-gradient(90deg,transparent,${col.accent}60,transparent)` }}/>
                 {/* Avatar placeholder */}
                 <div style={{ width:52, height:52, borderRadius:"50%", background:`linear-gradient(135deg,${col.accent}40,${col.accent}20)`, border:`2px solid ${col.accent}40`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:12 }}>

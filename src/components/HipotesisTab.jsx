@@ -13,7 +13,7 @@ const METHOD_ICONS = {
 
 export default function HipotesisTab({ a, onGoAnalysis }) {
   if (!a?.hipotesis?.length) return (
-    <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:20, backdropFilter:"blur(12px)" }}>
+    <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ fontSize:44, marginBottom:16 }}>🧪</div>
       <div style={{ fontWeight:700, fontSize:18, color:"var(--text)", marginBottom:8, fontFamily:"'Sora', sans-serif" }}>Sin hipótesis todavía</div>
       <div style={{ color:"var(--text)"Mute, fontSize:14, marginBottom:28 }}>Generá el análisis primero</div>
@@ -40,9 +40,9 @@ export default function HipotesisTab({ a, onGoAnalysis }) {
         const risk = RISK_COLORS[h.riesgo?.toLowerCase()] || RISK_COLORS.media;
         const methodKey = Object.keys(METHOD_ICONS).find(k => h.metodo?.toLowerCase().includes(k)) || "default";
         return (
-          <div key={i} style={{ background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:16, overflow:"hidden", backdropFilter:"blur(12px)" }}>
+          <div key={i} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, overflow:"hidden", backdropFilter:"blur(12px)" }}>
             {/* Card header */}
-            <div style={{ background:`linear-gradient(135deg,${risk.bg},"var(--surface)")`, borderBottom:`1px solid ${var(--border)}`, padding:"14px 20px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+            <div style={{ background:`linear-gradient(135deg,${risk.bg},"var(--surface)")`, borderBottom:"1px solid var(--border)", padding:"14px 20px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
               <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                 <div style={{ width:28, height:28, borderRadius:"50%", background:`linear-gradient(135deg,#6C5CE7,#00F5D4)`, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, fontSize:12, color:"#fff", fontFamily:"monospace", flexShrink:0 }}>
                   {i + 1}

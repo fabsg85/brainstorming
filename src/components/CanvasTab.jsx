@@ -14,7 +14,7 @@ const CANVAS_BLOCKS = [
 
 export default function CanvasTab({ a, onGoAnalysis }) {
   if (!a?.canvas) return (
-    <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:20, backdropFilter:"blur(12px)" }}>
+    <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ fontSize:44, marginBottom:16 }}>📋</div>
       <div style={{ fontWeight:700, fontSize:18, color:"var(--text)", marginBottom:8, fontFamily:"'Sora', sans-serif" }}>Canvas no generado todavía</div>
       <div style={{ color:"var(--text)"Mute, fontSize:14, marginBottom:28 }}>Generá el análisis primero y el Lean Canvas se arma automáticamente</div>

@@ -14,7 +14,7 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
   };
 
   if (!a && !loading) return (
-    <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:20, backdropFilter:"blur(12px)" }}>
+    <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ fontSize:44, marginBottom:16 }}>🔍</div>
       <div style={{ fontWeight:700, fontSize:18, color:"var(--text)", marginBottom:8, fontFamily:"'Sora', sans-serif" }}>Sin análisis base</div>
       <div style={{ color:"var(--text)"Mute, fontSize:14, marginBottom:28 }}>Primero generá el análisis del Shark</div>
@@ -39,7 +39,7 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
       </div>
 
       {loading && (
-        <div style={{ textAlign:"center", padding:"52px 20px", background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:16, backdropFilter:"blur(12px)" }}>
+        <div style={{ textAlign:"center", padding:"52px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, backdropFilter:"blur(12px)" }}>
           <div style={{ fontSize:36, marginBottom:16, animation:"pulse 1.4s ease-in-out infinite" }}>🔍</div>
           <div style={{ fontWeight:700, color:"var(--text)", fontSize:16, marginBottom:6, fontFamily:"'Sora', sans-serif" }}>Buscando en internet...</div>
           <div style={{ color:"var(--text)"Mute, fontSize:13 }}>Esto puede tardar 15-30 segundos. No es alucinación — es búsqueda real.</div>
@@ -47,7 +47,7 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
       )}
 
       {!loading && !hasData && (
-        <div style={{ textAlign:"center", padding:"52px 20px", background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:16, backdropFilter:"blur(12px)" }}>
+        <div style={{ textAlign:"center", padding:"52px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, backdropFilter:"blur(12px)" }}>
           <div style={{ fontSize:36, marginBottom:12 }}>🔍</div>
           <div style={{ fontWeight:600, color:"var(--text)"Mid, fontSize:15, marginBottom:6, fontFamily:"'Sora', sans-serif" }}>Hacé click en "Buscar"</div>
           <div style={{ color:"var(--text)"Mute, fontSize:13 }}>El Shark va a buscar competidores reales en internet para esta idea</div>
@@ -75,8 +75,8 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
               const tc = threatColors[comp.amenaza?.toLowerCase()] || threatColors.media;
 
               return (
-                <div key={i} style={{ background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:16, overflow:"hidden", backdropFilter:"blur(12px)" }}>
-                  <div style={{ padding:"14px 20px", borderBottom:`1px solid ${var(--border)}`, display:"flex", justifyContent:"space-between", alignItems:"center", background:"var(--surface)" }}>
+                <div key={i} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, overflow:"hidden", backdropFilter:"blur(12px)" }}>
+                  <div style={{ padding:"14px 20px", borderBottom:"1px solid var(--border)", display:"flex", justifyContent:"space-between", alignItems:"center", background:"var(--surface)" }}>
                     <div>
                       <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
                         <div style={{ fontWeight:700, fontSize:15, color:"var(--text)", fontFamily:"'Sora', sans-serif" }}>{comp.nombre}</div>

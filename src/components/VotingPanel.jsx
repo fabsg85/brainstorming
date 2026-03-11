@@ -16,7 +16,7 @@ export default function VotingPanel({ idea, onVote }) {
   };
 
   const inputStyle = {
-    border: `1px solid ${var(--border2)}`,
+    border: "1px solid var(--border2)",
     borderRadius: 10, padding: "11px 14px",
     fontSize: 13, outline: "none",
     color: "var(--text)", width: "100%",
@@ -28,9 +28,9 @@ export default function VotingPanel({ idea, onVote }) {
   };
 
   return (
-    <div style={{ background: "var(--surface)", border: `1px solid ${var(--border)}`, borderRadius: 18, overflow: "hidden", marginBottom: 16, backdropFilter: "blur(12px)" }}>
+    <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 18, overflow: "hidden", marginBottom: 16, backdropFilter: "blur(12px)" }}>
       {/* Header */}
-      <div style={{ background: "linear-gradient(135deg,rgba(108,92,231,0.2),rgba(0,245,212,0.08))", padding: "18px 22px", borderBottom: `1px solid ${var(--border)}`, position:"relative", overflow:"hidden" }}>
+      <div style={{ background: "linear-gradient(135deg,rgba(108,92,231,0.2),rgba(0,245,212,0.08))", padding: "18px 22px", borderBottom: "1px solid var(--border)", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(108,92,231,0.5),transparent)" }}/>
         <div style={{ fontWeight:700, fontSize:16, color:"var(--text)", fontFamily:"'Sora', sans-serif", marginBottom:3, letterSpacing:"-0.3px" }}>🗳️ El equipo habla primero</div>
         <div style={{ fontSize:12, color:"var(--text)"Mute }}>Votá antes del análisis. El Shark habla después.</div>
@@ -51,7 +51,7 @@ export default function VotingPanel({ idea, onVote }) {
               ))}
             </div>
             {votes.map((v,i) => (
-              <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", background:"var(--surface)", borderRadius:8, padding:"8px 12px", marginBottom:6, border:`1px solid ${var(--border)}` }}>
+              <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", background:"var(--surface)", borderRadius:8, padding:"8px 12px", marginBottom:6, border:"1px solid var(--border)" }}>
                 <span style={{ fontSize:13, fontWeight:600, color:"var(--text)", fontFamily:"'Sora', sans-serif" }}>{v.name}</span>
                 <div style={{ display:"flex", alignItems:"center", gap:6 }}>
                   <span style={{ fontSize:16 }}>{v.vote==="up"?"👍":"👎"}</span>

@@ -57,7 +57,7 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
           { label:"Pagaron / Pre-vendieron", value:metrics.pagados,  color:"#00F5D4", icon:"💳" },
           { label:"% Conversión", value:`${metrics.conversion}%`, color: metrics.conversion >= 20 ? "#00F5D4" : metrics.conversion >= 10 ? "#FFB547" : "#FF5F7A", icon:"📈" },
         ].map(m => (
-          <div key={m.label} style={{ background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:14, padding:"16px 18px", backdropFilter:"blur(8px)" }}>
+          <div key={m.label} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:14, padding:"16px 18px", backdropFilter:"blur(8px)" }}>
             <div style={{ fontSize:10, fontWeight:700, color:"var(--text)"Mute, textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:7, fontFamily:"'Sora', sans-serif" }}>{m.icon} {m.label}</div>
             <div style={{ fontSize:28, fontWeight:900, fontFamily:"monospace", color:m.color, lineHeight:1 }}>{m.value}</div>
           </div>
@@ -77,7 +77,7 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
 
       {/* Funnel visual */}
       {presell.length > 0 && (
-        <div style={{ background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:14, padding:"16px 20px", backdropFilter:"blur(8px)" }}>
+        <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:14, padding:"16px 20px", backdropFilter:"blur(8px)" }}>
           <div style={{ fontSize:10, fontWeight:700, color:"var(--text)"Mute, textTransform:"uppercase", letterSpacing:"1px", marginBottom:14, fontFamily:"'Sora', sans-serif" }}>Funnel de validación</div>
           {STATUS_OPTIONS.map(s => {
             const count = presell.filter(p => p.status === s.key).length;
@@ -99,8 +99,8 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
       )}
 
       {/* Contact list */}
-      <div style={{ background:"var(--surface)", border:`1px solid ${var(--border)}`, borderRadius:14, overflow:"hidden", backdropFilter:"blur(8px)" }}>
-        <div style={{ padding:"14px 18px", borderBottom:`1px solid ${var(--border)}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+      <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:14, overflow:"hidden", backdropFilter:"blur(8px)" }}>
+        <div style={{ padding:"14px 18px", borderBottom:"1px solid var(--border)", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
           <div style={{ fontSize:10, fontWeight:700, color:"var(--text)"Mute, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora', sans-serif" }}>Contactos · {presell.length}</div>
           <button onClick={openAdd} style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:8, padding:"7px 14px", color:"#fff", fontWeight:700, fontSize:12, cursor:"pointer", fontFamily:"'Sora', sans-serif", boxShadow:"0 0 12px rgba(108,92,231,0.4)" }}>
             + Agregar
@@ -117,7 +117,7 @@ export default function PreSellTab({ ideaId, presell = [], onSave }) {
           presell.map((contact, i) => {
             const s = STATUS_OPTIONS.find(s => s.key === contact.status) || STATUS_OPTIONS[0];
             return (
-              <div key={contact.id || i} style={{ padding:"12px 18px", borderTop:`1px solid ${var(--border)}`, display:"flex", alignItems:"center", gap:12, transition:"background 0.1s" }}
+              <div key={contact.id || i} style={{ padding:"12px 18px", borderTop:"1px solid var(--border)", display:"flex", alignItems:"center", gap:12, transition:"background 0.1s" }}
                 onMouseEnter={e => e.currentTarget.style.background = "var(--surface)"}
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                 {/* Status indicator */}
