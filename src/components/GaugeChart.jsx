@@ -23,7 +23,7 @@ export default function GaugeChart({ score, size = 150 }) {
         </linearGradient>
       </defs>
       {/* Track */}
-      <path d={arcPath(startA, startA+totalA, r)} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" strokeLinecap="round"/>
+      <path d={arcPath(startA, startA+totalA, r)} fill="none" stroke="var(--border)" strokeWidth="8" strokeLinecap="round"/>
       {/* Fill */}
       <path d={arcPath(startA, startA+fillA, r)} fill="none" stroke="url(#gaugeGrad)" strokeWidth="8" strokeLinecap="round"
         style={{ filter: `drop-shadow(0 0 6px ${c}80)` }}/>
@@ -32,7 +32,7 @@ export default function GaugeChart({ score, size = 150 }) {
         <line key={o}
           x1={cx+(r-12)*Math.cos(toRad(needleA+o))} y1={cy+(r-12)*Math.sin(toRad(needleA+o))}
           x2={cx+nLen*Math.cos(toRad(needleA+o))}   y2={cy+nLen*Math.sin(toRad(needleA+o))}
-          stroke={o===0 ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.08)"}
+          stroke={o===0 ? "rgba(255,255,255,0.9)" : "var(--border)"}
           strokeWidth={o===0 ? 2.5 : 1.5} strokeLinecap="round"/>
       ))}
       <circle cx={cx} cy={cy} r="5" fill="rgba(255,255,255,0.9)" style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.5))" }}/>

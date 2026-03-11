@@ -2,7 +2,7 @@ export default function SharkLogo({ size = 36 }) {
   const r = Math.round(size * 0.25);
   return (
     <svg width={size} height={size} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="36" height="36" rx={r} fill="#0B0B0F"/>
+      <rect width="36" height="36" rx={r} fill="var(--bg)"/>
       <path
         d="M8 24 L15 10 L18 17 L22 14 L27 24 Z"
         fill="none"

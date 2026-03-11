@@ -16,7 +16,7 @@ export default function VerdictBanner({ score }) {
       justifyContent: "space-between",
       alignItems: "center",
       backdropFilter: "blur(16px)",
-      boxShadow: "0 0 60px rgba(108,92,231,0.12), inset 0 1px 0 rgba(255,255,255,0.06)",
+      boxShadow: "0 0 60px rgba(108,92,231,0.12), inset 0 1px 0 var(--surface)",
       position: "relative",
       overflow: "hidden",
     }}>

@@ -13,10 +13,10 @@ const WIZARD_STEPS = [
 ];
 
 const inputStyle = (focused) => ({
-  border: `1px solid ${focused ? "rgba(108,92,231,0.6)" : "rgba(255,255,255,0.12)"}`,
+  border: `1px solid ${focused ? "rgba(108,92,231,0.6)" : "var(--surface2)"}`,
   borderRadius: 10, padding: "12px 14px", fontSize: 14, outline: "none",
-  color: "rgba(255,255,255,0.92)", width: "100%", boxSizing: "border-box",
-  fontFamily: "'DM Sans',sans-serif", background: "rgba(255,255,255,0.04)",
+  color: "var(--text)", width: "100%", boxSizing: "border-box",
+  fontFamily: "'DM Sans',sans-serif", background: "var(--surface)",
   backdropFilter: "blur(8px)", transition: "border-color 0.15s", lineHeight: 1.5,
 });
 
@@ -69,7 +69,7 @@ export default function Wizard({ onSave, onClose }) {
 
   return (
     <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.78)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:16, backdropFilter:"blur(6px)" }}>
-      <div style={{ background:"#111118", border:"1px solid rgba(255,255,255,0.1)", borderRadius:24, width:"100%", maxWidth:520, boxShadow:"0 40px 100px rgba(0,0,0,0.6)", overflow:"hidden" }}>
+      <div style={{ background:"var(--bg2)", border:"1px solid var(--surface2)", borderRadius:24, width:"100%", maxWidth:520, boxShadow:"0 40px 100px rgba(0,0,0,0.6)", overflow:"hidden" }}>
 
         {/* Header */}
         <div style={{ background:"linear-gradient(135deg,rgba(108,92,231,0.2),rgba(0,245,212,0.06))", padding:"20px 24px 16px", position:"relative", overflow:"hidden" }}>
@@ -79,23 +79,23 @@ export default function Wizard({ onSave, onClose }) {
               <SharkLogo size={30}/>
               <span style={{ color:"#fff", fontWeight:700, fontSize:15, fontFamily:"'Sora',sans-serif" }}>Nueva Idea</span>
             </div>
-            <button onClick={onClose} style={{ background:"rgba(255,255,255,0.07)", border:"none", borderRadius:7, color:"rgba(255,255,255,0.5)", width:30, height:30, cursor:"pointer", fontSize:14 }}>✕</button>
+            <button onClick={onClose} style={{ background:"var(--surface2)", border:"none", borderRadius:7, color:"var(--textMid)", width:30, height:30, cursor:"pointer", fontSize:14 }}>✕</button>
           </div>
           {/* Progress bar */}
-          <div style={{ height:3, background:"rgba(255,255,255,0.08)", borderRadius:99, overflow:"hidden" }}>
+          <div style={{ height:3, background:"var(--border)", borderRadius:99, overflow:"hidden" }}>
             <div style={{ height:"100%", width:`${progress}%`, background:"linear-gradient(90deg,#6C5CE7,#00F5D4)", borderRadius:99, transition:"width 0.4s cubic-bezier(.4,0,.2,1)" }}/>
           </div>
           <div style={{ display:"flex", justifyContent:"space-between", marginTop:8 }}>
-            <span style={{ fontSize:11, color:"rgba(255,255,255,0.3)", fontFamily:"'Sora',sans-serif" }}>Paso {step+1} de {WIZARD_STEPS.length}</span>
-            <span style={{ fontSize:11, color:"rgba(255,255,255,0.3)", fontFamily:"'Sora',sans-serif" }}>{s.emoji} {s.label}</span>
+            <span style={{ fontSize:11, color:"var(--textMute)", fontFamily:"'Sora',sans-serif" }}>Paso {step+1} de {WIZARD_STEPS.length}</span>
+            <span style={{ fontSize:11, color:"var(--textMute)", fontFamily:"'Sora',sans-serif" }}>{s.emoji} {s.label}</span>
           </div>
         </div>
 
         {/* Body */}
         <div style={{ padding:"22px 24px 26px" }}>
           <div style={{ marginBottom:18 }}>
-            <div style={{ fontWeight:700, fontSize:18, color:"rgba(255,255,255,0.92)", fontFamily:"'Sora',sans-serif", marginBottom:6, letterSpacing:"-0.4px" }}>{s.emoji} {s.label}</div>
-            <div style={{ color:"rgba(255,255,255,0.35)", fontSize:13, lineHeight:1.6 }}>{s.desc}</div>
+            <div style={{ fontWeight:700, fontSize:18, color:"var(--text)", fontFamily:"'Sora',sans-serif", marginBottom:6, letterSpacing:"-0.4px" }}>{s.emoji} {s.label}</div>
+            <div style={{ color:"var(--textMute)", fontSize:13, lineHeight:1.6 }}>{s.desc}</div>
           </div>
 
           {/* Step 0 — Title */}
@@ -107,11 +107,11 @@ export default function Wizard({ onSave, onClose }) {
           {step === 1 && (
             <div style={{ display:"grid", gap:10 }}>
               <FocusInput value={data.customer} onChange={v => set("customer", v)} placeholder="ej: CFO de empresa de 20-100 empleados en LATAM" onEnter={goNext}/>
-              <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", fontFamily:"'DM Sans',sans-serif" }}>Atajos rápidos:</div>
+              <div style={{ fontSize:11, color:"var(--textMute)", fontFamily:"'DM Sans',sans-serif" }}>Atajos rápidos:</div>
               <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
                 {["Dueño PyME","CTO startup","HR manager","Profesional independiente","Consumidor final","Director de escuela","Reclutador","Gerente de ventas"].map(opt => (
                   <button key={opt} onClick={() => set("customer", opt)}
-                    style={{ background: data.customer === opt ? "rgba(108,92,231,0.2)" : "rgba(255,255,255,0.04)", border: `1px solid ${data.customer === opt ? "rgba(108,92,231,0.4)" : "rgba(255,255,255,0.08)"}`, borderRadius:99, padding:"5px 12px", fontSize:11, fontWeight:600, color: data.customer === opt ? "#6C5CE7" : "rgba(255,255,255,0.45)", cursor:"pointer", fontFamily:"'Sora',sans-serif", transition:"all 0.12s" }}>
+                    style={{ background: data.customer === opt ? "rgba(108,92,231,0.2)" : "var(--surface)", border: `1px solid ${data.customer === opt ? "rgba(108,92,231,0.4)" : "var(--border)"}`, borderRadius:99, padding:"5px 12px", fontSize:11, fontWeight:600, color: data.customer === opt ? "#6C5CE7" : "var(--textMute)", cursor:"pointer", fontFamily:"'Sora',sans-serif", transition:"all 0.12s" }}>
                     {opt}
                   </button>
                 ))}
@@ -136,7 +136,7 @@ export default function Wizard({ onSave, onClose }) {
               <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
                 {["No pagan nada todavía","Herramienta de $10-50/mes","Consultor o agencia","Software legacy caro ($500+/mes)","Lo hacen manual / in-house"].map(opt => (
                   <button key={opt} onClick={() => set("price", opt)}
-                    style={{ background: data.price === opt ? "rgba(0,245,212,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${data.price === opt ? "rgba(0,245,212,0.3)" : "rgba(255,255,255,0.08)"}`, borderRadius:99, padding:"5px 12px", fontSize:11, fontWeight:600, color: data.price === opt ? "#00F5D4" : "rgba(255,255,255,0.45)", cursor:"pointer", fontFamily:"'Sora',sans-serif", transition:"all 0.12s" }}>
+                    style={{ background: data.price === opt ? "rgba(0,245,212,0.12)" : "var(--surface)", border: `1px solid ${data.price === opt ? "rgba(0,245,212,0.3)" : "var(--border)"}`, borderRadius:99, padding:"5px 12px", fontSize:11, fontWeight:600, color: data.price === opt ? "#00F5D4" : "var(--textMute)", cursor:"pointer", fontFamily:"'Sora',sans-serif", transition:"all 0.12s" }}>
                     {opt}
                   </button>
                 ))}
@@ -162,9 +162,9 @@ export default function Wizard({ onSave, onClose }) {
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
               {INDUSTRIES.map(ind => (
                 <button key={ind.key} onClick={() => set("industry", ind.key)}
-                  style={{ background: data.industry === ind.key ? "rgba(108,92,231,0.2)" : "rgba(255,255,255,0.03)", border: `1px solid ${data.industry === ind.key ? "rgba(108,92,231,0.5)" : "rgba(255,255,255,0.07)"}`, borderRadius:10, padding:"11px 14px", cursor:"pointer", textAlign:"left", transition:"all 0.12s", display:"flex", alignItems:"center", gap:8 }}>
+                  style={{ background: data.industry === ind.key ? "rgba(108,92,231,0.2)" : "var(--surface)", border: `1px solid ${data.industry === ind.key ? "rgba(108,92,231,0.5)" : "var(--surface2)"}`, borderRadius:10, padding:"11px 14px", cursor:"pointer", textAlign:"left", transition:"all 0.12s", display:"flex", alignItems:"center", gap:8 }}>
                   <span style={{ fontSize:18 }}>{ind.emoji}</span>
-                  <span style={{ fontSize:13, fontWeight:600, color: data.industry === ind.key ? "#fff" : "rgba(255,255,255,0.55)", fontFamily:"'Sora',sans-serif" }}>{ind.label}</span>
+                  <span style={{ fontSize:13, fontWeight:600, color: data.industry === ind.key ? "#fff" : "var(--textMid)", fontFamily:"'Sora',sans-serif" }}>{ind.label}</span>
                 </button>
               ))}
             </div>
@@ -175,7 +175,7 @@ export default function Wizard({ onSave, onClose }) {
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
               {STAGES.map(st => (
                 <button key={st.key} onClick={() => set("stage", st.key)}
-                  style={{ background: data.stage === st.key ? st.bg : "rgba(255,255,255,0.03)", color: data.stage === st.key ? st.color : "rgba(255,255,255,0.5)", border: `1px solid ${data.stage === st.key ? st.color + "40" : "rgba(255,255,255,0.07)"}`, borderRadius:12, padding:"14px 10px", fontSize:13, fontWeight:700, cursor:"pointer", textAlign:"center", transition:"all 0.15s", fontFamily:"'Sora',sans-serif", boxShadow: data.stage === st.key ? `0 0 16px ${st.color}20` : "none" }}>
+                  style={{ background: data.stage === st.key ? st.bg : "var(--surface)", color: data.stage === st.key ? st.color : "var(--textMid)", border: `1px solid ${data.stage === st.key ? st.color + "40" : "var(--surface2)"}`, borderRadius:12, padding:"14px 10px", fontSize:13, fontWeight:700, cursor:"pointer", textAlign:"center", transition:"all 0.15s", fontFamily:"'Sora',sans-serif", boxShadow: data.stage === st.key ? `0 0 16px ${st.color}20` : "none" }}>
                   <div style={{ fontSize:24, marginBottom:4 }}>{st.emoji}</div>
                   {st.label}
                 </button>
@@ -186,13 +186,13 @@ export default function Wizard({ onSave, onClose }) {
           {/* Nav */}
           <div style={{ display:"flex", gap:8, marginTop:20 }}>
             {step > 0 && (
-              <button onClick={() => setStep(s => s - 1)} style={{ flex:1, background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:"12px", color:"rgba(255,255,255,0.5)", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"'Sora',sans-serif" }}>
+              <button onClick={() => setStep(s => s - 1)} style={{ flex:1, background:"var(--surface)", border:"1px solid var(--border)", borderRadius:10, padding:"12px", color:"var(--textMid)", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"'Sora',sans-serif" }}>
                 ← Atrás
               </button>
             )}
             {step < WIZARD_STEPS.length - 1 ? (
               <button onClick={goNext} disabled={!canNext()}
-                style={{ flex:2, background: canNext() ? "linear-gradient(135deg,#6C5CE7,#00F5D4)" : "rgba(255,255,255,0.04)", border:"none", borderRadius:10, padding:"12px", color: canNext() ? "#fff" : "rgba(255,255,255,0.25)", fontWeight:700, fontSize:14, cursor: canNext() ? "pointer" : "not-allowed", fontFamily:"'Sora',sans-serif", boxShadow: canNext() ? "0 0 20px rgba(108,92,231,0.4)" : "none", transition:"all 0.15s" }}>
+                style={{ flex:2, background: canNext() ? "linear-gradient(135deg,#6C5CE7,#00F5D4)" : "var(--surface)", border:"none", borderRadius:10, padding:"12px", color: canNext() ? "#fff" : "var(--textMute)", fontWeight:700, fontSize:14, cursor: canNext() ? "pointer" : "not-allowed", fontFamily:"'Sora',sans-serif", boxShadow: canNext() ? "0 0 20px rgba(108,92,231,0.4)" : "none", transition:"all 0.15s" }}>
                 Siguiente →
               </button>
             ) : (

@@ -21,13 +21,13 @@ export default function RadarChart({ scores, size = 180 }) {
         <polygon key={lv}
           points={Array.from({length:n},(_,i)=>pt(i,lv*r)).map(p=>p.join(",")).join(" ")}
           fill={lv===0.25?"rgba(108,92,231,0.05)":"none"}
-          stroke={lv===1?"rgba(255,255,255,0.12)":"rgba(255,255,255,0.05)"}
+          stroke={lv===1?"rgba(255,255,255,0.12)":"var(--surface)"}
           strokeWidth={lv===1?1:0.7}/>
       ))}
       {/* Spokes */}
       {Array.from({length:n},(_,i) => {
         const e=pt(i,r);
-        return <line key={i} x1={cx} y1={cy} x2={e[0]} y2={e[1]} stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>;
+        return <line key={i} x1={cx} y1={cy} x2={e[0]} y2={e[1]} stroke="var(--surface)" strokeWidth="1"/>;
       })}
       {/* Data fill */}
       <path d={toPath(dataPts)} fill="url(#radarGrad)" stroke="#6C5CE7" strokeWidth="1.5" strokeLinejoin="round"
