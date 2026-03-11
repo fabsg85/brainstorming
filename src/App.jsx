@@ -53,69 +53,73 @@ const BackgroundEffects = () => (
   </div>
 );
 
-const ANALYZE_PROMPT = (title, description, industry = "") => `Sos un Shark board: inversor brutal, técnico, rioplatense. Analizá esta idea y devolvé SOLO JSON válido. Sin markdown, sin backticks, sin texto extra. Empezá con { terminá con }.
+const ANALYZE_PROMPT = (title, description, industry = "") => `Sos un Shark board: inversor brutal, técnico, rioplatense. Analizá esta idea y devolvé SOLO JSON válido. Sin markdown, sin texto extra. El JSON debe empezar con { y terminar con }.
 
 IDEA: ${title}
 DESCRIPCIÓN: ${description}
 INDUSTRIA: ${industry}
 
-IMPORTANTE: Todos los campos son obligatorios. El JSON debe ser parseable.
+REGLAS CRÍTICAS DE FORMATO:
+- Todos los strings deben usar comillas dobles
+- No uses saltos de línea dentro de strings — usá \\n si necesitás
+- No uses caracteres especiales sin escapar dentro de strings
+- Todos los arrays deben tener exactamente los elementos indicados
+- Devolvé SOLO el JSON, sin ningún texto antes o después
 
 {
-  "pagaHoy": "quién paga, cuánto, cómo",
-  "publicObj": "cliente específico con contexto LATAM",
-  "diferencial": "ventaja real, difícil de copiar",
-  "benchmark": "competidores reales con nombre",
-  "stack": "stack técnico concreto",
-  "pros": ["pro 1", "pro 2", "pro 3"],
-  "cons": ["con 1", "con 2", "con 3"],
-  "veredicto": "una línea brutal, directa, sarcástica",
-  "mayorRiesgo": "el riesgo que puede matar esto",
+  "pagaHoy": "string",
+  "publicObj": "string",
+  "diferencial": "string",
+  "benchmark": "string",
+  "stack": "string",
+  "pros": ["string", "string", "string"],
+  "cons": ["string", "string", "string"],
+  "veredicto": "string",
+  "mayorRiesgo": "string",
   "monetizacion": [
-    { "modelo": "nombre", "descripcion": "desc", "pros": "ventaja", "contras": "desventaja", "mrrEstimado": "rango USD" },
-    { "modelo": "nombre", "descripcion": "desc", "pros": "ventaja", "contras": "desventaja", "mrrEstimado": "rango USD" },
-    { "modelo": "nombre", "descripcion": "desc", "pros": "ventaja", "contras": "desventaja", "mrrEstimado": "rango USD" }
+    { "modelo": "string", "descripcion": "string", "pros": "string", "contras": "string", "mrrEstimado": "string" },
+    { "modelo": "string", "descripcion": "string", "pros": "string", "contras": "string", "mrrEstimado": "string" },
+    { "modelo": "string", "descripcion": "string", "pros": "string", "contras": "string", "mrrEstimado": "string" }
   ],
-  "publicidad": { "organico": "canales orgánicos", "pago": "si vale y cuándo", "recomendacion": "qué hacer primero" },
-  "gtm90dias": "plan 90 días exactamente 3 frases separadas por punto",
-  "riesgoLegal": "riesgos regulatorios LATAM",
-  "primeros30dias": "3 acciones concretas antes de escribir código",
-  "scoreRationale": { "traccion": "1 línea", "moat": "1 línea", "monetizacion": "1 línea", "velocidad": "1 línea", "mercado": "1 línea" },
-  "scores": { "traccion": 0, "moat": 0, "monetizacion": 0, "velocidad": 0, "mercado": 0 },
-  "nextStep": { "accion": "qué hacer hoy", "razon": "por qué esta acción primero", "urgencia": "alta|media|baja" },
+  "publicidad": { "organico": "string", "pago": "string", "recomendacion": "string" },
+  "gtm90dias": "string",
+  "riesgoLegal": "string",
+  "primeros30dias": "string",
+  "scoreRationale": { "traccion": "string", "moat": "string", "monetizacion": "string", "velocidad": "string", "mercado": "string" },
+  "scores": { "traccion": 7, "moat": 6, "monetizacion": 7, "velocidad": 8, "mercado": 7 },
   "hipotesis": [
-    { "hipotesis": "suposición crítica 1", "porqueCritica": "si falla esto, el negocio muere", "riesgo": "alta|media|baja", "metodo": "cómo testearla", "metrica": "cómo saber si pasó o falló", "tiempoEstimado": "X días", "costoEstimado": "$X", "siFalla": "qué hacer si esta hipótesis es falsa" },
-    { "hipotesis": "suposición crítica 2", "porqueCritica": "impacto si falla", "riesgo": "alta|media|baja", "metodo": "método", "metrica": "métrica", "tiempoEstimado": "X días", "costoEstimado": "$X", "siFalla": "plan B" },
-    { "hipotesis": "suposición crítica 3", "porqueCritica": "impacto si falla", "riesgo": "alta|media|baja", "metodo": "método", "metrica": "métrica", "tiempoEstimado": "X días", "costoEstimado": "$X", "siFalla": "plan B" }
+    { "hipotesis": "string", "porqueCritica": "string", "riesgo": "alta", "metodo": "string", "metrica": "string", "tiempoEstimado": "string", "costoEstimado": "string", "siFalla": "string" },
+    { "hipotesis": "string", "porqueCritica": "string", "riesgo": "media", "metodo": "string", "metrica": "string", "tiempoEstimado": "string", "costoEstimado": "string", "siFalla": "string" },
+    { "hipotesis": "string", "porqueCritica": "string", "riesgo": "baja", "metodo": "string", "metrica": "string", "tiempoEstimado": "string", "costoEstimado": "string", "siFalla": "string" }
   ],
   "personas": [
-    { "nombre": "nombre ficticio realista", "rol": "cargo y empresa", "edad": "rango de edad", "frase": "quote que diría sobre el problema", "frustracion": "qué lo frustra hoy", "objetivo": "qué quiere lograr", "disposicionPago": "cuánto pagaría y por qué", "canal": "dónde lo encontramos", "triggers": ["trigger de compra 1", "trigger 2"] },
-    { "nombre": "nombre ficticio 2", "rol": "cargo", "edad": "rango", "frase": "quote", "frustracion": "frustración", "objetivo": "objetivo", "disposicionPago": "disposición", "canal": "canal", "triggers": ["trigger 1", "trigger 2"] }
+    { "nombre": "string", "rol": "string", "edad": "string", "frase": "string", "frustracion": "string", "objetivo": "string", "disposicionPago": "string", "canal": "string", "triggers": ["string", "string"] },
+    { "nombre": "string", "rol": "string", "edad": "string", "frase": "string", "frustracion": "string", "objetivo": "string", "disposicionPago": "string", "canal": "string", "triggers": ["string", "string"] }
   ],
-  "personaInsight": "qué tienen en común estos dos perfiles y cómo impacta el go-to-market",
+  "personaInsight": "string",
   "canvas": {
-    "propuestaValor": "qué valor único entregás",
-    "segmentoClientes": ["segmento 1", "segmento 2"],
-    "canales": ["canal 1", "canal 2"],
-    "relacionClientes": "cómo te relacionás con clientes",
-    "actividadesClave": ["actividad 1", "actividad 2", "actividad 3"],
-    "recursosClave": ["recurso 1", "recurso 2"],
-    "sociosClave": ["socio/partner 1", "socio 2"],
-    "estructuraCostos": ["costo principal 1", "costo 2", "costo 3"],
-    "fuentesIngreso": ["ingreso 1", "ingreso 2"]
+    "propuestaValor": "string",
+    "segmentoClientes": ["string", "string"],
+    "canales": ["string", "string"],
+    "relacionClientes": "string",
+    "actividadesClave": ["string", "string", "string"],
+    "recursosClave": ["string", "string"],
+    "sociosClave": ["string", "string"],
+    "estructuraCostos": ["string", "string", "string"],
+    "fuentesIngreso": ["string", "string"]
   },
   "budget": {
     "items": [
-      { "id": 1, "category": "infra",      "description": "Dominio .com/.io (anual)", "amount": 15,  "phase": "MVP",           "recurring": false },
-      { "id": 2, "category": "infra",      "description": "Hosting / Vercel Pro",     "amount": 20,  "phase": "MVP",           "recurring": true  },
-      { "id": 3, "category": "ai",         "description": "API LLM — estimado MVP",   "amount": 50,  "phase": "MVP",           "recurring": true  },
-      { "id": 4, "category": "tools",      "description": "Supabase Free/Pro",        "amount": 25,  "phase": "MVP",           "recurring": true  },
-      { "id": 5, "category": "tools",      "description": "Email transaccional (Resend/SendGrid)", "amount": 10, "phase": "MVP", "recurring": true },
-      { "id": 6, "category": "ads",        "description": "Meta Ads — smoke test inicial", "amount": 150, "phase": "Pre-lanzamiento", "recurring": false },
-      { "id": 7, "category": "freelancer", "description": "Dev freelancer — revisión y deploy", "amount": 300, "phase": "MVP", "recurring": false },
-      { "id": 8, "category": "tools",      "description": "Figma / diseño UI",        "amount": 15,  "phase": "MVP",           "recurring": true  }
+      { "id": 1, "category": "infra",      "description": "Dominio .com/.io (anual)",                "amount": 15,  "phase": "MVP",              "recurring": false },
+      { "id": 2, "category": "infra",      "description": "Hosting / Vercel Pro",                    "amount": 20,  "phase": "MVP",              "recurring": true  },
+      { "id": 3, "category": "ai",         "description": "API LLM — estimado uso MVP",              "amount": 50,  "phase": "MVP",              "recurring": true  },
+      { "id": 4, "category": "tools",      "description": "Supabase Pro",                            "amount": 25,  "phase": "MVP",              "recurring": true  },
+      { "id": 5, "category": "tools",      "description": "Email transaccional Resend",              "amount": 10,  "phase": "MVP",              "recurring": true  },
+      { "id": 6, "category": "ads",        "description": "Meta Ads smoke test",                     "amount": 150, "phase": "Pre-lanzamiento",  "recurring": false },
+      { "id": 7, "category": "freelancer", "description": "Dev freelancer revision y deploy",        "amount": 300, "phase": "MVP",              "recurring": false },
+      { "id": 8, "category": "tools",      "description": "Figma diseño UI",                        "amount": 15,  "phase": "MVP",              "recurring": true  }
     ],
-    "notes": "Budget estimado por el Shark según el stack y modelo. IMPORTANTE: ajustá los montos según el tipo de producto — si es AI-heavy aumentá el ítem de API, si necesitás validación rápida aumentá ads.",
+    "notes": "string",
     "currency": "USD"
   }
 }`;
@@ -454,14 +458,31 @@ export default function App() {
       const res  = await fetch("/api/shark", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ prompt:ANALYZE_PROMPT(sel.title, sel.description, sel.industry||"") }) });
       const data = await res.json();
       const text = data.content?.[0]?.text || "";
+
+      // Step 1: strip markdown fences
       let jsonText = text.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
+
+      // Step 2: extract outermost { ... }
       const fb = jsonText.indexOf("{"), lb = jsonText.lastIndexOf("}");
-      if (fb!==-1&&lb!==-1) jsonText = jsonText.slice(fb,lb+1);
-      // Repair common JSON issues: trailing commas before ] or }
+      if (fb !== -1 && lb !== -1) jsonText = jsonText.slice(fb, lb + 1);
+
+      // Step 3: repair common LLM JSON issues
       jsonText = jsonText
-        .replace(/,(\s*[}\]])/g, "$1")        // trailing commas
-        .replace(/:\s*undefined/g, ': null');  // undefined values
-      const parsed = JSON.parse(jsonText);
+        .replace(/,(\s*[}\]])/g, "$1")           // trailing commas
+        .replace(/:\s*undefined/g, ": null")      // undefined values
+        .replace(/[\u0000-\u001F\u007F]/g, " ");  // control characters
+
+      let parsed;
+      try {
+        parsed = JSON.parse(jsonText);
+      } catch(parseErr) {
+        // Step 4: last resort — log position and try to give useful error
+        const pos = parseInt(parseErr.message.match(/position (\d+)/)?.[1] || "0");
+        const snippet = jsonText.slice(Math.max(0, pos-80), pos+80);
+        console.error("JSON parse failed at pos", pos, "\nSnippet:", snippet);
+        throw new Error(`JSON inválido cerca de: ...${snippet}...`);
+      }
+
       const avgScore = Object.values(parsed.scores).reduce((a,b)=>a+b,0)/5;
       const prevScore = ideas.find(i=>i.id===ideaId)?.analysis?.avgScore || null;
       await saveAnalysis(ideaId, {...parsed, avgScore, prevScore, analyzedAt: new Date().toISOString()});
