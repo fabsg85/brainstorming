@@ -216,29 +216,29 @@ function EmptyBoard({ onAdd }) {
 // ── ANALYSIS TAB ─────────────────────────────────────────────────
 function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt, onGoTab }) {
   if (!a && !analyzing) return (
-    <div style={{ textAlign:"center", padding:"72px 20px", background:T.surface, border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
+    <div style={{ textAlign:"center", padding:"72px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       {/* Animated shark logo */}
       <div style={{ display:"inline-flex", marginBottom:24, animation:"glowPulse 3s ease-in-out infinite" }}>
         <SharkLogo size={64}/>
       </div>
-      <div style={{ fontWeight:700, fontSize:22, marginBottom:10, fontFamily:T.fontDisplay, color:"var(--text)", letterSpacing:"-0.5px" }}>Que el Shark hable</div>
+      <div style={{ fontWeight:700, fontSize:22, marginBottom:10, fontFamily:"'Sora',sans-serif", color:"var(--text)", letterSpacing:"-0.5px" }}>Que el Shark hable</div>
       <div style={{ color:"var(--textMute)", fontSize:14, marginBottom:36, maxWidth:360, margin:"10px auto 36px", lineHeight:1.7 }}>
         Scoring calibrado · Monetización · GTM · Riesgo legal · Veredicto sin anestesia
       </div>
-      <button onClick={onAnalyze} style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:12, padding:"14px 36px", color:"#fff", fontWeight:700, fontSize:15, cursor:"pointer", fontFamily:T.fontDisplay, boxShadow:"0 0 30px rgba(108,92,231,0.5)" }}>
+      <button onClick={onAnalyze} style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:12, padding:"14px 36px", color:"#fff", fontWeight:700, fontSize:15, cursor:"pointer", fontFamily:"'Sora',sans-serif", boxShadow:"0 0 30px rgba(108,92,231,0.5)" }}>
         🦈 Analizar esta idea
       </button>
     </div>
   );
 
   if (analyzing) return (
-    <div style={{ textAlign:"center", padding:"80px 20px", background:T.surface, border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
+    <div style={{ textAlign:"center", padding:"80px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ animation:"pulse 1.6s ease-in-out infinite", display:"inline-block" }}><SharkLogo size={64}/></div>
-      <div style={{ color:"var(--text)", fontWeight:700, fontSize:20, marginTop:24, fontFamily:T.fontDisplay, letterSpacing:"-0.3px" }}>El Shark está pensando...</div>
+      <div style={{ color:"var(--text)", fontWeight:700, fontSize:20, marginTop:24, fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px" }}>El Shark está pensando...</div>
       <div style={{ color:"var(--textMute)", fontSize:13, marginTop:8, marginBottom:28 }}>No lo toques. Esto tarda unos segundos.</div>
       <div style={{ display:"flex", justifyContent:"center", gap:6, flexWrap:"wrap" }}>
         {SCORE_CRITERIA.map((c,i) => (
-          <span key={c.key} style={{ fontSize:11, color:"var(--textMid)", background:T.surface2, border:"1px solid var(--border)", borderRadius:99, padding:"4px 12px", fontWeight:600, fontFamily:T.fontDisplay, animation:`pulse 1.6s ${i*0.2}s infinite` }}>
+          <span key={c.key} style={{ fontSize:11, color:"var(--textMid)", background:"var(--surface2)", border:"1px solid var(--border)", borderRadius:99, padding:"4px 12px", fontWeight:600, fontFamily:"'Sora',sans-serif", animation:`pulse 1.6s ${i*0.2}s infinite` }}>
             {c.icon} {c.label}
           </span>
         ))}
@@ -249,7 +249,7 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
   if (a.error) return (
     <div style={{ textAlign:"center", padding:"52px 20px", background:"rgba(255,95,122,0.06)", border:"1px solid rgba(255,95,122,0.2)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ fontSize:40, marginBottom:12 }}>😬</div>
-      <div style={{ color:"#FF5F7A", fontWeight:700, fontSize:17, marginBottom:7, fontFamily:T.fontDisplay }}>Algo salió mal</div>
+      <div style={{ color:"#FF5F7A", fontWeight:700, fontSize:17, marginBottom:7, fontFamily:"'Sora',sans-serif" }}>Algo salió mal</div>
       <div style={{ color:"var(--textMute)", fontSize:13, marginBottom:22 }}>{a.msg||"El Shark está de mal humor. Intentá de nuevo."}</div>
       <GlowBtn onClick={onReanalyze} variant="ghost">🔄 Reintentar</GlowBtn>
     </div>
@@ -277,7 +277,7 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
         <div style={{ background: parseFloat(scoreDelta) >= 0 ? "rgba(0,245,212,0.08)" : "rgba(255,95,122,0.08)", border: `1px solid ${parseFloat(scoreDelta) >= 0 ? "rgba(0,245,212,0.2)" : "rgba(255,95,122,0.2)"}`, borderRadius:12, padding:"12px 18px", display:"flex", alignItems:"center", gap:12 }}>
           <span style={{ fontSize:22 }}>{parseFloat(scoreDelta) >= 0 ? "📈" : "📉"}</span>
           <div>
-            <div style={{ fontWeight:700, fontSize:13, color: parseFloat(scoreDelta) >= 0 ? "#00F5D4" : "#FF5F7A", fontFamily:T.fontDisplay }}>
+            <div style={{ fontWeight:700, fontSize:13, color: parseFloat(scoreDelta) >= 0 ? "#00F5D4" : "#FF5F7A", fontFamily:"'Sora',sans-serif" }}>
               Score {parseFloat(scoreDelta) >= 0 ? "subió" : "bajó"} {parseFloat(scoreDelta) >= 0 ? "+" : ""}{scoreDelta} puntos desde el análisis anterior
             </div>
             <div style={{ fontSize:11, color:"var(--textMute)", marginTop:2 }}>
@@ -291,7 +291,7 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
         <Card title="🎯 Scoring detallado">
           {a.pagaHoy && (
             <div style={{ background:"rgba(0,245,212,0.08)", border:"1px solid rgba(0,245,212,0.2)", borderRadius:10, padding:"10px 14px", marginBottom:18 }}>
-              <div style={{ fontSize:10, fontWeight:700, color:"#00F5D4", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:T.fontDisplay }}>💸 ¿Pagan por esto hoy?</div>
+              <div style={{ fontSize:10, fontWeight:700, color:"#00F5D4", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora',sans-serif" }}>💸 ¿Pagan por esto hoy?</div>
               <p style={{ margin:0, fontSize:13, color:"var(--textMid)", lineHeight:1.5 }}>{a.pagaHoy}</p>
             </div>
           )}
@@ -300,8 +300,8 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
           ))}
         </Card>
         {a.scores && (
-          <div style={{ background:T.surface, border:"1px solid var(--border)", borderRadius:16, padding:"18px", backdropFilter:"blur(12px)", boxShadow:"0 4px 24px rgba(0,0,0,0.3)" }}>
-            <div style={{ fontSize:10, fontWeight:700, color:"var(--textMute)", textTransform:"uppercase", letterSpacing:"1px", marginBottom:10, textAlign:"center", fontFamily:T.fontDisplay }}>Radar</div>
+          <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, padding:"18px", backdropFilter:"blur(12px)", boxShadow:"0 4px 24px rgba(0,0,0,0.3)" }}>
+            <div style={{ fontSize:10, fontWeight:700, color:"var(--textMute)", textTransform:"uppercase", letterSpacing:"1px", marginBottom:10, textAlign:"center", fontFamily:"'Sora',sans-serif" }}>Radar</div>
             <RadarChart scores={a.scores} size={172}/>
           </div>
         )}
@@ -339,12 +339,12 @@ function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt
       {nextStep && (
         <div style={{ background:nextStep.bg, border:`1px solid ${nextStep.border}`, borderRadius:16, padding:"20px 22px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:14 }}>
           <div>
-            <div style={{ fontSize:10, fontWeight:700, color:nextStep.color, textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:6, fontFamily:T.fontDisplay }}>🦈 Próximo paso recomendado</div>
-            <div style={{ fontWeight:700, fontSize:16, color:"var(--text)", marginBottom:4, fontFamily:T.fontDisplay, letterSpacing:"-0.3px" }}>{nextStep.icon} {nextStep.label}</div>
+            <div style={{ fontSize:10, fontWeight:700, color:nextStep.color, textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:6, fontFamily:"'Sora',sans-serif" }}>🦈 Próximo paso recomendado</div>
+            <div style={{ fontWeight:700, fontSize:16, color:"var(--text)", marginBottom:4, fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px" }}>{nextStep.icon} {nextStep.label}</div>
             <div style={{ fontSize:13, color:"var(--textMute)", lineHeight:1.5 }}>{nextStep.sub}</div>
           </div>
           <button onClick={()=>nextStep.action==="reanalyze" ? onReanalyze() : onGoTab(nextStep.tab)}
-            style={{ background:`linear-gradient(135deg,${nextStep.color}CC,${nextStep.color}88)`, border:"none", borderRadius:10, padding:"11px 20px", color:"#fff", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:T.fontDisplay, flexShrink:0, whiteSpace:"nowrap", boxShadow:`0 0 16px ${nextStep.color}40` }}>
+            style={{ background:`linear-gradient(135deg,${nextStep.color}CC,${nextStep.color}88)`, border:"none", borderRadius:10, padding:"11px 20px", color:"#fff", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"'Sora',sans-serif", flexShrink:0, whiteSpace:"nowrap", boxShadow:`0 0 16px ${nextStep.color}40` }}>
             Ir →
           </button>
         </div>
@@ -364,15 +364,15 @@ function MonetizacionTab({ a, onGoAnalysis }) {
   return (
     <div style={{ display:"grid", gap:14 }}>
       {a.monetizacion?.map((m,i) => (
-        <div key={i} style={{ background:T.surface, border:`1px solid ${i===0?"rgba(108,92,231,0.3)":"var(--border)"}, borderRadius:16, overflow:"hidden", backdropFilter:"blur(12px)", boxShadow:i===0?"0 0 30px rgba(108,92,231,0.15)":"none" }}>
+        <div key={i} style={{ background:"var(--surface)", border:`1px solid ${i===0?"rgba(108,92,231,0.3)":"var(--border)"}, borderRadius:16, overflow:"hidden", backdropFilter:"blur(12px)", boxShadow:i===0?"0 0 30px rgba(108,92,231,0.15)":"none" }}>
           <div style={{ background:i===0?"linear-gradient(135deg,rgba(108,92,231,0.2),rgba(0,245,212,0.08))":"rgba(255,255,255,0.03)", padding:"16px 22px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:"1px solid var(--border)", position:"relative", overflow:"hidden" }}>
             {i===0&&<div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(108,92,231,0.6),rgba(0,245,212,0.3),transparent)" }}/>}
             <div>
-              <span style={{ fontSize:10, fontWeight:700, color:"var(--textMute)", textTransform:"uppercase", letterSpacing:"0.5px", fontFamily:T.fontDisplay }}>Opción {i+1}{i===0?" · Recomendada":""}</span>
-              <div style={{ fontWeight:700, fontSize:16, color:"var(--text)", marginTop:2, fontFamily:T.fontDisplay, letterSpacing:"-0.3px" }}>{m.modelo}</div>
+              <span style={{ fontSize:10, fontWeight:700, color:"var(--textMute)", textTransform:"uppercase", letterSpacing:"0.5px", fontFamily:"'Sora',sans-serif" }}>Opción {i+1}{i===0?" · Recomendada":""}</span>
+              <div style={{ fontWeight:700, fontSize:16, color:"var(--text)", marginTop:2, fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px" }}>{m.modelo}</div>
             </div>
             <div style={{ textAlign:"right" }}>
-              <div style={{ fontSize:10, color:"var(--textMute)", marginBottom:2, fontFamily:T.fontDisplay }}>MRR est.</div>
+              <div style={{ fontSize:10, color:"var(--textMute)", marginBottom:2, fontFamily:"'Sora',sans-serif" }}>MRR est.</div>
               <div style={{ fontWeight:800, fontSize:15, color:"#00F5D4", fontFamily:"monospace" }}>{m.mrrEstimado}</div>
             </div>
           </div>
@@ -384,7 +384,7 @@ function MonetizacionTab({ a, onGoAnalysis }) {
                 { label:"⚠️ CONTRAS",text:m.contras,bg:"rgba(255,95,122,0.08)", border:"rgba(255,95,122,0.2)", color:"#FF5F7A" },
               ].map(({label,text,bg,border,color}) => (
                 <div key={label} style={{ background:bg, borderRadius:10, padding:"10px 14px", border:`1px solid ${border}` }}>
-                  <div style={{ fontSize:10, fontWeight:700, color, marginBottom:5, textTransform:"uppercase", letterSpacing:"0.5px", fontFamily:T.fontDisplay }}>{label}</div>
+                  <div style={{ fontSize:10, fontWeight:700, color, marginBottom:5, textTransform:"uppercase", letterSpacing:"0.5px", fontFamily:"'Sora',sans-serif" }}>{label}</div>
                   <p style={{ margin:0, fontSize:13, color:"var(--textMid)", lineHeight:1.5 }}>{text}</p>
                 </div>
               ))}
@@ -401,7 +401,7 @@ function MonetizacionTab({ a, onGoAnalysis }) {
               { label:"🦈 DICE EL SHARK",  text:a.publicidad.recomendacion,bg:"rgba(255,255,255,0.03)",color:"var(--text)",   border:"var(--border)", bold:true },
             ].map(({label,text,bg,color,border,bold})=>(
               <div key={label} style={{ background:bg, borderRadius:10, padding:"12px 16px", border:`1px solid ${border}` }}>
-                <div style={{ fontSize:10, fontWeight:700, color, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px", fontFamily:T.fontDisplay }}>{label}</div>
+                <div style={{ fontSize:10, fontWeight:700, color, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px", fontFamily:"'Sora',sans-serif" }}>{label}</div>
                 <p style={{ margin:0, fontSize:14, color:"var(--textMid)", lineHeight:1.6, fontWeight:bold?600:400 }}>{text}</p>
               </div>
             ))}
@@ -428,7 +428,7 @@ function GtmTab({ a, onGoAnalysis }) {
 function CommentsTab({ sel, onAdd }) {
   const [author,  setAuthor]  = useState("");
   const [comment, setComment] = useState("");
-  const inputStyle = { border:"1px solid var(--border2)", borderRadius:10, padding:"10px 14px", fontSize:13, outline:"none", color:"var(--text)", background:"var(--surface)", backdropFilter:"blur(8px)", width:"100%", boxSizing:"border-box", fontFamily:T.font, transition:"border-color 0.15s" };
+  const inputStyle = { border:"1px solid var(--border2)", borderRadius:10, padding:"10px 14px", fontSize:13, outline:"none", color:"var(--text)", background:"var(--surface)", backdropFilter:"blur(8px)", width:"100%", boxSizing:"border-box", fontFamily:"'DM Sans',sans-serif", transition:"border-color 0.15s" };
 
   const submit = () => {
     if (!comment.trim()) return;
@@ -438,8 +438,8 @@ function CommentsTab({ sel, onAdd }) {
 
   return (
     <div>
-      <div style={{ background:T.surface, border:"1px solid var(--border)", borderRadius:16, padding:"18px 22px", marginBottom:14, backdropFilter:"blur(12px)" }}>
-        <div style={{ fontWeight:700, fontSize:15, marginBottom:14, color:"var(--text)", fontFamily:T.fontDisplay, letterSpacing:"-0.3px" }}>Agregar comentario</div>
+      <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, padding:"18px 22px", marginBottom:14, backdropFilter:"blur(12px)" }}>
+        <div style={{ fontWeight:700, fontSize:15, marginBottom:14, color:"var(--text)", fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px" }}>Agregar comentario</div>
         <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
           {[{val:author,set:setAuthor,ph:"Tu nombre"},{val:comment,set:setComment,ph:"Tu punto de vista (sin filtro)"}].map(({val,set,ph},i)=>(
             <input key={ph} value={val} onChange={e=>set(e.target.value)}
@@ -452,17 +452,17 @@ function CommentsTab({ sel, onAdd }) {
         </div>
       </div>
       {!sel.comments?.length ? (
-        <div style={{ textAlign:"center", padding:"44px", color:"var(--textMute)", background:T.surface, borderRadius:16, border:"1px solid var(--border)", backdropFilter:"blur(8px)" }}>
+        <div style={{ textAlign:"center", padding:"44px", color:"var(--textMute)", background:"var(--surface)", borderRadius:16, border:"1px solid var(--border)", backdropFilter:"blur(8px)" }}>
           <div style={{fontSize:32,marginBottom:10}}>💬</div>
-          <div style={{fontWeight:600,color:"var(--textMid)",marginBottom:4,fontFamily:T.fontDisplay}}>Nadie dijo nada todavía</div>
+          <div style={{fontWeight:600,color:"var(--textMid)",marginBottom:4,fontFamily:"'Sora',sans-serif"}}>Nadie dijo nada todavía</div>
           <div style={{fontSize:12}}>Sé el primero en opinar</div>
         </div>
       ) : (
         <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
           {sel.comments.map(c=>(
-            <div key={c.id} style={{ background:T.surface, border:"1px solid var(--border)", borderRadius:12, padding:"14px 18px", backdropFilter:"blur(8px)" }}>
+            <div key={c.id} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:12, padding:"14px 18px", backdropFilter:"blur(8px)" }}>
               <div style={{ display:"flex", justifyContent:"space-between", marginBottom:7 }}>
-                <span style={{ fontWeight:700, fontSize:13, color:"var(--text)", fontFamily:T.fontDisplay }}>{c.author}</span>
+                <span style={{ fontWeight:700, fontSize:13, color:"var(--text)", fontFamily:"'Sora',sans-serif" }}>{c.author}</span>
                 <span style={{ fontSize:11, color:"var(--textMute)", fontFamily:"monospace" }}>{c.time}</span>
               </div>
               <p style={{ margin:0, color:"var(--textMid)", fontSize:14, lineHeight:1.6 }}>{c.text}</p>
@@ -873,7 +873,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
                 {tab==="vote"&&(
                   <div>
                     <VotingPanel idea={sel} onVote={addVote}/>
-                    <div style={{ background:T.surface, border:"1px solid var(--border)", borderRadius:16, padding:"22px", textAlign:"center", backdropFilter:"blur(12px)" }}>
+                    <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, padding:"22px", textAlign:"center", backdropFilter:"blur(12px)" }}>
                       <div style={{ fontSize:17, color:"var(--text)", fontWeight:700, marginBottom:7, fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px" }}>🦈 ¿Listo para el veredicto?</div>
                       <div style={{ fontSize:13, color:"var(--textMute)", marginBottom:20 }}>Votá primero para no contaminar tu juicio</div>
                       <GlowBtn onClick={()=>setTab("analysis")}>Ver qué dice el Shark →</GlowBtn>
