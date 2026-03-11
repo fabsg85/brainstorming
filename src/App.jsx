@@ -12,6 +12,7 @@ import PitchDeckModal  from "./components/PitchDeckModal";
 import Comparador      from "./components/Comparador";
 import TimelineGTM     from "./components/TimelineGTM";
 import { Card, StageBadge, ScoreBar, EmptyTab, GlowBtn } from "./components/UI";
+import BudgetTab         from "./components/BudgetTab";
 
 // ── FONTS + GLOBAL STYLES ────────────────────────────────────────
 const GlobalStyles = () => (
@@ -401,6 +402,13 @@ export default function App() {
     exportMarkdown(`prompt-${sel.title.toLowerCase().replace(/\s+/g,"-").replace(/[^a-z0-9-]/g,"")}.md`, md);
   };
 
+  const saveBudget = (ideaId, budget) => {
+    const idea = ideas.find(i => i.id === ideaId);
+    if (!idea) return;
+    const newAnalysis = { ...(idea.analysis || {}), budget };
+    saveAnalysis(ideaId, newAnalysis);
+  };
+
   // ── LOADING ────────────────────────────────────────────────────
   if (loading) return (
     <div style={{ minHeight:"100vh", background:"#0B0B0F", display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -630,6 +638,7 @@ export default function App() {
                 {tab==="analysis"     && <AnalysisTab     sel={sel} a={a} analyzing={analyzing} onAnalyze={analyze} onReanalyze={reanalyze} onExportPrompt={handleExportPrompt}/>}
                 {tab==="monetizacion" && <MonetizacionTab a={a} onGoAnalysis={()=>setTab("analysis")}/>}
                 {tab==="gtm"          && <GtmTab          a={a} onGoAnalysis={()=>setTab("analysis")}/>}
+                {tab==="budget"       && <BudgetTab       ideaId={sel.id} budget={sel.analysis?.budget} onSave={saveBudget}/>}
                 {tab==="comments"     && <CommentsTab     sel={sel} onAdd={addComment}/>}
               </div>
             </div>

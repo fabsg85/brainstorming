@@ -64,5 +64,16 @@ export const TABS = (sel) => [
   { key: "analysis",    label: "🦈 Análisis" },
   { key: "monetizacion",label: "💰 Modelo"  },
   { key: "gtm",         label: "🚀 GTM"     },
+  { key: "budget",      label: `💸 Budget${sel?.analysis?.budget?.items?.length ? ` (${sel.analysis.budget.items.length})` : ""}` },
   { key: "comments",    label: `💬${sel?.comments?.length ? ` ${sel.comments.length}` : ""}` },
+];
+
+export const BUDGET_CATEGORIES = [
+  { key: "infra",      label: "Infraestructura", emoji: "🖥️",  examples: "dominio, hosting, VPS, CDN" },
+  { key: "ai",         label: "AI / APIs",        emoji: "🤖",  examples: "OpenAI, Anthropic, Replicate" },
+  { key: "tools",      label: "Herramientas",     emoji: "🔧",  examples: "Figma, GitHub, Notion, Supabase" },
+  { key: "ads",        label: "Publicidad",       emoji: "📣",  examples: "Instagram Ads, Google Ads, TikTok" },
+  { key: "freelancer", label: "Freelancers",      emoji: "👨‍💻",  examples: "dev, diseño, copy, QA" },
+  { key: "legal",      label: "Legal / Admin",    emoji: "⚖️",  examples: "registro empresa, trademark" },
+  { key: "other",      label: "Otro",             emoji: "📦",  examples: "lo que sea" },
 ];
