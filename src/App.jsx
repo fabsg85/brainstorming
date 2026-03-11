@@ -11,7 +11,41 @@ import Wizard          from "./components/Wizard";
 import PitchDeckModal  from "./components/PitchDeckModal";
 import Comparador      from "./components/Comparador";
 import TimelineGTM     from "./components/TimelineGTM";
-import { Card, StageBadge, ScoreBar, EmptyTab } from "./components/UI";
+import { Card, StageBadge, ScoreBar, EmptyTab, GlowBtn } from "./components/UI";
+
+// ── FONTS + GLOBAL STYLES ────────────────────────────────────────
+const GlobalStyles = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: #0B0B0F; color: rgba(255,255,255,0.92); font-family: 'DM Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: #0B0B0F; }
+    ::-webkit-scrollbar-thumb { background: #6C5CE7; border-radius: 99px; }
+    input, textarea, select { color: rgba(255,255,255,0.92); background: transparent; }
+    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.22); }
+    button { transition: opacity 0.12s, transform 0.1s; }
+    button:active:not(:disabled) { opacity: 0.82; transform: scale(0.98); }
+    textarea { resize: vertical; }
+    @keyframes pulse   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.94)} }
+    @keyframes spin    { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes glowPulse { 0%,100%{box-shadow:0 0 20px rgba(108,92,231,0.3)} 50%{box-shadow:0 0 40px rgba(108,92,231,0.6),0 0 20px rgba(0,245,212,0.2)} }
+    @keyframes blobFloat { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-40px) scale(1.04)} 66%{transform:translate(-20px,30px) scale(0.97)} }
+  `}</style>
+);
+
+// ── NOISE + BLOB BACKGROUND ──────────────────────────────────────
+const BackgroundEffects = () => (
+  <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:0, overflow:"hidden" }}>
+    {/* Noise texture */}
+    <div style={{ position:"absolute", inset:0, backgroundImage:`url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E")`, backgroundSize:"200px 200px", opacity:0.5 }}/>
+    {/* Blobs */}
+    <div style={{ position:"absolute", width:600, height:600, borderRadius:"50%", background:"#6C5CE7", filter:"blur(140px)", opacity:0.06, top:-200, left:-200, animation:"blobFloat 20s ease-in-out infinite" }}/>
+    <div style={{ position:"absolute", width:400, height:400, borderRadius:"50%", background:"#00F5D4", filter:"blur(120px)", opacity:0.05, top:"40%", right:-150, animation:"blobFloat 16s ease-in-out infinite", animationDelay:"-8s" }}/>
+    <div style={{ position:"absolute", width:300, height:300, borderRadius:"50%", background:"#6C5CE7", filter:"blur(100px)", opacity:0.04, bottom:-100, left:"30%", animation:"blobFloat 18s ease-in-out infinite", animationDelay:"-14s" }}/>
+  </div>
+);
 
 const ANALYZE_PROMPT = (title, description) => `Analizá esta idea de negocio AI. Devolvé SOLO un objeto JSON válido. Sin markdown, sin texto extra, sin backticks. Empezá con { y terminá con }.
 
@@ -54,190 +88,191 @@ ESTRUCTURA EXACTA:
   "scores": { "traccion": 0, "moat": 0, "monetizacion": 0, "velocidad": 0, "mercado": 0 }
 }`;
 
-// ── GLOBAL STYLES ─────────────────────────────────────────────────
-const GlobalStyles = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap');
-    * { box-sizing: border-box; }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-thumb { background: #D0CCC4; border-radius: 3px; }
-    input::placeholder, textarea::placeholder { color: #A8A49E; }
-    button  { transition: opacity 0.12s, transform 0.1s; font-family: inherit; }
-    button:active { opacity: 0.82; transform: scale(0.98); }
-    textarea { resize: vertical; font-family: inherit; }
-    select   { appearance: auto; font-family: inherit; }
-    @keyframes pulse   { 0%,100%{opacity:1;transform:scale(1)}  50%{opacity:0.6;transform:scale(0.93)} }
-    @keyframes spin    { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-    @keyframes fadeUp  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-  `}</style>
-);
-
-// ── EMPTY STATE ───────────────────────────────────────────────────
+// ── EMPTY BOARD ──────────────────────────────────────────────────
 function EmptyBoard({ onAdd }) {
   return (
-    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: T.font, padding: 20 }}>
-      <div style={{ textAlign: "center", maxWidth: 480 }}>
-        <div style={{ marginBottom: 26 }}><SharkLogo size={84} /></div>
-        <h1 style={{ margin: "0 0 10px", fontSize: 46, fontWeight: 700, color: T.text, letterSpacing: "-1.5px", fontFamily: T.fontDisplay, lineHeight: 1.1 }}>Shark Board</h1>
-        <p style={{ color: T.textMid, fontSize: 16, lineHeight: 1.75, marginBottom: 42 }}>
-          Tirá tus ideas de negocio AI.<br />El Shark las analiza sin filtro — y sin piedad.
+    <div style={{ minHeight:"100vh", background:"#0B0B0F", display:"flex", alignItems:"center", justifyContent:"center", padding:20, position:"relative", overflow:"hidden" }}>
+      <BackgroundEffects/>
+      <div style={{ textAlign:"center", maxWidth:560, position:"relative", zIndex:1 }}>
+        {/* Logo */}
+        <div style={{ marginBottom:28, display:"inline-flex", animation:"glowPulse 3s ease-in-out infinite" }}>
+          <SharkLogo size={80}/>
+        </div>
+        <h1 style={{ margin:"0 0 12px", fontSize:56, fontWeight:800, color:"rgba(255,255,255,0.95)", letterSpacing:"-2px", fontFamily:"'Sora',sans-serif", lineHeight:1.05 }}>
+          Think Faster.<br/>
+          <span style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
+            Hunt Better Ideas.
+          </span>
+        </h1>
+        <p style={{ color:"rgba(255,255,255,0.42)", fontSize:16, lineHeight:1.75, marginBottom:48, fontWeight:300 }}>
+          Tirá tus ideas. El Shark las puntúa sin filtro.<br/>Scoring calibrado, veredicto brutal, playbook ejecutable.
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 42 }}>
-          {[["🦈","Análisis brutal"],["📊","Scoring sarcástico"],["📋","Pitch Deck"],["🗳️","Votación equipo"],["⚖️","Comparación"],["⬇️","Export prompt"]].map(([e, l]) => (
-            <div key={l} style={{ background: T.surface, border: `1.5px solid ${T.border}`, borderRadius: 14, padding: "16px 12px", textAlign: "center", boxShadow: "0 2px 8px #0000000a" }}>
-              <div style={{ fontSize: 24, marginBottom: 6 }}>{e}</div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: T.textMid }}>{l}</div>
+
+        {/* Feature pills */}
+        <div style={{ display:"flex", flexWrap:"wrap", gap:8, justifyContent:"center", marginBottom:48 }}>
+          {[["🦈","Análisis brutal"],["📊","Scoring 5 ejes"],["📋","Pitch Deck auto"],["🗳️","Votación equipo"],["⚖️","Comparación"],["⬇️","Export .md"]].map(([e,l])=>(
+            <div key={l} style={{ background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:99, padding:"7px 14px", fontSize:12, fontWeight:600, color:"rgba(255,255,255,0.5)", fontFamily:"'Sora',sans-serif", backdropFilter:"blur(8px)" }}>
+              {e} {l}
             </div>
           ))}
         </div>
-        <button onClick={onAdd} style={{ background: T.text, border: "none", borderRadius: 14, padding: "16px 40px", color: "#FFF", fontWeight: 700, fontSize: 16, cursor: "pointer", fontFamily: T.fontDisplay, letterSpacing: "-0.3px", boxShadow: `0 8px 28px ${T.text}22` }}>
+
+        <button onClick={onAdd} style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:14, padding:"16px 44px", color:"#fff", fontWeight:700, fontSize:16, cursor:"pointer", fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px", boxShadow:"0 0 40px rgba(108,92,231,0.5), 0 0 20px rgba(0,245,212,0.2)" }}>
           🦈 Tirar la primera idea
         </button>
+        <div style={{ marginTop:16, fontSize:12, color:"rgba(255,255,255,0.2)" }}>No hace falta tener todo claro. El Shark se encarga.</div>
       </div>
     </div>
   );
 }
 
-// ── ANALYSIS TAB ──────────────────────────────────────────────────
+// ── ANALYSIS TAB ─────────────────────────────────────────────────
 function AnalysisTab({ sel, a, analyzing, onAnalyze, onReanalyze, onExportPrompt }) {
-  if (!a && !analyzing) {
-    return (
-      <div style={{ textAlign: "center", padding: "72px 20px", background: T.surface, border: `1.5px solid ${T.border}`, borderRadius: 20, boxShadow: "0 4px 20px #0000000a" }}>
-        <SharkLogo size={68} />
-        <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 10, marginTop: 22, fontFamily: T.fontDisplay, color: T.text }}>Que el Shark hable</div>
-        <div style={{ color: T.textMid, fontSize: 14, marginBottom: 34, maxWidth: 360, margin: "10px auto 34px", lineHeight: 1.7 }}>
-          Scoring calibrado · Monetización · GTM · Riesgo legal · Veredicto sin anestesia
-        </div>
-        <button onClick={onAnalyze} style={{ background: T.text, border: "none", borderRadius: 14, padding: "15px 38px", color: "#FFF", fontWeight: 700, fontSize: 15, cursor: "pointer", fontFamily: T.fontDisplay, letterSpacing: "-0.3px", boxShadow: `0 8px 24px ${T.text}22` }}>
-          🦈 Analizar esta idea
-        </button>
+  if (!a && !analyzing) return (
+    <div style={{ textAlign:"center", padding:"72px 20px", background:T.surface, border:`1px solid ${T.border}`, borderRadius:20, backdropFilter:"blur(12px)" }}>
+      {/* Animated shark logo */}
+      <div style={{ display:"inline-flex", marginBottom:24, animation:"glowPulse 3s ease-in-out infinite" }}>
+        <SharkLogo size={64}/>
       </div>
-    );
-  }
+      <div style={{ fontWeight:700, fontSize:22, marginBottom:10, fontFamily:T.fontDisplay, color:T.text, letterSpacing:"-0.5px" }}>Que el Shark hable</div>
+      <div style={{ color:T.textMute, fontSize:14, marginBottom:36, maxWidth:360, margin:"10px auto 36px", lineHeight:1.7 }}>
+        Scoring calibrado · Monetización · GTM · Riesgo legal · Veredicto sin anestesia
+      </div>
+      <button onClick={onAnalyze} style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:12, padding:"14px 36px", color:"#fff", fontWeight:700, fontSize:15, cursor:"pointer", fontFamily:T.fontDisplay, boxShadow:"0 0 30px rgba(108,92,231,0.5)" }}>
+        🦈 Analizar esta idea
+      </button>
+    </div>
+  );
 
-  if (analyzing) {
-    return (
-      <div style={{ textAlign: "center", padding: "80px 20px", background: T.surface, border: `1.5px solid ${T.border}`, borderRadius: 20 }}>
-        <div style={{ animation: "pulse 1.6s ease-in-out infinite", display: "inline-block" }}><SharkLogo size={68} /></div>
-        <div style={{ color: T.text, fontWeight: 700, fontSize: 20, marginTop: 24, fontFamily: T.fontDisplay }}>El Shark está pensando...</div>
-        <div style={{ color: T.textMute, fontSize: 13, marginTop: 8, marginBottom: 26 }}>No lo toques. Esto tarda unos segundos.</div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 6, flexWrap: "wrap" }}>
-          {SCORE_CRITERIA.map((c, i) => (
-            <span key={c.key} style={{ fontSize: 11, color: T.textMid, background: T.bg, border: `1.5px solid ${T.border}`, borderRadius: 20, padding: "4px 12px", fontWeight: 600, animation: `pulse 1.5s ${i * 0.2}s infinite` }}>
-              {c.icon} {c.label}
-            </span>
-          ))}
-        </div>
+  if (analyzing) return (
+    <div style={{ textAlign:"center", padding:"80px 20px", background:T.surface, border:`1px solid ${T.border}`, borderRadius:20, backdropFilter:"blur(12px)" }}>
+      <div style={{ animation:"pulse 1.6s ease-in-out infinite", display:"inline-block" }}><SharkLogo size={64}/></div>
+      <div style={{ color:T.text, fontWeight:700, fontSize:20, marginTop:24, fontFamily:T.fontDisplay, letterSpacing:"-0.3px" }}>El Shark está pensando...</div>
+      <div style={{ color:T.textMute, fontSize:13, marginTop:8, marginBottom:28 }}>No lo toques. Esto tarda unos segundos.</div>
+      <div style={{ display:"flex", justifyContent:"center", gap:6, flexWrap:"wrap" }}>
+        {SCORE_CRITERIA.map((c,i) => (
+          <span key={c.key} style={{ fontSize:11, color:T.textMid, background:T.surface2, border:`1px solid ${T.border}`, borderRadius:99, padding:"4px 12px", fontWeight:600, fontFamily:T.fontDisplay, animation:`pulse 1.6s ${i*0.2}s infinite` }}>
+            {c.icon} {c.label}
+          </span>
+        ))}
       </div>
-    );
-  }
+    </div>
+  );
 
-  if (a.error) {
-    return (
-      <div style={{ textAlign: "center", padding: "52px 20px", background: T.surface, border: `1.5px solid ${T.coral}25`, borderRadius: 20 }}>
-        <div style={{ fontSize: 42, marginBottom: 12 }}>😬</div>
-        <div style={{ color: T.coral, fontWeight: 700, fontSize: 17, marginBottom: 7, fontFamily: T.fontDisplay }}>Algo salió mal</div>
-        <div style={{ color: T.textMute, fontSize: 13, marginBottom: 22 }}>{a.msg || "El Shark está de mal humor. Intentá de nuevo."}</div>
-        <button onClick={onReanalyze} style={{ background: T.bg, border: `1.5px solid ${T.border}`, borderRadius: 10, padding: "10px 24px", color: T.text, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
-          🔄 Reintentar
-        </button>
-      </div>
-    );
-  }
+  if (a.error) return (
+    <div style={{ textAlign:"center", padding:"52px 20px", background:"rgba(255,95,122,0.06)", border:"1px solid rgba(255,95,122,0.2)", borderRadius:20, backdropFilter:"blur(12px)" }}>
+      <div style={{ fontSize:40, marginBottom:12 }}>😬</div>
+      <div style={{ color:"#FF5F7A", fontWeight:700, fontSize:17, marginBottom:7, fontFamily:T.fontDisplay }}>Algo salió mal</div>
+      <div style={{ color:T.textMute, fontSize:13, marginBottom:22 }}>{a.msg||"El Shark está de mal humor. Intentá de nuevo."}</div>
+      <GlowBtn onClick={onReanalyze} variant="ghost">🔄 Reintentar</GlowBtn>
+    </div>
+  );
 
   return (
-    <div style={{ display: "grid", gap: 16, animation: "fadeUp 0.3s ease" }}>
-      <VerdictBanner score={a.avgScore} />
+    <div style={{ display:"grid", gap:14, animation:"fadeUp 0.3s ease" }}>
+      <VerdictBanner score={a.avgScore}/>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 16, alignItems: "start" }}>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:14, alignItems:"start" }}>
         <Card title="🎯 Scoring detallado">
           {a.pagaHoy && (
-            <div style={{ background: T.mintLight, border: `1.5px solid ${T.mint}22`, borderRadius: 10, padding: "10px 14px", marginBottom: 18 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: T.mint, marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.5px" }}>💸 ¿Pagan por esto hoy?</div>
-              <p style={{ margin: 0, fontSize: 13, color: T.textMid, lineHeight: 1.5 }}>{a.pagaHoy}</p>
+            <div style={{ background:"rgba(0,245,212,0.08)", border:"1px solid rgba(0,245,212,0.2)", borderRadius:10, padding:"10px 14px", marginBottom:18 }}>
+              <div style={{ fontSize:10, fontWeight:700, color:"#00F5D4", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:T.fontDisplay }}>💸 ¿Pagan por esto hoy?</div>
+              <p style={{ margin:0, fontSize:13, color:T.textMid, lineHeight:1.5 }}>{a.pagaHoy}</p>
             </div>
           )}
-          {SCORE_CRITERIA.map((c) => (
-            <ScoreBar key={c.key} icon={c.icon} label={c.label} value={a.scores?.[c.key]} rationale={a.scoreRationale?.[c.key]} />
+          {SCORE_CRITERIA.map(c => (
+            <ScoreBar key={c.key} icon={c.icon} label={c.label} value={a.scores?.[c.key]} rationale={a.scoreRationale?.[c.key]}/>
           ))}
         </Card>
         {a.scores && (
-          <div style={{ background: T.surface, border: `1.5px solid ${T.border}`, borderRadius: 16, padding: "18px", boxShadow: "0 2px 10px #0000000a" }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: T.textMute, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 10, textAlign: "center" }}>Radar</div>
-            <RadarChart scores={a.scores} size={172} />
+          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:"18px", backdropFilter:"blur(12px)", boxShadow:"0 4px 24px rgba(0,0,0,0.3)" }}>
+            <div style={{ fontSize:10, fontWeight:700, color:T.textMute, textTransform:"uppercase", letterSpacing:"1px", marginBottom:10, textAlign:"center", fontFamily:T.fontDisplay }}>Radar</div>
+            <RadarChart scores={a.scores} size={172}/>
           </div>
         )}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        <Card title="👥 Público objetivo"><p style={{ margin: 0, color: T.textMid, fontSize: 14, lineHeight: 1.65 }}>{a.publicObj}</p></Card>
-        <Card title="🔍 Benchmark"><p style={{ margin: 0, color: T.textMid, fontSize: 14, lineHeight: 1.65 }}>{a.benchmark}</p></Card>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+        <Card title="👥 Público objetivo"><p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.65 }}>{a.publicObj}</p></Card>
+        <Card title="🔍 Benchmark"><p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.65 }}>{a.benchmark}</p></Card>
       </div>
-      <Card title="✨ Diferencial"><p style={{ margin: 0, color: T.textMid, fontSize: 14, lineHeight: 1.7 }}>{a.diferencial}</p></Card>
+      <Card title="✨ Diferencial"><p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.7 }}>{a.diferencial}</p></Card>
       <Card title="⚙️ Stack técnico">
-        <p style={{ margin: 0, color: T.text, fontSize: 13, fontFamily: "monospace", background: T.bg, borderRadius: 8, padding: "12px 14px", lineHeight: 1.7, border: `1px solid ${T.border}` }}>{a.stack}</p>
+        <div style={{ background:"rgba(255,255,255,0.03)", borderRadius:8, padding:"12px 14px", border:`1px solid ${T.border}` }}>
+          <p style={{ margin:0, color:T.text, fontSize:13, fontFamily:"monospace", lineHeight:1.7 }}>{a.stack}</p>
+        </div>
       </Card>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        <Card title="✅ Pros" accent={T.mint}>
-          <ul style={{ margin: 0, paddingLeft: 18 }}>{a.pros?.map((p, i) => <li key={i} style={{ color: T.mint, fontSize: 14, marginBottom: 7, lineHeight: 1.5 }}><span style={{ color: T.textMid }}>{p}</span></li>)}</ul>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+        <Card title="✅ Pros" accent="#00F5D4">
+          <ul style={{ margin:0, paddingLeft:18 }}>
+            {a.pros?.map((p,i) => <li key={i} style={{ color:"#00F5D4", fontSize:14, marginBottom:7, lineHeight:1.5 }}><span style={{ color:T.textMid }}>{p}</span></li>)}
+          </ul>
         </Card>
-        <Card title="⚠️ Cons" accent={T.coral}>
-          <ul style={{ margin: 0, paddingLeft: 18 }}>{a.cons?.map((c, i) => <li key={i} style={{ color: T.coral, fontSize: 14, marginBottom: 7, lineHeight: 1.5 }}><span style={{ color: T.textMid }}>{c}</span></li>)}</ul>
+        <Card title="⚠️ Cons" accent="#FF5F7A">
+          <ul style={{ margin:0, paddingLeft:18 }}>
+            {a.cons?.map((c,i) => <li key={i} style={{ color:"#FF5F7A", fontSize:14, marginBottom:7, lineHeight:1.5 }}><span style={{ color:T.textMid }}>{c}</span></li>)}
+          </ul>
         </Card>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        <Card title="☠️ Mayor riesgo" accent={T.amber}><p style={{ margin: 0, color: T.textMid, fontSize: 14, lineHeight: 1.65 }}>{a.mayorRiesgo}</p></Card>
-        <Card title="⚖️ Riesgo legal"  accent={T.cobalt}><p style={{ margin: 0, color: T.textMid, fontSize: 14, lineHeight: 1.65 }}>{a.riesgoLegal}</p></Card>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+        <Card title="☠️ Mayor riesgo" accent="#FFB547"><p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.65 }}>{a.mayorRiesgo}</p></Card>
+        <Card title="⚖️ Riesgo legal"  accent="#6C5CE7"><p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.65 }}>{a.riesgoLegal}</p></Card>
       </div>
-      <Card title="📅 Primeros 30 días"><p style={{ margin: 0, color: T.textMid, fontSize: 14, lineHeight: 1.7 }}>{a.primeros30dias}</p></Card>
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-        <button onClick={onExportPrompt} style={{ background: T.bg, border: `1.5px solid ${T.border}`, borderRadius: 10, padding: "9px 18px", color: T.text, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>⬇️ Exportar Prompt</button>
-        <button onClick={onReanalyze}    style={{ background: T.text, border: "none", borderRadius: 10, padding: "9px 18px", color: "#FFF", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>🔄 Re-analizar</button>
+      <Card title="📅 Primeros 30 días"><p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.7 }}>{a.primeros30dias}</p></Card>
+
+      <div style={{ display:"flex", justifyContent:"flex-end", gap:10 }}>
+        <GlowBtn onClick={onExportPrompt} variant="ghost">⬇️ Exportar Prompt</GlowBtn>
+        <GlowBtn onClick={onReanalyze} variant="teal">🔄 Re-analizar</GlowBtn>
       </div>
     </div>
   );
 }
 
-// ── MONETIZACION TAB ──────────────────────────────────────────────
+// ── MONETIZACION TAB ─────────────────────────────────────────────
 function MonetizacionTab({ a, onGoAnalysis }) {
-  if (!a) return <EmptyTab icon="💰" title="Nada que ver acá todavía" sub="Generá el análisis primero" onGo={onGoAnalysis} />;
+  if (!a) return <EmptyTab icon="💰" title="Nada que ver acá todavía" sub="Generá el análisis primero" onGo={onGoAnalysis}/>;
   return (
-    <div style={{ display: "grid", gap: 14 }}>
-      {a.monetizacion?.map((m, i) => (
-        <div key={i} style={{ background: T.surface, border: `1.5px solid ${i === 0 ? T.text + "18" : T.border}`, borderRadius: 16, overflow: "hidden", boxShadow: i === 0 ? "0 6px 24px #00000010" : "none" }}>
-          <div style={{ background: i === 0 ? T.text : T.bg, padding: "16px 22px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div style={{ display:"grid", gap:14 }}>
+      {a.monetizacion?.map((m,i) => (
+        <div key={i} style={{ background:T.surface, border:`1px solid ${i===0?"rgba(108,92,231,0.3)":T.border}`, borderRadius:16, overflow:"hidden", backdropFilter:"blur(12px)", boxShadow:i===0?"0 0 30px rgba(108,92,231,0.15)":"none" }}>
+          <div style={{ background:i===0?"linear-gradient(135deg,rgba(108,92,231,0.2),rgba(0,245,212,0.08))":"rgba(255,255,255,0.03)", padding:"16px 22px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${T.border}`, position:"relative", overflow:"hidden" }}>
+            {i===0&&<div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(108,92,231,0.6),rgba(0,245,212,0.3),transparent)" }}/>}
             <div>
-              <span style={{ fontSize: 10, fontWeight: 700, color: i === 0 ? "#FFFFFF35" : T.textMute, textTransform: "uppercase", letterSpacing: "0.5px" }}>Opción {i + 1}{i === 0 ? " · Recomendada" : ""}</span>
-              <div style={{ fontWeight: 700, fontSize: 16, color: i === 0 ? "#FFF" : T.text, marginTop: 2, fontFamily: T.fontDisplay }}>{m.modelo}</div>
+              <span style={{ fontSize:10, fontWeight:700, color:T.textMute, textTransform:"uppercase", letterSpacing:"0.5px", fontFamily:T.fontDisplay }}>Opción {i+1}{i===0?" · Recomendada":""}</span>
+              <div style={{ fontWeight:700, fontSize:16, color:T.text, marginTop:2, fontFamily:T.fontDisplay, letterSpacing:"-0.3px" }}>{m.modelo}</div>
             </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 10, color: i === 0 ? "#FFFFFF35" : T.textMute, marginBottom: 2 }}>MRR est.</div>
-              <div style={{ fontWeight: 800, fontSize: 15, color: T.mint, fontFamily: "monospace" }}>{m.mrrEstimado}</div>
+            <div style={{ textAlign:"right" }}>
+              <div style={{ fontSize:10, color:T.textMute, marginBottom:2, fontFamily:T.fontDisplay }}>MRR est.</div>
+              <div style={{ fontWeight:800, fontSize:15, color:"#00F5D4", fontFamily:"monospace" }}>{m.mrrEstimado}</div>
             </div>
           </div>
-          <div style={{ padding: "16px 22px", display: "grid", gap: 10 }}>
-            <p style={{ margin: 0, color: T.textMid, fontSize: 14, lineHeight: 1.65 }}>{m.descripcion}</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              {[{ label: "✅ PROS", text: m.pros, bg: T.mintLight, color: T.mint },
-                { label: "⚠️ CONTRAS", text: m.contras, bg: T.coralLight, color: T.coral }].map(({ label, text, bg, color }) => (
-                <div key={label} style={{ background: bg, borderRadius: 10, padding: "10px 14px" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color, marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.5px" }}>{label}</div>
-                  <p style={{ margin: 0, fontSize: 13, color: T.textMid, lineHeight: 1.5 }}>{text}</p>
+          <div style={{ padding:"16px 22px", display:"grid", gap:10 }}>
+            <p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.65 }}>{m.descripcion}</p>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+              {[
+                { label:"✅ PROS",   text:m.pros,   bg:"rgba(0,245,212,0.08)",  border:"rgba(0,245,212,0.2)",  color:"#00F5D4" },
+                { label:"⚠️ CONTRAS",text:m.contras,bg:"rgba(255,95,122,0.08)", border:"rgba(255,95,122,0.2)", color:"#FF5F7A" },
+              ].map(({label,text,bg,border,color}) => (
+                <div key={label} style={{ background:bg, borderRadius:10, padding:"10px 14px", border:`1px solid ${border}` }}>
+                  <div style={{ fontSize:10, fontWeight:700, color, marginBottom:5, textTransform:"uppercase", letterSpacing:"0.5px", fontFamily:T.fontDisplay }}>{label}</div>
+                  <p style={{ margin:0, fontSize:13, color:T.textMid, lineHeight:1.5 }}>{text}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
       ))}
-      {a.publicidad && (
+      {a.publicidad&&(
         <Card title="📣 Estrategia de adquisición">
-          <div style={{ display: "grid", gap: 10 }}>
-            {[{ label: "🌱 ORGÁNICO", text: a.publicidad.organico, bg: T.mintLight, color: T.mint },
-              { label: "💸 PUBLICIDAD PAGA", text: a.publicidad.pago, bg: T.cobaltLight, color: T.cobalt },
-              { label: "🦈 DICE EL SHARK", text: a.publicidad.recomendacion, bg: T.bg, color: T.text, bold: true }].map(({ label, text, bg, color, bold }) => (
-              <div key={label} style={{ background: bg, borderRadius: 10, padding: "12px 16px", border: bold ? `1.5px solid ${T.border}` : "none" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>{label}</div>
-                <p style={{ margin: 0, fontSize: 14, color: T.textMid, lineHeight: 1.6, fontWeight: bold ? 600 : 400 }}>{text}</p>
+          <div style={{ display:"grid", gap:10 }}>
+            {[
+              { label:"🌱 ORGÁNICO",       text:a.publicidad.organico,     bg:"rgba(0,245,212,0.06)",  color:"#00F5D4", border:"rgba(0,245,212,0.15)" },
+              { label:"💸 PUBLICIDAD PAGA", text:a.publicidad.pago,         bg:"rgba(108,92,231,0.06)", color:"#6C5CE7", border:"rgba(108,92,231,0.15)" },
+              { label:"🦈 DICE EL SHARK",  text:a.publicidad.recomendacion,bg:"rgba(255,255,255,0.03)",color:T.text,   border:T.border, bold:true },
+            ].map(({label,text,bg,color,border,bold})=>(
+              <div key={label} style={{ background:bg, borderRadius:10, padding:"12px 16px", border:`1px solid ${border}` }}>
+                <div style={{ fontSize:10, fontWeight:700, color, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px", fontFamily:T.fontDisplay }}>{label}</div>
+                <p style={{ margin:0, fontSize:14, color:T.textMid, lineHeight:1.6, fontWeight:bold?600:400 }}>{text}</p>
               </div>
             ))}
           </div>
@@ -247,58 +282,60 @@ function MonetizacionTab({ a, onGoAnalysis }) {
   );
 }
 
-// ── GTM TAB ───────────────────────────────────────────────────────
+// ── GTM TAB ──────────────────────────────────────────────────────
 function GtmTab({ a, onGoAnalysis }) {
-  if (!a) return <EmptyTab icon="🚀" title="Sin plan todavía" sub="Generá el análisis primero" onGo={onGoAnalysis} />;
+  if (!a) return <EmptyTab icon="🚀" title="Sin plan todavía" sub="Generá el análisis primero" onGo={onGoAnalysis}/>;
   return (
-    <div style={{ display: "grid", gap: 16 }}>
-      <Card title="🚀 Go-to-Market · Primeros 90 días" accent={T.cobalt}><TimelineGTM gtm90dias={a.gtm90dias} /></Card>
-      <Card title="📅 Primeros 30 días (antes de escribir código)" accent={T.coral}><p style={{ margin: 0, color: T.textMid, fontSize: 14, lineHeight: 1.7 }}>{a.primeros30dias}</p></Card>
-      <Card title="⚖️ Riesgo legal y regulatorio" accent={T.amber}><p style={{ margin: 0, color: T.textMid, fontSize: 14, lineHeight: 1.7 }}>{a.riesgoLegal}</p></Card>
+    <div style={{ display:"grid", gap:14 }}>
+      <Card title="🚀 Go-to-Market · Primeros 90 días" accent="#6C5CE7"><TimelineGTM gtm90dias={a.gtm90dias}/></Card>
+      <Card title="📅 Primeros 30 días (antes de escribir código)" accent="#FF5F7A"><p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.7 }}>{a.primeros30dias}</p></Card>
+      <Card title="⚖️ Riesgo legal y regulatorio" accent="#FFB547"><p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.7 }}>{a.riesgoLegal}</p></Card>
     </div>
   );
 }
 
-// ── COMMENTS TAB ──────────────────────────────────────────────────
+// ── COMMENTS TAB ─────────────────────────────────────────────────
 function CommentsTab({ sel, onAdd }) {
   const [author,  setAuthor]  = useState("");
   const [comment, setComment] = useState("");
+  const inputStyle = { border:`1px solid ${T.border2}`, borderRadius:10, padding:"10px 14px", fontSize:13, outline:"none", color:T.text, background:"rgba(255,255,255,0.04)", backdropFilter:"blur(8px)", width:"100%", boxSizing:"border-box", fontFamily:T.font, transition:"border-color 0.15s" };
 
   const submit = () => {
     if (!comment.trim()) return;
-    onAdd(sel.id, { id: Date.now(), author: author.trim() || "Anónimo", text: comment.trim(), time: new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }) });
+    onAdd(sel.id, { id:Date.now(), author:author.trim()||"Anónimo", text:comment.trim(), time:new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"}) });
     setComment("");
   };
 
   return (
     <div>
-      <div style={{ background: T.surface, border: `1.5px solid ${T.border}`, borderRadius: 16, padding: "18px 22px", marginBottom: 14 }}>
-        <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 14, color: T.text, fontFamily: T.fontDisplay }}>Agregar comentario</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {[{ val: author, set: setAuthor, ph: "Tu nombre" }, { val: comment, set: setComment, ph: "Tu punto de vista (sin filtro)" }].map(({ val, set, ph }, i) => (
-            <input key={ph} value={val} onChange={(e) => set(e.target.value)}
-              onKeyDown={(e) => i === 1 && e.key === "Enter" && submit()}
-              placeholder={ph}
-              style={{ border: `1.5px solid ${T.border}`, borderRadius: 10, padding: "10px 14px", fontSize: 13, outline: "none", color: T.text, background: T.bg }} />
+      <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:"18px 22px", marginBottom:14, backdropFilter:"blur(12px)" }}>
+        <div style={{ fontWeight:700, fontSize:15, marginBottom:14, color:T.text, fontFamily:T.fontDisplay, letterSpacing:"-0.3px" }}>Agregar comentario</div>
+        <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+          {[{val:author,set:setAuthor,ph:"Tu nombre"},{val:comment,set:setComment,ph:"Tu punto de vista (sin filtro)"}].map(({val,set,ph},i)=>(
+            <input key={ph} value={val} onChange={e=>set(e.target.value)}
+              onKeyDown={e=>i===1&&e.key==="Enter"&&submit()}
+              placeholder={ph} style={inputStyle}
+              onFocus={e=>(e.target.style.borderColor="rgba(108,92,231,0.5)")}
+              onBlur={e=>(e.target.style.borderColor=T.border2)}/>
           ))}
-          <button onClick={submit} style={{ background: T.text, border: "none", borderRadius: 10, padding: "11px", color: "#FFF", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Enviar</button>
+          <GlowBtn onClick={submit}>Enviar</GlowBtn>
         </div>
       </div>
       {!sel.comments?.length ? (
-        <div style={{ textAlign: "center", padding: "44px", color: T.textMute, background: T.surface, borderRadius: 16, border: `1.5px solid ${T.border}` }}>
-          <div style={{ fontSize: 36, marginBottom: 10 }}>💬</div>
-          <div style={{ fontWeight: 600, color: T.textMid, marginBottom: 4, fontFamily: T.fontDisplay }}>Nadie dijo nada todavía</div>
-          <div style={{ fontSize: 12 }}>Sé el primero en opinar</div>
+        <div style={{ textAlign:"center", padding:"44px", color:T.textMute, background:T.surface, borderRadius:16, border:`1px solid ${T.border}`, backdropFilter:"blur(8px)" }}>
+          <div style={{fontSize:32,marginBottom:10}}>💬</div>
+          <div style={{fontWeight:600,color:T.textMid,marginBottom:4,fontFamily:T.fontDisplay}}>Nadie dijo nada todavía</div>
+          <div style={{fontSize:12}}>Sé el primero en opinar</div>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {sel.comments.map((c) => (
-            <div key={c.id} style={{ background: T.surface, border: `1.5px solid ${T.border}`, borderRadius: 12, padding: "14px 18px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 7 }}>
-                <span style={{ fontWeight: 700, fontSize: 13, color: T.text }}>{c.author}</span>
-                <span style={{ fontSize: 11, color: T.textMute }}>{c.time}</span>
+        <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+          {sel.comments.map(c=>(
+            <div key={c.id} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:"14px 18px", backdropFilter:"blur(8px)" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:7 }}>
+                <span style={{ fontWeight:700, fontSize:13, color:T.text, fontFamily:T.fontDisplay }}>{c.author}</span>
+                <span style={{ fontSize:11, color:T.textMute, fontFamily:"monospace" }}>{c.time}</span>
               </div>
-              <p style={{ margin: 0, color: T.textMid, fontSize: 14, lineHeight: 1.6 }}>{c.text}</p>
+              <p style={{ margin:0, color:T.textMid, fontSize:14, lineHeight:1.6 }}>{c.text}</p>
             </div>
           ))}
         </div>
@@ -307,7 +344,7 @@ function CommentsTab({ sel, onAdd }) {
   );
 }
 
-// ── ROOT APP ──────────────────────────────────────────────────────
+// ── ROOT APP ─────────────────────────────────────────────────────
 export default function App() {
   const { ideas, loading, addIdea, updateIdea, deleteIdea, addVote, addComment, saveAnalysis } = useIdeas();
   const [selectedId,  setSelectedId]  = useState(null);
@@ -319,18 +356,18 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const analyzeRef = useRef(false);
 
-  const sel = ideas.find((i) => i.id === selectedId) || ideas[0] || null;
+  const sel = ideas.find(i => i.id === selectedId) || ideas[0] || null;
   const a   = sel?.analysis;
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
-  const handleAdd = async (draft) => {
+  const handleAdd = async draft => {
     const created = await addIdea(draft);
     if (created) { setSelectedId(created.id); setWizard(false); setTab("vote"); setSidebarOpen(false); }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async id => {
     const ok = await deleteIdea(id);
-    if (ok) setSelectedId(ideas.filter((i) => i.id !== id)[0]?.id || null);
+    if (ok) setSelectedId(ideas.filter(i => i.id !== id)[0]?.id || null);
   };
 
   const analyze = async () => {
@@ -339,113 +376,163 @@ export default function App() {
     setAnalyzing(true);
     const ideaId = sel.id;
     try {
-      const res  = await fetch("/api/shark", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: ANALYZE_PROMPT(sel.title, sel.description) }) });
+      const res  = await fetch("/api/shark", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ prompt:ANALYZE_PROMPT(sel.title, sel.description) }) });
       const data = await res.json();
       const text = data.content?.[0]?.text || "";
-      let jsonText = text.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
+      let jsonText = text.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
       const fb = jsonText.indexOf("{"), lb = jsonText.lastIndexOf("}");
-      if (fb !== -1 && lb !== -1) jsonText = jsonText.slice(fb, lb + 1);
+      if (fb!==-1&&lb!==-1) jsonText = jsonText.slice(fb,lb+1);
       const parsed   = JSON.parse(jsonText);
-      const avgScore = Object.values(parsed.scores).reduce((a, b) => a + b, 0) / 5;
-      await saveAnalysis(ideaId, { ...parsed, avgScore });
-    } catch (err) {
-      await saveAnalysis(ideaId, { error: true, msg: err.message });
+      const avgScore = Object.values(parsed.scores).reduce((a,b)=>a+b,0)/5;
+      await saveAnalysis(ideaId, {...parsed, avgScore});
+    } catch(err) {
+      await saveAnalysis(ideaId, {error:true, msg:err.message});
     }
     analyzeRef.current = false;
     setAnalyzing(false);
   };
 
-  const reanalyze = () => { updateIdea(selectedId, { analysis: null }); setTimeout(analyze, 200); };
+  const reanalyze = () => { updateIdea(selectedId, {analysis:null}); setTimeout(analyze, 200); };
 
   const handleExportPrompt = () => {
-    if (!sel || !a) return;
-    const score = a.avgScore?.toFixed(1) || "N/A";
-    const md = `# Prompt de Construccion — ${sel.title}\n\n> Score: ${score}/10\n\n## CONTEXTO\n**Idea:** ${sel.title}\n**Descripcion:** ${sel.description}\n**Stack:** ${a.stack || "N/A"}\n**Publico:** ${a.publicObj || "N/A"}\n**Diferencial:** ${a.diferencial || "N/A"}\n**Mayor riesgo:** ${a.mayorRiesgo || "N/A"}\n\n## PROS\n${(a.pros || []).map((p) => "- " + p).join("\n")}\n\n## CONS\n${(a.cons || []).map((c) => "- " + c).join("\n")}\n\n## MONETIZACION PRIMARIA\n${a.monetizacion?.[0] ? `${a.monetizacion[0].modelo}: ${a.monetizacion[0].descripcion} (MRR: ${a.monetizacion[0].mrrEstimado})` : "N/A"}\n\n## PRIMEROS 30 DIAS\n${a.primeros30dias || "N/A"}\n\n## MISION\nSos un experto en producto digital y AI. Construi este producto paso a paso:\n\n**PASO 1 — Validacion:** Define las 3 preguntas criticas y como pre-vender.\n**PASO 2 — MVP:** Feature minima, genera codigo del core.\n**PASO 3 — Primeros clientes:** Como conseguir los primeros 10 pagos.\n**PASO 4 — Escala:** Cuando encontraste PMF y que feature sigue.\n\nEmpeza por PASO 1 y espera mi confirmacion.`;
-    exportMarkdown(`prompt-${sel.title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")}.md`, md);
+    if (!sel||!a) return;
+    const score = a.avgScore?.toFixed(1)||"N/A";
+    const md = `# Prompt de Construccion — ${sel.title}\n\n> Score: ${score}/10\n\n## CONTEXTO\n**Idea:** ${sel.title}\n**Descripcion:** ${sel.description}\n**Stack:** ${a.stack||"N/A"}\n**Publico:** ${a.publicObj||"N/A"}\n**Diferencial:** ${a.diferencial||"N/A"}\n**Mayor riesgo:** ${a.mayorRiesgo||"N/A"}\n\n## PROS\n${(a.pros||[]).map(p=>"- "+p).join("\n")}\n\n## CONS\n${(a.cons||[]).map(c=>"- "+c).join("\n")}\n\n## MONETIZACION PRIMARIA\n${a.monetizacion?.[0]?`${a.monetizacion[0].modelo}: ${a.monetizacion[0].descripcion} (MRR: ${a.monetizacion[0].mrrEstimado})`:"N/A"}\n\n## PRIMEROS 30 DIAS\n${a.primeros30dias||"N/A"}\n\n## MISION\nSos un experto en producto digital y AI. Construi este producto paso a paso:\n\n**PASO 1 — Validacion:** Define las 3 preguntas criticas y como pre-vender.\n**PASO 2 — MVP:** Feature minima, genera codigo del core.\n**PASO 3 — Primeros clientes:** Como conseguir los primeros 10 pagos.\n**PASO 4 — Escala:** Cuando encontraste PMF y que feature sigue.\n\nEmpeza por PASO 1 y espera mi confirmacion.`;
+    exportMarkdown(`prompt-${sel.title.toLowerCase().replace(/\s+/g,"-").replace(/[^a-z0-9-]/g,"")}.md`, md);
   };
 
+  // ── LOADING ────────────────────────────────────────────────────
   if (loading) return (
-    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: T.font }}>
-      <GlobalStyles />
-      <div style={{ textAlign: "center" }}>
-        <div style={{ animation: "spin 3s linear infinite", display: "inline-block" }}><SharkLogo size={68} /></div>
-        <div style={{ color: T.textMid, fontWeight: 600, marginTop: 20, fontSize: 14 }}>Cargando Shark Board...</div>
+    <div style={{ minHeight:"100vh", background:"#0B0B0F", display:"flex", alignItems:"center", justifyContent:"center" }}>
+      <GlobalStyles/>
+      <BackgroundEffects/>
+      <div style={{ textAlign:"center", position:"relative", zIndex:1 }}>
+        <div style={{ animation:"spin 3s linear infinite", display:"inline-block" }}><SharkLogo size={64}/></div>
+        <div style={{ color:T.textMid, fontWeight:600, marginTop:20, fontSize:14, fontFamily:"'Sora',sans-serif" }}>Cargando Shark Board...</div>
       </div>
     </div>
   );
 
   if (ideas.length === 0 && !wizard) return (
     <>
-      <GlobalStyles />
-      <EmptyBoard onAdd={() => setWizard(true)} />
-      {wizard && <Wizard onSave={handleAdd} onClose={() => setWizard(false)} />}
+      <GlobalStyles/>
+      <EmptyBoard onAdd={()=>setWizard(true)}/>
+      {wizard&&<Wizard onSave={handleAdd} onClose={()=>setWizard(false)}/>}
     </>
   );
 
+  // ── MAIN APP ───────────────────────────────────────────────────
   return (
-    <div style={{ minHeight: "100vh", background: T.bg, fontFamily: T.font, color: T.text }}>
-      <GlobalStyles />
+    <div style={{ minHeight:"100vh", background:"#0B0B0F", color:T.text, position:"relative" }}>
+      <GlobalStyles/>
+      <BackgroundEffects/>
 
-      {/* TOP BAR */}
-      <div style={{ background: T.surface, borderBottom: `1.5px solid ${T.border}`, padding: "0 20px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50, height: 62, boxShadow: "0 1px 6px #0000000a" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          {isMobile && <button onClick={() => setSidebarOpen((o) => !o)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: T.text, padding: "4px" }}>☰</button>}
-          <SharkLogo size={38} />
+      {/* TOP NAV */}
+      <nav style={{ position:"sticky", top:0, zIndex:50, height:62, background:"rgba(11,11,15,0.8)", backdropFilter:"blur(20px)", borderBottom:`1px solid ${T.border}`, padding:"0 20px", display:"flex", alignItems:"center", justifyContent:"space-between", boxShadow:"0 1px 0 rgba(255,255,255,0.04)" }}>
+        {/* Left: hamburger + logo */}
+        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+          {isMobile&&(
+            <button onClick={()=>setSidebarOpen(o=>!o)} style={{ background:"none", border:"none", cursor:"pointer", color:T.textMid, padding:4, fontSize:20 }}>☰</button>
+          )}
+          <SharkLogo size={36}/>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 17, letterSpacing: "-0.5px", fontFamily: T.fontDisplay, lineHeight: 1.2 }}>Shark Board</div>
-            <div style={{ color: T.textMute, fontSize: 11 }}>{ideas.length} ideas · {ideas.filter((i) => i.analysis && !i.analysis.error).length} analizadas</div>
+            <div style={{ fontWeight:700, fontSize:16, letterSpacing:"-0.5px", fontFamily:"'Sora',sans-serif", lineHeight:1.2, color:T.white }}>
+              Shark <span style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>Board</span>
+            </div>
+            <div style={{ color:T.textMute, fontSize:10, fontFamily:"'Sora',sans-serif" }}>{ideas.length} ideas · {ideas.filter(i=>i.analysis&&!i.analysis.error).length} analizadas</div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <button onClick={() => setView((v) => (v === "board" ? "ranking" : "board"))}
-            style={{ background: view === "ranking" ? T.text : T.bg, color: view === "ranking" ? "#FFF" : T.textMid, border: `1.5px solid ${view === "ranking" ? T.text : T.border}`, borderRadius: 10, padding: "7px 14px", fontWeight: 700, fontSize: 12, cursor: "pointer", transition: "all 0.15s" }}>
-            {view === "ranking" ? "← Board" : "📊 Comparar"}
+
+        {/* Right: actions */}
+        <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+          <button onClick={()=>setView(v=>v==="board"?"ranking":"board")}
+            style={{ background:view==="ranking"?"rgba(108,92,231,0.2)":"rgba(255,255,255,0.04)", color:view==="ranking"?"#6C5CE7":T.textMid, border:`1px solid ${view==="ranking"?"rgba(108,92,231,0.4)":T.border}`, borderRadius:9, padding:"7px 14px", fontWeight:700, fontSize:12, cursor:"pointer", fontFamily:"'Sora',sans-serif", transition:"all 0.15s" }}>
+            {view==="ranking"?"← Board":"📊 Comparar"}
           </button>
-          <button onClick={() => setWizard(true)} style={{ background: T.text, border: "none", borderRadius: 10, padding: "8px 18px", color: "#FFF", fontWeight: 700, fontSize: 13, cursor: "pointer", boxShadow: `0 3px 10px ${T.text}20` }}>
+          <button onClick={()=>setWizard(true)}
+            style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:9, padding:"8px 18px", color:"#fff", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"'Sora',sans-serif", boxShadow:"0 0 16px rgba(108,92,231,0.4)" }}>
             + Idea
           </button>
         </div>
-      </div>
+      </nav>
 
-      {view === "ranking" && <div style={{ maxWidth: 1000, margin: "0 auto" }}><Comparador ideas={ideas} /></div>}
+      {/* RANKING VIEW */}
+      {view==="ranking"&&(
+        <div style={{ maxWidth:1000, margin:"0 auto", position:"relative", zIndex:1 }}>
+          <Comparador ideas={ideas}/>
+        </div>
+      )}
 
-      {view === "board" && (
-        <div style={{ display: "flex", height: "calc(100vh - 62px)", position: "relative" }}>
-          {isMobile && sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: "#00000044", zIndex: 40 }} />}
+      {/* BOARD VIEW */}
+      {view==="board"&&(
+        <div style={{ display:"flex", height:"calc(100vh - 62px)", position:"relative" }}>
+          {/* Mobile overlay */}
+          {isMobile&&sidebarOpen&&(
+            <div onClick={()=>setSidebarOpen(false)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.6)", zIndex:40, backdropFilter:"blur(4px)" }}/>
+          )}
 
           {/* SIDEBAR */}
-          <div style={{ width: 268, flexShrink: 0, background: T.surface, borderRight: `1.5px solid ${T.border}`, overflowY: "auto", padding: "10px", display: "flex", flexDirection: "column", gap: 4, ...(isMobile ? { position: "fixed", left: sidebarOpen ? 0 : -272, top: 62, height: "calc(100vh - 62px)", zIndex: 45, transition: "left 0.25s cubic-bezier(.4,0,.2,1)" } : {}) }}>
-            <div style={{ padding: "6px 8px 10px", color: T.textMute, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.7px" }}>Ideas · {ideas.length}</div>
-            {ideas.map((idea) => {
-              const isSelected    = idea.id === (sel?.id);
-              const stg           = STAGES.find((x) => x.key === idea.stage) || STAGES[0];
-              const score         = idea.analysis?.avgScore;
-              const sc            = score ? scoreColor(score) : null;
-              const isAnalyzing   = analyzing && sel?.id === idea.id;
-              const voteCount     = (idea.votes || []).length;
-              const upVotes       = (idea.votes || []).filter((v) => v.vote === "up").length;
+          <div style={{
+            width:272, flexShrink:0,
+            background:"rgba(17,17,24,0.8)",
+            backdropFilter:"blur(20px)",
+            borderRight:`1px solid ${T.border}`,
+            overflowY:"auto",
+            padding:10,
+            display:"flex", flexDirection:"column", gap:4,
+            ...(isMobile?{position:"fixed",left:sidebarOpen?0:-276,top:62,height:"calc(100vh - 62px)",zIndex:45,transition:"left 0.25s cubic-bezier(.4,0,.2,1)"}:{}),
+          }}>
+            <div style={{ padding:"6px 8px 10px", color:T.textMute, fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:"1px", fontFamily:"'Sora',sans-serif" }}>
+              Ideas · {ideas.length}
+            </div>
+
+            {ideas.map(idea => {
+              const isSelected  = idea.id === (sel?.id);
+              const stg         = STAGES.find(x=>x.key===idea.stage)||STAGES[0];
+              const score       = idea.analysis?.avgScore;
+              const sc          = score ? scoreColor(score) : null;
+              const isAnalyzingThis = analyzing && sel?.id===idea.id;
+              const voteCount   = (idea.votes||[]).length;
+              const upVotes     = (idea.votes||[]).filter(v=>v.vote==="up").length;
+
               return (
-                <div key={idea.id} onClick={() => { setSelectedId(idea.id); setTab("analysis"); setSidebarOpen(false); }}
-                  style={{ border: `1.5px solid ${isSelected ? T.text : T.border}`, borderRadius: 12, padding: "11px 13px", cursor: "pointer", background: isSelected ? T.text : T.surface, transition: "all 0.15s", boxShadow: isSelected ? `0 4px 16px ${T.text}18` : "none" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                    <span style={{ background: isSelected ? "#FFFFFF18" : stg.bg, color: isSelected ? "#FFFFFF80" : stg.color, fontSize: 10, fontWeight: 700, borderRadius: 20, padding: "2px 8px" }}>{stg.emoji} {stg.label}</span>
-                    {isAnalyzing ? (
-                      <span style={{ fontSize: 10, color: isSelected ? "#FFFFFF50" : T.textMute, fontWeight: 700, animation: "pulse 1.5s infinite" }}>analizando...</span>
+                <div key={idea.id}
+                  onClick={()=>{ setSelectedId(idea.id); setTab("analysis"); setSidebarOpen(false); }}
+                  style={{
+                    border:`1px solid ${isSelected?"rgba(108,92,231,0.5)":T.border}`,
+                    borderRadius:12, padding:"11px 13px", cursor:"pointer",
+                    background:isSelected?"linear-gradient(135deg,rgba(108,92,231,0.15),rgba(0,245,212,0.06))":"rgba(255,255,255,0.02)",
+                    backdropFilter:"blur(8px)",
+                    transition:"all 0.15s",
+                    boxShadow:isSelected?"0 0 20px rgba(108,92,231,0.15), inset 0 1px 0 rgba(255,255,255,0.06)":"none",
+                    position:"relative", overflow:"hidden",
+                  }}>
+                  {/* Selected top line */}
+                  {isSelected&&<div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(108,92,231,0.6),rgba(0,245,212,0.4),transparent)" }}/>}
+
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
+                    <span style={{ background:stg.bg, color:stg.color, fontSize:10, fontWeight:700, borderRadius:99, padding:"2px 8px", fontFamily:"'Sora',sans-serif", border:`1px solid ${stg.color}20` }}>
+                      {stg.emoji} {stg.label}
+                    </span>
+                    {isAnalyzingThis ? (
+                      <span style={{ fontSize:10, color:T.textMute, fontWeight:700, animation:"pulse 1.5s infinite" }}>analizando...</span>
                     ) : sc ? (
-                      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                        <span style={{ fontSize: 9, color: isSelected ? "#FFFFFF50" : sc, fontWeight: 700 }}>{scoreLabel(score)}</span>
-                        <span style={{ background: isSelected ? "#FFFFFF18" : sc + "15", color: isSelected ? "#FFF" : sc, borderRadius: 6, padding: "1px 6px", fontWeight: 800, fontSize: 12, fontFamily: "monospace" }}>{score.toFixed(1)}</span>
+                      <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+                        <span style={{ fontSize:9, color:sc, fontWeight:700, fontFamily:"'Sora',sans-serif" }}>{score >= 7.5 ? "🟢" : score >= 5.5 ? "🟡" : "🔴"}</span>
+                        <span style={{ background:sc+"18", color:sc, border:`1px solid ${sc}25`, borderRadius:6, padding:"1px 7px", fontWeight:800, fontSize:12, fontFamily:"monospace" }}>{score.toFixed(1)}</span>
                       </div>
                     ) : (
-                      <span style={{ fontSize: 10, color: isSelected ? "#FFFFFF25" : T.border, fontWeight: 600 }}>sin análisis</span>
+                      <span style={{ fontSize:10, color:T.textMute, fontWeight:500 }}>sin análisis</span>
                     )}
                   </div>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: isSelected ? "#FFF" : T.text, lineHeight: 1.3, marginBottom: 4 }}>{idea.title}</div>
-                  <div style={{ color: isSelected ? "#FFFFFF45" : T.textMute, fontSize: 11, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", marginBottom: voteCount ? 7 : 0 }}>{idea.description}</div>
-                  {voteCount > 0 && (
-                    <div style={{ display: "flex", gap: 6 }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: isSelected ? "#FFFFFF55" : T.mint, background: isSelected ? "#FFFFFF10" : T.mintLight, borderRadius: 20, padding: "1px 7px" }}>👍 {upVotes}</span>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: isSelected ? "#FFFFFF55" : T.coral, background: isSelected ? "#FFFFFF10" : T.coralLight, borderRadius: 20, padding: "1px 7px" }}>👎 {voteCount - upVotes}</span>
+
+                  <div style={{ fontWeight:700, fontSize:13, color:T.text, lineHeight:1.3, marginBottom:4, fontFamily:"'Sora',sans-serif" }}>{idea.title}</div>
+                  <div style={{ color:T.textMute, fontSize:11, lineHeight:1.4, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden", marginBottom:voteCount?7:0 }}>{idea.description}</div>
+
+                  {voteCount>0&&(
+                    <div style={{ display:"flex", gap:5 }}>
+                      <span style={{ fontSize:10, fontWeight:700, color:"#00F5D4", background:"rgba(0,245,212,0.08)", borderRadius:99, padding:"1px 7px", border:"1px solid rgba(0,245,212,0.15)" }}>👍 {upVotes}</span>
+                      <span style={{ fontSize:10, fontWeight:700, color:"#FF5F7A", background:"rgba(255,95,122,0.08)", borderRadius:99, padding:"1px 7px", border:"1px solid rgba(255,95,122,0.15)" }}>👎 {voteCount-upVotes}</span>
                     </div>
                   )}
                 </div>
@@ -455,41 +542,45 @@ export default function App() {
 
           {/* MAIN PANEL */}
           {sel ? (
-            <div style={{ flex: 1, overflowY: "auto", minWidth: 0 }}>
+            <div style={{ flex:1, overflowY:"auto", minWidth:0, position:"relative", zIndex:1 }}>
               {/* Idea header */}
-              <div style={{ background: T.surface, borderBottom: `1.5px solid ${T.border}`, padding: "18px 24px 0" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 9, flexWrap: "wrap" }}>
-                      <StageBadge stage={sel.stage} />
-                      <select value={sel.stage} onChange={(e) => updateIdea(sel.id, { stage: e.target.value })}
-                        style={{ border: `1px solid ${T.border}`, borderRadius: 8, padding: "3px 8px", fontSize: 11, color: T.textMid, background: T.bg, cursor: "pointer" }}>
-                        {STAGES.map((s) => <option key={s.key} value={s.key}>{s.emoji} {s.label}</option>)}
+              <div style={{ background:"rgba(17,17,24,0.7)", backdropFilter:"blur(20px)", borderBottom:`1px solid ${T.border}`, padding:"18px 24px 0", position:"sticky", top:0, zIndex:10 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:14 }}>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:9, flexWrap:"wrap" }}>
+                      <StageBadge stage={sel.stage}/>
+                      <select value={sel.stage} onChange={e=>updateIdea(sel.id,{stage:e.target.value})}
+                        style={{ border:`1px solid ${T.border}`, borderRadius:8, padding:"3px 8px", fontSize:11, color:T.textMid, background:"rgba(255,255,255,0.04)", cursor:"pointer", fontFamily:"'Sora',sans-serif", backdropFilter:"blur(8px)", outline:"none" }}>
+                        {STAGES.map(s=><option key={s.key} value={s.key}>{s.emoji} {s.label}</option>)}
                       </select>
                     </div>
-                    <h1 style={{ margin: "0 0 7px", fontSize: 22, fontWeight: 700, letterSpacing: "-0.5px", color: T.text, lineHeight: 1.3, fontFamily: T.fontDisplay }}>{sel.title}</h1>
-                    <p style={{ margin: 0, color: T.textMid, fontSize: 13, lineHeight: 1.65 }}>{sel.description}</p>
+                    <h1 style={{ margin:"0 0 7px", fontSize:20, fontWeight:700, letterSpacing:"-0.5px", color:T.text, lineHeight:1.3, fontFamily:"'Sora',sans-serif" }}>{sel.title}</h1>
+                    <p style={{ margin:0, color:T.textMid, fontSize:13, lineHeight:1.65 }}>{sel.description}</p>
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, marginLeft: 18, flexShrink: 0 }}>
-                    {a?.avgScore && (
-                      <div style={{ textAlign: "center", background: T.text, borderRadius: 14, padding: "12px 18px", minWidth: 80 }}>
-                        <div style={{ fontSize: 9, color: "#FFFFFF35", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px" }}>SCORE</div>
-                        <div style={{ fontSize: 36, fontWeight: 900, fontFamily: "monospace", color: scoreColor(a.avgScore), lineHeight: 1.1, margin: "3px 0" }}>{a.avgScore.toFixed(1)}</div>
-                        <div style={{ fontSize: 10, color: scoreColor(a.avgScore), fontWeight: 700 }}>{scoreLabel(a.avgScore)}</div>
+
+                  <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:8, marginLeft:18, flexShrink:0 }}>
+                    {a?.avgScore&&(
+                      <div style={{ textAlign:"center", background:"linear-gradient(135deg,rgba(108,92,231,0.2),rgba(0,245,212,0.08))", borderRadius:14, padding:"10px 16px", minWidth:80, border:"1px solid rgba(108,92,231,0.2)", boxShadow:"0 0 20px rgba(108,92,231,0.15)", position:"relative", overflow:"hidden" }}>
+                        <div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(108,92,231,0.5),rgba(0,245,212,0.3),transparent)" }}/>
+                        <div style={{ fontSize:9, color:T.textMute, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora',sans-serif" }}>SCORE</div>
+                        <div style={{ fontSize:32, fontWeight:900, fontFamily:"monospace", color:scoreColor(a.avgScore), lineHeight:1.1, margin:"3px 0", textShadow:`0 0 16px ${scoreColor(a.avgScore)}50` }}>{a.avgScore.toFixed(1)}</div>
+                        <div style={{ fontSize:10, color:scoreColor(a.avgScore), fontWeight:700, fontFamily:"'Sora',sans-serif" }}>{scoreLabel(a.avgScore)}</div>
                       </div>
                     )}
-                    <div style={{ display: "flex", gap: 6 }}>
-                      {a && !a.error && (
-                        <button onClick={() => setPitchIdea(sel)} style={{ background: T.text, border: "none", borderRadius: 8, padding: "7px 13px", color: "#FFF", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>📋 Pitch</button>
+                    <div style={{ display:"flex", gap:6 }}>
+                      {a&&!a.error&&(
+                        <GlowBtn onClick={()=>setPitchIdea(sel)} size="sm">📋 Pitch</GlowBtn>
                       )}
-                      <button onClick={() => handleDelete(sel.id)} style={{ background: T.coralLight, border: `1px solid ${T.coral}18`, borderRadius: 8, padding: "7px 11px", color: T.coral, fontWeight: 600, fontSize: 12, cursor: "pointer" }}>🗑</button>
+                      <GlowBtn onClick={()=>handleDelete(sel.id)} variant="danger" size="sm">🗑</GlowBtn>
                     </div>
                   </div>
                 </div>
-                <div style={{ display: "flex", overflowX: "auto", gap: 2 }}>
-                  {TABS(sel).map((t) => (
-                    <button key={t.key} onClick={() => setTab(t.key)}
-                      style={{ border: "none", background: tab === t.key ? T.bg : "transparent", borderBottom: `3px solid ${tab === t.key ? T.text : "transparent"}`, borderRadius: "8px 8px 0 0", color: tab === t.key ? T.text : T.textMute, padding: "10px 16px", cursor: "pointer", fontSize: 13, fontWeight: tab === t.key ? 700 : 500, marginBottom: -1, whiteSpace: "nowrap", transition: "all 0.15s" }}>
+
+                {/* Tabs */}
+                <div style={{ display:"flex", overflowX:"auto", gap:2 }}>
+                  {TABS(sel).map(t => (
+                    <button key={t.key} onClick={()=>setTab(t.key)}
+                      style={{ border:"none", background:"transparent", borderBottom:`2px solid ${tab===t.key?"#6C5CE7":"transparent"}`, color:tab===t.key?T.text:T.textMute, padding:"10px 16px", cursor:"pointer", fontSize:13, fontWeight:tab===t.key?700:500, marginBottom:-1, whiteSpace:"nowrap", transition:"all 0.15s", fontFamily:"'Sora',sans-serif" }}>
                       {t.label}
                     </button>
                   ))}
@@ -497,37 +588,37 @@ export default function App() {
               </div>
 
               {/* Tab content */}
-              <div style={{ padding: "24px 20px", animation: "fadeUp 0.2s ease" }}>
-                {tab === "vote" && (
+              <div style={{ padding:"22px 20px", animation:"fadeUp 0.2s ease" }}>
+                {tab==="vote"&&(
                   <div>
-                    <VotingPanel idea={sel} onVote={addVote} />
-                    <div style={{ background: T.surface, border: `1.5px solid ${T.border}`, borderRadius: 16, padding: "22px", textAlign: "center" }}>
-                      <div style={{ fontSize: 17, color: T.text, fontWeight: 700, marginBottom: 7, fontFamily: T.fontDisplay }}>🦈 ¿Listo para el veredicto?</div>
-                      <div style={{ fontSize: 13, color: T.textMid, marginBottom: 20 }}>Votá primero para no contaminar tu juicio</div>
-                      <button onClick={() => setTab("analysis")} style={{ background: T.text, border: "none", borderRadius: 10, padding: "11px 26px", color: "#FFF", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Ver qué dice el Shark →</button>
+                    <VotingPanel idea={sel} onVote={addVote}/>
+                    <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:16, padding:"22px", textAlign:"center", backdropFilter:"blur(12px)" }}>
+                      <div style={{ fontSize:17, color:T.text, fontWeight:700, marginBottom:7, fontFamily:"'Sora',sans-serif", letterSpacing:"-0.3px" }}>🦈 ¿Listo para el veredicto?</div>
+                      <div style={{ fontSize:13, color:T.textMute, marginBottom:20 }}>Votá primero para no contaminar tu juicio</div>
+                      <GlowBtn onClick={()=>setTab("analysis")}>Ver qué dice el Shark →</GlowBtn>
                     </div>
                   </div>
                 )}
-                {tab === "analysis"     && <AnalysisTab     sel={sel} a={a} analyzing={analyzing} onAnalyze={analyze} onReanalyze={reanalyze} onExportPrompt={handleExportPrompt} />}
-                {tab === "monetizacion" && <MonetizacionTab a={a} onGoAnalysis={() => setTab("analysis")} />}
-                {tab === "gtm"          && <GtmTab          a={a} onGoAnalysis={() => setTab("analysis")} />}
-                {tab === "comments"     && <CommentsTab     sel={sel} onAdd={addComment} />}
+                {tab==="analysis"     && <AnalysisTab     sel={sel} a={a} analyzing={analyzing} onAnalyze={analyze} onReanalyze={reanalyze} onExportPrompt={handleExportPrompt}/>}
+                {tab==="monetizacion" && <MonetizacionTab a={a} onGoAnalysis={()=>setTab("analysis")}/>}
+                {tab==="gtm"          && <GtmTab          a={a} onGoAnalysis={()=>setTab("analysis")}/>}
+                {tab==="comments"     && <CommentsTab     sel={sel} onAdd={addComment}/>}
               </div>
             </div>
           ) : (
-            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ textAlign: "center", color: T.textMute }}>
-                <SharkLogo size={58} />
-                <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 6, marginTop: 20, color: T.textMid, fontFamily: T.fontDisplay }}>Seleccioná una idea</div>
-                <div style={{ fontSize: 13 }}>o agregá una con + Idea</div>
+            <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", position:"relative", zIndex:1 }}>
+              <div style={{ textAlign:"center", color:T.textMute }}>
+                <SharkLogo size={56}/>
+                <div style={{ fontWeight:700, fontSize:16, marginBottom:6, marginTop:20, color:T.textMid, fontFamily:"'Sora',sans-serif" }}>Seleccioná una idea</div>
+                <div style={{ fontSize:13 }}>o agregá una con + Idea</div>
               </div>
             </div>
           )}
         </div>
       )}
 
-      {wizard    && <Wizard          onSave={handleAdd}  onClose={() => setWizard(false)} />}
-      {pitchIdea && <PitchDeckModal  idea={pitchIdea}    analysis={pitchIdea.analysis} onClose={() => setPitchIdea(null)} />}
+      {wizard    && <Wizard         onSave={handleAdd}   onClose={()=>setWizard(false)}/>}
+      {pitchIdea && <PitchDeckModal idea={pitchIdea}     analysis={pitchIdea.analysis} onClose={()=>setPitchIdea(null)}/>}
     </div>
   );
 }
