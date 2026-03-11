@@ -7,7 +7,7 @@ export default function MiniBarChart({ ideas }) {
     .sort((a,b) => b.analysis.avgScore - a.analysis.avgScore)
     .slice(0,7);
   if (withScores.length < 2) return (
-    <div style={{ color: "var(--text)"Mute, fontSize: 13, textAlign: "center", padding: "20px 0" }}>
+    <div style={{ color: "var(--textMute)", fontSize: 13, textAlign: "center", padding: "20px 0" }}>
       Analizá más ideas para ver el ranking
     </div>
   );
@@ -19,7 +19,7 @@ export default function MiniBarChart({ ideas }) {
         return (
           <div key={idea.id} style={{ marginBottom: 12 }}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
-              <span style={{ fontSize:12, color:"var(--text)"Mid, fontWeight:600, fontFamily:"'Sora', sans-serif", maxWidth:220, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+              <span style={{ fontSize:12, color:"var(--textMid)", fontWeight:600, fontFamily:"'Sora', sans-serif", maxWidth:220, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
                 {medals[idx]||`${idx+1}.`} {idea.title}
               </span>
               <span style={{ fontSize:12, fontWeight:800, color:c, fontFamily:"monospace" }}>{sc.toFixed(1)}</span>

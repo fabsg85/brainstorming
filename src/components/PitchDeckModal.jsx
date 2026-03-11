@@ -14,10 +14,10 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
       num:"01", title:"El Problema", color:"#FF5F7A", accent:"rgba(255,95,122,0.15)",
       content:(
         <div style={{display:"grid",gap:12}}>
-          <p style={{fontSize:15,lineHeight:1.8,color:"var(--text)"Mid,margin:0,fontFamily:"'DM Sans', sans-serif"}}>{idea.description}</p>
+          <p style={{fontSize:15,lineHeight:1.8,color:"var(--textMid)",margin:0,fontFamily:"'DM Sans', sans-serif"}}>{idea.description}</p>
           <div style={{background:"rgba(255,95,122,0.08)",border:"1px solid rgba(255,95,122,0.2)",borderRadius:10,padding:"14px 16px"}}>
             <div style={{fontSize:10,fontWeight:700,color:"#FF5F7A",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.8px",fontFamily:"'Sora', sans-serif"}}>💸 ¿Pagan por esto hoy?</div>
-            <p style={{margin:0,fontSize:14,color:"var(--text)"Mid,lineHeight:1.6}}>{a?.pagaHoy||"Sin datos"}</p>
+            <p style={{margin:0,fontSize:14,color:"var(--textMid)",lineHeight:1.6}}>{a?.pagaHoy||"Sin datos"}</p>
           </div>
         </div>
       ),
@@ -26,9 +26,9 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
       num:"02", title:"La Solución", color:"#6C5CE7", accent:"rgba(108,92,231,0.15)",
       content:(
         <div style={{display:"grid",gap:12}}>
-          <p style={{fontSize:15,lineHeight:1.8,color:"var(--text)"Mid,margin:0}}>{a?.diferencial}</p>
+          <p style={{fontSize:15,lineHeight:1.8,color:"var(--textMid)",margin:0}}>{a?.diferencial}</p>
           <div style={{background:"var(--surface)",border:"1px solid var(--border2)",borderRadius:10,padding:"14px 16px"}}>
-            <div style={{fontSize:10,fontWeight:700,color:"var(--text)"Mute,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.8px",fontFamily:"'Sora', sans-serif"}}>⚙️ Stack técnico</div>
+            <div style={{fontSize:10,fontWeight:700,color:"var(--textMute)",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.8px",fontFamily:"'Sora', sans-serif"}}>⚙️ Stack técnico</div>
             <p style={{margin:0,fontSize:13,color:"var(--text)",fontFamily:"monospace",lineHeight:1.7}}>{a?.stack}</p>
           </div>
         </div>
@@ -42,7 +42,7 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
             {[{t:"👥 Cliente objetivo",v:a?.publicObj},{t:"🔍 vs Competencia",v:a?.benchmark}].map(({t,v})=>(
               <div key={t} style={{background:"rgba(0,245,212,0.06)",border:"1px solid rgba(0,245,212,0.15)",borderRadius:10,padding:"14px"}}>
                 <div style={{fontSize:10,fontWeight:700,color:"#00F5D4",marginBottom:6,textTransform:"uppercase",letterSpacing:"0.8px",fontFamily:"'Sora', sans-serif"}}>{t}</div>
-                <p style={{margin:0,fontSize:13,color:"var(--text)"Mid,lineHeight:1.5}}>{v}</p>
+                <p style={{margin:0,fontSize:13,color:"var(--textMid)",lineHeight:1.5}}>{v}</p>
               </div>
             ))}
           </div>
@@ -50,7 +50,7 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
             <div style={{background:"rgba(108,92,231,0.12)",border:"1px solid rgba(108,92,231,0.2)",borderRadius:12,padding:"16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <RadarChart scores={a?.scores} size={120}/>
               <div style={{textAlign:"right"}}>
-                <div style={{fontSize:10,color:"var(--text)"Mute,marginBottom:4,fontFamily:"'Sora', sans-serif"}}>Score Shark Board</div>
+                <div style={{fontSize:10,color:"var(--textMute)",marginBottom:4,fontFamily:"'Sora', sans-serif"}}>Score Shark Board</div>
                 <div style={{fontSize:36,fontWeight:900,fontFamily:"monospace",color:scoreColor(score)}}>{score.toFixed(1)}</div>
                 <div style={{fontSize:12,color:scoreColor(score),fontFamily:"'Sora', sans-serif",fontWeight:700}}>{scoreLabel(score)}</div>
               </div>
@@ -70,10 +70,10 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
                   {m.modelo}
                   {i===0&&<span style={{marginLeft:8,fontSize:10,background:"rgba(255,181,71,0.15)",color:"#FFB547",fontWeight:700,borderRadius:99,padding:"2px 8px"}}>★ RECOMENDADO</span>}
                 </div>
-                <div style={{fontSize:12,color:"var(--text)"Mute,marginTop:2}}>{m.descripcion}</div>
+                <div style={{fontSize:12,color:"var(--textMute)",marginTop:2}}>{m.descripcion}</div>
               </div>
               <div style={{textAlign:"right",flexShrink:0,marginLeft:12}}>
-                <div style={{fontSize:10,color:"var(--text)"Mute}}>MRR est.</div>
+                <div style={{fontSize:10,color:"var(--textMute)"}}>MRR est.</div>
                 <div style={{fontWeight:800,color:"#00F5D4",fontFamily:"monospace",fontSize:14}}>{m.mrrEstimado}</div>
               </div>
             </div>
@@ -92,7 +92,7 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
             <div key={title}>
               <div style={{fontWeight:700,fontSize:10,color,marginBottom:8,textTransform:"uppercase",letterSpacing:"0.8px",fontFamily:"'Sora', sans-serif"}}>{title}</div>
               {items?.map((item,i)=>(
-                <div key={i} style={{background:bg,border:`1px solid ${border}`,borderRadius:8,padding:"8px 12px",fontSize:13,color:"var(--text)"Mid,lineHeight:1.4,marginBottom:7}}>{item}</div>
+                <div key={i} style={{background:bg,border:`1px solid ${border}`,borderRadius:8,padding:"8px 12px",fontSize:13,color:"var(--textMid)",lineHeight:1.4,marginBottom:7}}>{item}</div>
               ))}
             </div>
           ))}
@@ -106,7 +106,7 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
           <TimelineGTM gtm90dias={a?.gtm90dias}/>
           <div style={{background:"rgba(108,92,231,0.08)",border:"1px solid rgba(108,92,231,0.2)",borderRadius:10,padding:"14px 16px"}}>
             <div style={{fontSize:10,fontWeight:700,color:"#6C5CE7",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.8px",fontFamily:"'Sora', sans-serif"}}>📅 Primeros 30 días</div>
-            <p style={{margin:0,fontSize:14,color:"var(--text)"Mid,lineHeight:1.7}}>{a?.primeros30dias}</p>
+            <p style={{margin:0,fontSize:14,color:"var(--textMid)",lineHeight:1.7}}>{a?.primeros30dias}</p>
           </div>
         </div>
       ),
@@ -130,13 +130,13 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             <SharkLogo size={30}/>
             <div>
-              <div style={{ color:"var(--text)"Mute, fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora', sans-serif" }}>PITCH DECK</div>
+              <div style={{ color:"var(--textMute)", fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.8px", fontFamily:"'Sora', sans-serif" }}>PITCH DECK</div>
               <div style={{ color:"var(--text)", fontWeight:700, fontSize:15, fontFamily:"'Sora', sans-serif", letterSpacing:"-0.3px" }}>{idea.title}</div>
             </div>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <span style={{ color:"var(--text)"Mute, fontSize:12, fontFamily:"monospace" }}>{slide+1}/{slides.length}</span>
-            <button onClick={onClose} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:8, color:"var(--text)"Mid, width:32, height:32, cursor:"pointer", fontSize:16 }}>✕</button>
+            <span style={{ color:"var(--textMute)", fontSize:12, fontFamily:"monospace" }}>{slide+1}/{slides.length}</span>
+            <button onClick={onClose} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:8, color:"var(--textMid)", width:32, height:32, cursor:"pointer", fontSize:16 }}>✕</button>
           </div>
         </div>
 
@@ -162,7 +162,7 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
         {/* Footer nav */}
         <div style={{ padding:"12px 22px 18px", display:"flex", gap:8, borderTop:"1px solid var(--border)", background:"rgba(17,17,24,0.8)", backdropFilter:"blur(12px)" }}>
           <button onClick={()=>setSlide(s=>Math.max(0,s-1))} disabled={slide===0}
-            style={{ flex:1, background:"var(--surface)", border:"1px solid var(--border)", borderRadius:10, padding:"11px", color:slide===0?"var(--text)"Mute:"var(--text)", fontWeight:700, fontSize:13, cursor:slide===0?"not-allowed":"pointer", fontFamily:"'Sora', sans-serif" }}>
+            style={{ flex:1, background:"var(--surface)", border:"1px solid var(--border)", borderRadius:10, padding:"11px", color:slide===0?"var(--textMute)":"var(--text)", fontWeight:700, fontSize:13, cursor:slide===0?"not-allowed":"pointer", fontFamily:"'Sora', sans-serif" }}>
             ← Anterior
           </button>
           <button onClick={handleExport}
@@ -170,7 +170,7 @@ export default function PitchDeckModal({ idea, analysis: a, onClose }) {
             ⬇️ .md
           </button>
           <button onClick={()=>setSlide(s=>Math.min(slides.length-1,s+1))} disabled={slide===slides.length-1}
-            style={{ flex:1, background:slide===slides.length-1?"var(--surface)":"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:10, padding:"11px", color:slide===slides.length-1?"var(--text)"Mute:"#fff", fontWeight:700, fontSize:13, cursor:slide===slides.length-1?"not-allowed":"pointer", fontFamily:"'Sora', sans-serif", boxShadow:slide===slides.length-1?"none":"0 0 16px rgba(108,92,231,0.4)" }}>
+            style={{ flex:1, background:slide===slides.length-1?"var(--surface)":"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:10, padding:"11px", color:slide===slides.length-1?"var(--textMute)":"#fff", fontWeight:700, fontSize:13, cursor:slide===slides.length-1?"not-allowed":"pointer", fontFamily:"'Sora', sans-serif", boxShadow:slide===slides.length-1?"none":"0 0 16px rgba(108,92,231,0.4)" }}>
             Siguiente →
           </button>
         </div>

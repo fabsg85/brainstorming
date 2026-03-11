@@ -17,7 +17,7 @@ export default function CanvasTab({ a, onGoAnalysis }) {
     <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ fontSize:44, marginBottom:16 }}>📋</div>
       <div style={{ fontWeight:700, fontSize:18, color:"var(--text)", marginBottom:8, fontFamily:"'Sora', sans-serif" }}>Canvas no generado todavía</div>
-      <div style={{ color:"var(--text)"Mute, fontSize:14, marginBottom:28 }}>Generá el análisis primero y el Lean Canvas se arma automáticamente</div>
+      <div style={{ color:"var(--textMute)", fontSize:14, marginBottom:28 }}>Generá el análisis primero y el Lean Canvas se arma automáticamente</div>
       <button onClick={onGoAnalysis} style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:10, padding:"11px 24px", color:"#fff", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"'Sora', sans-serif", boxShadow:"0 0 24px rgba(108,92,231,0.4)" }}>🦈 Analizar idea</button>
     </div>
   );
@@ -47,11 +47,11 @@ export default function CanvasTab({ a, onGoAnalysis }) {
               {content.length > 1 ? (
                 <ul style={{ margin:0, paddingLeft:16, display:"grid", gap:4 }}>
                   {content.map((item, i) => (
-                    <li key={i} style={{ fontSize:13, color:"var(--text)"Mid, lineHeight:1.55 }}>{item}</li>
+                    <li key={i} style={{ fontSize:13, color:"var(--textMid)", lineHeight:1.55 }}>{item}</li>
                   ))}
                 </ul>
               ) : (
-                <p style={{ margin:0, fontSize:13, color:"var(--text)"Mid, lineHeight:1.65 }}>{content[0]}</p>
+                <p style={{ margin:0, fontSize:13, color:"var(--textMid)", lineHeight:1.65 }}>{content[0]}</p>
               )}
             </div>
           );

@@ -33,7 +33,7 @@ export default function VotingPanel({ idea, onVote }) {
       <div style={{ background: "linear-gradient(135deg,rgba(108,92,231,0.2),rgba(0,245,212,0.08))", padding: "18px 22px", borderBottom: "1px solid var(--border)", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(108,92,231,0.5),transparent)" }}/>
         <div style={{ fontWeight:700, fontSize:16, color:"var(--text)", fontFamily:"'Sora', sans-serif", marginBottom:3, letterSpacing:"-0.3px" }}>🗳️ El equipo habla primero</div>
-        <div style={{ fontSize:12, color:"var(--text)"Mute }}>Votá antes del análisis. El Shark habla después.</div>
+        <div style={{ fontSize:12, color:"var(--textMute)" }}>Votá antes del análisis. El Shark habla después.</div>
       </div>
 
       <div style={{ padding: "18px 22px" }}>
@@ -55,7 +55,7 @@ export default function VotingPanel({ idea, onVote }) {
                 <span style={{ fontSize:13, fontWeight:600, color:"var(--text)", fontFamily:"'Sora', sans-serif" }}>{v.name}</span>
                 <div style={{ display:"flex", alignItems:"center", gap:6 }}>
                   <span style={{ fontSize:16 }}>{v.vote==="up"?"👍":"👎"}</span>
-                  <span style={{ fontSize:11, color:"var(--text)"Mute, fontFamily:"monospace" }}>{v.time}</span>
+                  <span style={{ fontSize:11, color:"var(--textMute)", fontFamily:"monospace" }}>{v.time}</span>
                 </div>
               </div>
             ))}
@@ -75,7 +75,7 @@ export default function VotingPanel({ idea, onVote }) {
                 { type:"down", label:"👎 Paso", color:"#FF5F7A", bg:"rgba(255,95,122,0.1)", border:"rgba(255,95,122,0.3)" },
               ].map(({type,label,color,bg,border}) => (
                 <button key={type} onClick={()=>handleVote(type)} disabled={!voterName.trim()}
-                  style={{ flex:1, background:voterName.trim()?bg:"var(--surface)", border:`1px solid ${voterName.trim()?border:"var(--border)"}`, borderRadius:10, padding:"12px", color:voterName.trim()?color:"var(--text)"Mute, fontWeight:800, fontSize:14, cursor:voterName.trim()?"pointer":"not-allowed", fontFamily:"'Sora', sans-serif", transition:"all 0.15s" }}>
+                  style={{ flex:1, background:voterName.trim()?bg:"var(--surface)", border:`1px solid ${voterName.trim()?border:"var(--border)"}`, borderRadius:10, padding:"12px", color:voterName.trim()?color:"var(--textMute)", fontWeight:800, fontSize:14, cursor:voterName.trim()?"pointer":"not-allowed", fontFamily:"'Sora', sans-serif", transition:"all 0.15s" }}>
                   {label}
                 </button>
               ))}

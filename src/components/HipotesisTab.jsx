@@ -16,7 +16,7 @@ export default function HipotesisTab({ a, onGoAnalysis }) {
     <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ fontSize:44, marginBottom:16 }}>🧪</div>
       <div style={{ fontWeight:700, fontSize:18, color:"var(--text)", marginBottom:8, fontFamily:"'Sora', sans-serif" }}>Sin hipótesis todavía</div>
-      <div style={{ color:"var(--text)"Mute, fontSize:14, marginBottom:28 }}>Generá el análisis primero</div>
+      <div style={{ color:"var(--textMute)", fontSize:14, marginBottom:28 }}>Generá el análisis primero</div>
       <button onClick={onGoAnalysis} style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:10, padding:"11px 24px", color:"#fff", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"'Sora', sans-serif", boxShadow:"0 0 24px rgba(108,92,231,0.4)" }}>🦈 Analizar</button>
     </div>
   );
@@ -30,7 +30,7 @@ export default function HipotesisTab({ a, onGoAnalysis }) {
         <div style={{ fontWeight:700, fontSize:17, color:"var(--text)", marginBottom:6, fontFamily:"'Sora', sans-serif", letterSpacing:"-0.3px" }}>
           🧪 Antes de escribir una línea de código
         </div>
-        <p style={{ margin:0, fontSize:13, color:"var(--text)"Mid, lineHeight:1.65 }}>
+        <p style={{ margin:0, fontSize:13, color:"var(--textMid)", lineHeight:1.65 }}>
           Estas son las suposiciones críticas que pueden matar el negocio. Rankeadas por riesgo. Testealas en este orden — si la primera falla, no sigas.
         </p>
       </div>
@@ -57,8 +57,8 @@ export default function HipotesisTab({ a, onGoAnalysis }) {
             <div style={{ padding:"16px 20px", display:"grid", gap:12 }}>
               {/* Why critical */}
               <div>
-                <div style={{ fontSize:10, fontWeight:700, color:"var(--text)"Mute, textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:5, fontFamily:"'Sora', sans-serif" }}>¿Por qué es crítica?</div>
-                <p style={{ margin:0, fontSize:13, color:"var(--text)"Mid, lineHeight:1.6 }}>{h.porqueCritica}</p>
+                <div style={{ fontSize:10, fontWeight:700, color:"var(--textMute)", textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:5, fontFamily:"'Sora', sans-serif" }}>¿Por qué es crítica?</div>
+                <p style={{ margin:0, fontSize:13, color:"var(--textMid)", lineHeight:1.6 }}>{h.porqueCritica}</p>
               </div>
 
               {/* Test method + metric */}
@@ -67,11 +67,11 @@ export default function HipotesisTab({ a, onGoAnalysis }) {
                   <div style={{ fontSize:10, fontWeight:700, color:"#6C5CE7", textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:5, fontFamily:"'Sora', sans-serif" }}>
                     {METHOD_ICONS[methodKey]} Cómo testearla
                   </div>
-                  <p style={{ margin:0, fontSize:13, color:"var(--text)"Mid, lineHeight:1.5 }}>{h.metodo}</p>
+                  <p style={{ margin:0, fontSize:13, color:"var(--textMid)", lineHeight:1.5 }}>{h.metodo}</p>
                 </div>
                 <div style={{ background:"rgba(0,245,212,0.06)", border:"1px solid rgba(0,245,212,0.15)", borderRadius:10, padding:"12px 14px" }}>
                   <div style={{ fontSize:10, fontWeight:700, color:"#00F5D4", textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:5, fontFamily:"'Sora', sans-serif" }}>📏 Métrica de éxito</div>
-                  <p style={{ margin:0, fontSize:13, color:"var(--text)"Mid, lineHeight:1.5 }}>{h.metrica}</p>
+                  <p style={{ margin:0, fontSize:13, color:"var(--textMid)", lineHeight:1.5 }}>{h.metrica}</p>
                 </div>
               </div>
 
@@ -89,7 +89,7 @@ export default function HipotesisTab({ a, onGoAnalysis }) {
                 {h.siFalla && (
                   <div style={{ background:"rgba(255,95,122,0.06)", border:"1px solid rgba(255,95,122,0.15)", borderRadius:10, padding:"10px 14px", flex:2 }}>
                     <div style={{ fontSize:10, fontWeight:700, color:"#FF5F7A", textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:3, fontFamily:"'Sora', sans-serif" }}>☠️ Si falla</div>
-                    <div style={{ fontSize:12, color:"var(--text)"Mid, lineHeight:1.4 }}>{h.siFalla}</div>
+                    <div style={{ fontSize:12, color:"var(--textMid)", lineHeight:1.4 }}>{h.siFalla}</div>
                   </div>
                 )}
               </div>

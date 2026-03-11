@@ -17,7 +17,7 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
     <div style={{ textAlign:"center", padding:"64px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:20, backdropFilter:"blur(12px)" }}>
       <div style={{ fontSize:44, marginBottom:16 }}>🔍</div>
       <div style={{ fontWeight:700, fontSize:18, color:"var(--text)", marginBottom:8, fontFamily:"'Sora', sans-serif" }}>Sin análisis base</div>
-      <div style={{ color:"var(--text)"Mute, fontSize:14, marginBottom:28 }}>Primero generá el análisis del Shark</div>
+      <div style={{ color:"var(--textMute)", fontSize:14, marginBottom:28 }}>Primero generá el análisis del Shark</div>
       <button onClick={onGoAnalysis} style={{ background:"linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:10, padding:"11px 24px", color:"#fff", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"'Sora', sans-serif" }}>🦈 Analizar</button>
     </div>
   );
@@ -30,10 +30,10 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
         <div>
           <div style={{ fontSize:10, fontWeight:700, color:"var(--textMute)", textTransform:"uppercase", letterSpacing:"1px", marginBottom:5, fontFamily:"'Sora', sans-serif" }}>Análisis de Competencia Real</div>
           <div style={{ fontWeight:700, fontSize:16, color:"var(--text)", fontFamily:"'Sora', sans-serif", letterSpacing:"-0.3px" }}>🔍 Búsqueda con web search</div>
-          <div style={{ fontSize:12, color:"var(--text)"Mute, marginTop:3 }}>Competidores reales encontrados en internet, no alucinados</div>
+          <div style={{ fontSize:12, color:"var(--textMute)", marginTop:3 }}>Competidores reales encontrados en internet, no alucinados</div>
         </div>
         <button onClick={handleSearch} disabled={loading}
-          style={{ background: loading ? "var(--surface)" : "linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:10, padding:"11px 20px", color: loading ? "var(--text)"Mute : "#fff", fontWeight:700, fontSize:13, cursor: loading ? "not-allowed" : "pointer", fontFamily:"'Sora', sans-serif", flexShrink:0, boxShadow: loading ? "none" : "0 0 16px rgba(108,92,231,0.4)", transition:"all 0.2s", minWidth:120 }}>
+          style={{ background: loading ? "var(--surface)" : "linear-gradient(135deg,#6C5CE7,#00F5D4)", border:"none", borderRadius:10, padding:"11px 20px", color: loading ? "var(--textMute)" : "#fff", fontWeight:700, fontSize:13, cursor: loading ? "not-allowed" : "pointer", fontFamily:"'Sora', sans-serif", flexShrink:0, boxShadow: loading ? "none" : "0 0 16px rgba(108,92,231,0.4)", transition:"all 0.2s", minWidth:120 }}>
           {loading ? "🔍 Buscando..." : hasData ? "🔄 Actualizar" : "🔍 Buscar"}
         </button>
       </div>
@@ -42,15 +42,15 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
         <div style={{ textAlign:"center", padding:"52px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, backdropFilter:"blur(12px)" }}>
           <div style={{ fontSize:36, marginBottom:16, animation:"pulse 1.4s ease-in-out infinite" }}>🔍</div>
           <div style={{ fontWeight:700, color:"var(--text)", fontSize:16, marginBottom:6, fontFamily:"'Sora', sans-serif" }}>Buscando en internet...</div>
-          <div style={{ color:"var(--text)"Mute, fontSize:13 }}>Esto puede tardar 15-30 segundos. No es alucinación — es búsqueda real.</div>
+          <div style={{ color:"var(--textMute)", fontSize:13 }}>Esto puede tardar 15-30 segundos. No es alucinación — es búsqueda real.</div>
         </div>
       )}
 
       {!loading && !hasData && (
         <div style={{ textAlign:"center", padding:"52px 20px", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:16, backdropFilter:"blur(12px)" }}>
           <div style={{ fontSize:36, marginBottom:12 }}>🔍</div>
-          <div style={{ fontWeight:600, color:"var(--text)"Mid, fontSize:15, marginBottom:6, fontFamily:"'Sora', sans-serif" }}>Hacé click en "Buscar"</div>
-          <div style={{ color:"var(--text)"Mute, fontSize:13 }}>El Shark va a buscar competidores reales en internet para esta idea</div>
+          <div style={{ fontWeight:600, color:"var(--textMid)", fontSize:15, marginBottom:6, fontFamily:"'Sora', sans-serif" }}>Hacé click en "Buscar"</div>
+          <div style={{ color:"var(--textMute)", fontSize:13 }}>El Shark va a buscar competidores reales en internet para esta idea</div>
         </div>
       )}
 
@@ -60,7 +60,7 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
           {a.mapaCompetitivo && (
             <div style={{ background:"rgba(255,181,71,0.08)", border:"1px solid rgba(255,181,71,0.2)", borderRadius:14, padding:"16px 20px" }}>
               <div style={{ fontSize:10, fontWeight:700, color:"#FFB547", textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:6, fontFamily:"'Sora', sans-serif" }}>🗺️ Mapa competitivo</div>
-              <p style={{ margin:0, fontSize:14, color:"var(--text)"Mid, lineHeight:1.65 }}>{a.mapaCompetitivo}</p>
+              <p style={{ margin:0, fontSize:14, color:"var(--textMid)", lineHeight:1.65 }}>{a.mapaCompetitivo}</p>
             </div>
           )}
 
@@ -87,14 +87,14 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
                           </a>
                         )}
                       </div>
-                      <div style={{ fontSize:12, color:"var(--text)"Mute }}>{comp.modelo} · {comp.mercado}</div>
+                      <div style={{ fontSize:12, color:"var(--textMute)" }}>{comp.modelo} · {comp.mercado}</div>
                     </div>
                     <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:6 }}>
                       <span style={{ background:tc.bg, color:tc.color, border:`1px solid ${tc.border}`, borderRadius:99, padding:"2px 10px", fontSize:10, fontWeight:700, fontFamily:"'Sora', sans-serif" }}>
                         ⚡ Amenaza {comp.amenaza}
                       </span>
                       {comp.funding && (
-                        <span style={{ fontSize:11, color:"var(--text)"Mute, fontFamily:"monospace" }}>💰 {comp.funding}</span>
+                        <span style={{ fontSize:11, color:"var(--textMute)", fontFamily:"monospace" }}>💰 {comp.funding}</span>
                       )}
                     </div>
                   </div>
@@ -108,7 +108,7 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
                     ].filter(f => f.value).map(({ label, value, color, bg, border }) => (
                       <div key={label} style={{ background:bg, border:`1px solid ${border}`, borderRadius:10, padding:"10px 12px" }}>
                         <div style={{ fontSize:10, fontWeight:700, color, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:4, fontFamily:"'Sora', sans-serif" }}>{label}</div>
-                        <div style={{ fontSize:12, color:"var(--text)"Mid, lineHeight:1.5 }}>{value}</div>
+                        <div style={{ fontSize:12, color:"var(--textMid)", lineHeight:1.5 }}>{value}</div>
                       </div>
                     ))}
                   </div>
@@ -122,7 +122,7 @@ export default function CompetidoresTab({ a, idea, onGoAnalysis, onRefreshCompet
             <div style={{ background:"linear-gradient(135deg,rgba(108,92,231,0.15),rgba(0,245,212,0.06))", border:"1px solid rgba(108,92,231,0.25)", borderRadius:14, padding:"18px 22px", position:"relative", overflow:"hidden" }}>
               <div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(108,92,231,0.5),transparent)" }}/>
               <div style={{ fontSize:10, fontWeight:700, color:"#6C5CE7", textTransform:"uppercase", letterSpacing:"0.8px", marginBottom:6, fontFamily:"'Sora', sans-serif" }}>🦈 Brecha a explotar</div>
-              <p style={{ margin:0, fontSize:14, color:"var(--text)"Mid, lineHeight:1.65, fontWeight:500 }}>{a.brechaCompetitiva}</p>
+              <p style={{ margin:0, fontSize:14, color:"var(--textMid)", lineHeight:1.65, fontWeight:500 }}>{a.brechaCompetitiva}</p>
             </div>
           )}
         </>
