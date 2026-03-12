@@ -628,7 +628,11 @@ export default function App() {
     const ideaId = sel.id;
     const activeShark = SHARK_PROFILES.find(p => p.key === sharkProfile) || SHARK_PROFILES[0];
     try {
-      const res  = await fetch("/api/shark", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ prompt:ANALYZE_PROMPT(sel.title, sel.description, sel.industry||"", activeShark.systemPrompt) }) });
+      const prevAnalysis = ideas.find(i=>i.id===ideaId)?.analysis;
+      const prevScoreNote = prevAnalysis?.scores
+        ? `\n\nNOTA: Este es un RE-ANÁLISIS. Scores anteriores: ${JSON.stringify(prevAnalysis.scores)}. Solo ajustá los scores si hay información nueva o un cambio real en la descripción. Mantené consistencia.`
+        : "";
+      const res  = await fetch("/api/shark", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ prompt:ANALYZE_PROMPT(sel.title, sel.description, sel.industry||"", activeShark.systemPrompt) + prevScoreNote }) });
       const data = await res.json();
       const text = data.content?.[0]?.text || "";
       let jsonText = text.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
@@ -734,7 +738,14 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
       const fb = jsonText.indexOf("{"), lb = jsonText.lastIndexOf("}");
       if (fb !== -1 && lb !== -1) jsonText = jsonText.slice(fb, lb+1);
       const parsed = JSON.parse(jsonText);
-      const newAnalysis = { ...(sel.analysis || {}), ...parsed };
+      // Merge carefully: preserve budget, presell and other user-edited fields
+      const existing = ideas.find(i=>i.id===ideaId)?.analysis || {};
+      const newAnalysis = {
+        ...existing,
+        competidores: parsed.competidores,
+        mapaCompetitivo: parsed.mapaCompetitivo,
+        brechaCompetitiva: parsed.brechaCompetitiva,
+      };
       await saveAnalysis(ideaId, newAnalysis);
     } catch(err) {
       console.error("Competitors fetch error:", err);
