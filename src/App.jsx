@@ -731,17 +731,16 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
         body: JSON.stringify({ prompt: competitorPrompt, useWebSearch: true }),
       });
       const data = await res.json();
-      // Extract text from ALL content blocks (text + tool_result blocks from web search)
+      if (data.error) throw new Error("API error: " + JSON.stringify(data.error));
+      // Web search: content blocks are [tool_use, web_search_tool_result*, text]
+      // Collect all text blocks — last one has the final JSON answer
       const allText = (data.content || [])
-        .flatMap(b => {
-          if (b.type === "text") return [b.text];
-          if (b.type === "tool_result") return (b.content||[]).filter(c=>c.type==="text").map(c=>c.text);
-          return [];
-        })
+        .filter(b => b.type === "text")
+        .map(b => b.text)
         .join("\n");
       let jsonText = allText.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
       const fb = jsonText.indexOf("{"), lb = jsonText.lastIndexOf("}");
-      if (fb === -1 || lb === -1) throw new Error("No JSON encontrado en la respuesta");
+      if (fb === -1 || lb === -1) throw new Error("Sin JSON — bloques: " + (data.content||[]).map(b=>b.type).join(", "));
       jsonText = jsonText.slice(fb, lb+1)
         .replace(/:\s*undefined/g, ": null")
         .replace(/[\u0000-\u001F\u007F]/g, " ");
