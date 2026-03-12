@@ -2,6 +2,12 @@ import { useState } from "react";
 import { T, BUDGET_CATEGORIES } from "../constants";
 
 const PHASE_OPTIONS = ["MVP", "Pre-lanzamiento", "Mes 1", "Mes 2-3", "Recurrente"];
+const PERIOD_OPTIONS = [
+  { key:"mensual",     label:"Mensual",     suffix:"/mes" },
+  { key:"trimestral",  label:"Trimestral",  suffix:"/trim." },
+  { key:"anual",       label:"Anual",       suffix:"/año" },
+  { key:"semanal",     label:"Semanal",     suffix:"/sem." },
+];
 
 function fmt(n) {
   return n ? `$${Number(n).toLocaleString("en-US")}` : "$0";
@@ -31,13 +37,13 @@ export default function BudgetTab({ ideaId, budget, onSave }) {
   const saveItems = (newItems) => onSave(ideaId, { ...budget, items: newItems, notes: editNotes, currency });
 
   const openAdd = () => {
-    setForm({ category:"infra", description:"", amount:"", phase:"MVP", recurring:false });
+    setForm({ category:"infra", description:"", amount:"", phase:"MVP", recurring:false, recurringPeriod:"mensual" });
     setEditIdx(null);
     setShowForm(true);
   };
 
   const openEdit = (idx) => {
-    setForm({ ...items[idx] });
+    setForm({ recurringPeriod:"mensual", ...items[idx] });
     setEditIdx(idx);
     setShowForm(true);
   };
@@ -162,11 +168,11 @@ export default function BudgetTab({ ideaId, budget, onSave }) {
                     </span>
                   </div>
                   <div style={{ textAlign: "right", fontWeight: 800, fontFamily: "monospace", fontSize: 13, color: item.recurring ? "#FF5F7A" : "#00F5D4" }}>
-                    {fmt(item.amount)}{item.recurring ? "/mes" : ""}
+                    {fmt(item.amount)}{item.recurring ? (PERIOD_OPTIONS.find(p=>p.key===(item.recurringPeriod||"mensual"))?.suffix || "/mes") : ""}
                   </div>
                   <div style={{ textAlign: "center" }}>
                     <span style={{ fontSize: 10, fontWeight: 700, color: item.recurring ? "#FF5F7A" : "#FFB547", background: item.recurring ? "rgba(255,95,122,0.1)" : "rgba(255,181,71,0.1)", borderRadius: 99, padding: "2px 8px", fontFamily: "'Sora', sans-serif", border: `1px solid ${item.recurring ? "rgba(255,95,122,0.2)" : "rgba(255,181,71,0.2)"}` }}>
-                      {item.recurring ? "🔄 Recur." : "1️⃣ Único"}
+                      {item.recurring ? `🔄 ${PERIOD_OPTIONS.find(p=>p.key===(item.recurringPeriod||"mensual"))?.label||"Mensual"}` : "1️⃣ Único"}
                     </span>
                   </div>
                   <div style={{ display: "flex", gap: 4 }}>
@@ -265,16 +271,28 @@ export default function BudgetTab({ ideaId, budget, onSave }) {
                 </div>
               </div>
 
-              {/* Recurring toggle */}
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <button onClick={() => setForm(f => ({ ...f, recurring: !f.recurring }))}
-                  style={{ width: 44, height: 24, borderRadius: 99, border: "none", cursor: "pointer", background: form.recurring ? "#6C5CE7" : "var(--surface2)", position: "relative", transition: "background 0.2s", flexShrink: 0 }}>
-                  <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#fff", position: "absolute", top: 3, left: form.recurring ? 23 : 3, transition: "left 0.2s", boxShadow: "0 1px 4px rgba(0,0,0,0.4)" }}/>
-                </button>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", fontFamily: "'Sora', sans-serif" }}>Costo recurrente</div>
-                  <div style={{ fontSize: 11, color: "var(--textMute)" }}>se suma al costo mensual</div>
+              {/* Recurring toggle + period */}
+              <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <button onClick={() => setForm(f => ({ ...f, recurring: !f.recurring }))}
+                    style={{ width: 44, height: 24, borderRadius: 99, border: "none", cursor: "pointer", background: form.recurring ? "#6C5CE7" : "var(--surface2)", position: "relative", transition: "background 0.2s", flexShrink: 0 }}>
+                    <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#fff", position: "absolute", top: 3, left: form.recurring ? 23 : 3, transition: "left 0.2s", boxShadow: "0 1px 4px rgba(0,0,0,0.4)" }}/>
+                  </button>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", fontFamily: "'Sora', sans-serif" }}>Costo recurrente</div>
+                    <div style={{ fontSize: 11, color: "var(--textMute)" }}>{form.recurring ? "¿Con qué frecuencia?" : "único pago"}</div>
+                  </div>
                 </div>
+                {form.recurring && (
+                  <div style={{ display:"flex", gap:6, paddingLeft:56 }}>
+                    {PERIOD_OPTIONS.map(p => (
+                      <button key={p.key} onClick={() => setForm(f => ({ ...f, recurringPeriod: p.key }))}
+                        style={{ background: form.recurringPeriod===p.key ? "rgba(108,92,231,0.25)" : "var(--surface)", border:`1px solid ${form.recurringPeriod===p.key ? "rgba(108,92,231,0.5)" : "var(--border)"}`, borderRadius:8, padding:"6px 12px", cursor:"pointer", fontSize:12, fontWeight:700, color: form.recurringPeriod===p.key ? "#6C5CE7" : "var(--textMid)", fontFamily:"'Sora',sans-serif", transition:"all 0.12s" }}>
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Actions */}
