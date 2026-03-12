@@ -731,13 +731,43 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
         body: JSON.stringify({ prompt: competitorPrompt, useWebSearch: true }),
       });
       const data = await res.json();
-      // Extract text from response (may contain tool_use blocks)
-      const textBlocks = (data.content || []).filter(b => b.type === "text");
-      const text = textBlocks.map(b => b.text).join("\n");
-      let jsonText = text.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
+      // Extract text from ALL content blocks (text + tool_result blocks from web search)
+      const allText = (data.content || [])
+        .flatMap(b => {
+          if (b.type === "text") return [b.text];
+          if (b.type === "tool_result") return (b.content||[]).filter(c=>c.type==="text").map(c=>c.text);
+          return [];
+        })
+        .join("\n");
+      let jsonText = allText.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
       const fb = jsonText.indexOf("{"), lb = jsonText.lastIndexOf("}");
-      if (fb !== -1 && lb !== -1) jsonText = jsonText.slice(fb, lb+1);
-      const parsed = JSON.parse(jsonText);
+      if (fb === -1 || lb === -1) throw new Error("No JSON encontrado en la respuesta");
+      jsonText = jsonText.slice(fb, lb+1)
+        .replace(/:\s*undefined/g, ": null")
+        .replace(/[\u0000-\u001F\u007F]/g, " ");
+      let parsed;
+      try { parsed = JSON.parse(jsonText); }
+      catch(pe) {
+        // Robust char-by-char quote fixer (same as main analysis)
+        jsonText = (function fixQ(s) {
+          let out="",inS=false,esc=false;
+          for(let i=0;i<s.length;i++){
+            const c=s[i];
+            if(esc){out+=c;esc=false;continue;}
+            if(c==="\\"){out+=c;esc=true;continue;}
+            if(!inS){if(c==='"')inS=true;out+=c;continue;}
+            if(c==='"'){
+              let j=i+1;
+              while(j<s.length&&(s[j]===' '||s[j]==='\t'))j++;
+              const nx=s[j];
+              if(nx===':'||nx===','||nx==='}'||nx===']'||nx==='\n'||nx==='\r'||j>=s.length){out+=c;inS=false;}
+              else{out+='\\"';}
+            }else{out+=c;}
+          }
+          return out;
+        })(jsonText);
+        parsed = JSON.parse(jsonText);
+      }
       // Merge carefully: preserve budget, presell and other user-edited fields
       const existing = ideas.find(i=>i.id===ideaId)?.analysis || {};
       const newAnalysis = {
