@@ -61,6 +61,7 @@ export const TABS = (sel) => [
   { key:"gtm",          label:"🚀 GTM"      },
   { key:"budget",       label:`💸 Budget${sel?.analysis?.budget?.items?.length ? ` (${sel.analysis.budget.items.length})` : ""}` },
   { key:"presell",      label:`🤝 Pre-sell${sel?.presell?.length ? ` (${sel.presell.length})` : ""}` },
+  { key:"vin",          label:`🏛️ VIN${sel?.vinEval ? ` ${sel.vinEval.vinScore?.toFixed(1)}` : ""}` },
   { key:"comments",     label:`💬${sel?.comments?.length ? ` ${sel.comments.length}` : ""}` },
 ];
 

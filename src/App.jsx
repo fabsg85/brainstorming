@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { T, STAGES, SCORE_CRITERIA, TABS, SHARK_PROFILES } from "./constants";
 import { scoreColor, scoreLabel, exportMarkdown } from "./utils";
 import { useIdeas } from "./hooks/useIdeas";
@@ -18,6 +18,7 @@ import PersonasTab       from "./components/PersonasTab";
 import CompetidoresTab   from "./components/CompetidoresTab";
 import CanvasTab         from "./components/CanvasTab";
 import PreSellTab        from "./components/PreSellTab";
+import VinTab            from "./components/VinTab";
 
 // ── FONTS + GLOBAL STYLES ────────────────────────────────────────
 const GlobalStyles = ({ light }) => (
@@ -696,6 +697,18 @@ export default function App() {
     updateIdea(ideaId, { presell });
   };
 
+  // VIN eval + checklist persistence via custom events from VinTab
+  useEffect(() => {
+    const handleVinEval = e => updateIdea(e.detail.ideaId, { vinEval: e.detail.vinEval });
+    const handleVinCheck = e => updateIdea(e.detail.ideaId, { vinChecklist: e.detail.vinChecklist });
+    window.addEventListener("saveVinEval", handleVinEval);
+    window.addEventListener("saveVinChecklist", handleVinCheck);
+    return () => {
+      window.removeEventListener("saveVinEval", handleVinEval);
+      window.removeEventListener("saveVinChecklist", handleVinCheck);
+    };
+  }, []);
+
   const refreshCompetitors = async () => {
     if (!sel) return;
     const ideaId = sel.id;
@@ -1022,6 +1035,7 @@ Buscá exactamente: competidores directos, productos alternativos, herramientas 
                 {tab==="canvas"       && <CanvasTab       a={a} onGoAnalysis={()=>setTab("analysis")}/>}
                 {tab==="budget"       && <BudgetTab       ideaId={sel.id} budget={sel.analysis?.budget} onSave={saveBudget}/>}
                 {tab==="presell"      && <PreSellTab      ideaId={sel.id} presell={sel.presell||[]} onSave={savePresell}/>}
+                {tab==="vin"          && <VinTab           sel={sel} a={a} onGoAnalysis={()=>setTab("analysis")}/>}
                 {tab==="comments"     && <CommentsTab     sel={sel} onAdd={addComment}/>}
               </div>
             </div>
